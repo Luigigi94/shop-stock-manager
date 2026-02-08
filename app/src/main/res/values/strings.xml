@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">InventarioApp</string>
+
+    <!--  Menu  -->
+    <string name="menu_add_category">AddCategoryScreen</string>
+
+    <!--  Forms  -->
+    <string name="title_category">Nueva Categoria</string>
+    <string name="label_category_name">Nombre de la Categoria</string>
+    <string name="label_category_description">Descripción de la Categoria</string>
+    <string name="button_add_category">Crear Categoria</string>
+
 </resources>

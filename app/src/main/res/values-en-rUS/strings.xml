@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">InventarioApp</string>
+    <string name="menu_add_category">AddCategoryScreen</string>
+    <string name="title_category">New Category</string>
+    <string name="label_category_name">Category Name</string>
+    <string name="label_category_description">Category Description</string>
+    <string name="button_add_category">Create Category</string>
+</resources>

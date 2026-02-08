@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,8 +15,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -28,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.inventarioapp.constants.MenuOptions
-import com.example.inventarioapp.model.OptionsMenu
+import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 
 @Composable
 fun ContentCards(navController: NavController){
@@ -89,26 +85,9 @@ fun MenuBodyContent(navController: NavController, modifier: Modifier = Modifier)
 @Composable
 fun ListedOptions(navController: NavController){
     val listedMenuOptions = MenuOptions.options
-
-    CustomizedOutlinedCard(listedMenuOptions) { optionsMenu ->
-        navController.navigate(optionsMenu.route)
-    }
-}
-
-@Composable
-fun CustomizedOutlinedCard(optionsMenu: List<OptionsMenu>, modifier: Modifier = Modifier, onClick: (OptionsMenu) -> Unit){
     LazyColumn() {
-        items(optionsMenu) { option ->
-            OutlinedCard(
-                modifier = modifier.fillMaxWidth(),
-                shape = CardDefaults.outlinedShape,
-                colors = CardDefaults.outlinedCardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                elevation = CardDefaults.elevatedCardElevation(),
-                border = CardDefaults.outlinedCardBorder(),
-                onClick = { onClick(option) }
-            ) {
+        items(listedMenuOptions) { option ->
+            CustomizedOutlinedCard(onClick = { navController.navigate(option.route) }) {
                 Row() {
                     if (option.icon != null) {
                         Icon(
@@ -125,9 +104,7 @@ fun CustomizedOutlinedCard(optionsMenu: List<OptionsMenu>, modifier: Modifier = 
                         text = option.label
                     )
                 }
-
             }
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
