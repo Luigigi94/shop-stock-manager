@@ -24,6 +24,9 @@ class CategoryViewModel (
     private val _uiMessage = MutableStateFlow<String?>(null)
     val uiMessage: StateFlow<String?> get() = _uiMessage
 
+    private val _selectedCategory = MutableStateFlow<Categories?>(null)
+    val selectedCategory: StateFlow<Categories?> get() = _selectedCategory
+
     init {
 //        Inicialización: suscribirse a los datos de Firebase
         viewModelScope.launch {
@@ -48,11 +51,25 @@ class CategoryViewModel (
     }
 
     /**
+     * Obtiene los valores de categoria por Id
+     * @param id: UUID del documento
+     * */
+    fun loadCategory(id: String){
+        viewModelScope.launch {
+            _selectedCategory.value = repository.getCategoryById(id)
+        }
+    }
+
+    /**
      * Actualiza una categoría existente.
      */
     fun updateCategory(category: Categories) {
         viewModelScope.launch {
-            repository.updateCategory(category)
+            val result = repository.updateCategory(category)
+
+            result
+                .onSuccess { _uiMessage.value = "SUCCEDED_UPDATE_CATEGORY" }
+                .onFailure { e -> _uiMessage.value = "ERROR_UPDATE_CATEGORY: ${e.message}" }
         }
     }
 

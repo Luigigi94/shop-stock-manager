@@ -2,13 +2,18 @@
     <string name="app_name">InventarioApp</string>
 
     <!--  Menu  -->
-    <string name="menu_add_category">AddCategoryScreen</string>
+    <string name="menu_add_category" translatable="false">AddCategoryScreen</string>
+    <string name="menu_edit_category" translatable="false">EditCategoryScreen</string>
+    <string name="menu_button_back" translatable="false">Back</string>
 
     <!--  Forms  -->
     <string name="title_category">Nueva Categoria</string>
     <string name="label_category_name">Nombre de la Categoria</string>
     <string name="label_category_description">Descripción de la Categoria</string>
     <string name="button_add_category">Crear Categoria</string>
+    <string name="button_edit_category">Editar Categoria</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="button_delete">Eliminar</string>
     <string name="result_success_added_category">Categoria Guardada Correctamente</string>
     <string name="result_failure_added_category">Error al Guardar la Categoria:</string>
 

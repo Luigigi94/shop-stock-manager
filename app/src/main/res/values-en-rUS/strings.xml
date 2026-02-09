@@ -6,6 +6,9 @@
     <string name="label_category_name">Category Name</string>
     <string name="label_category_description">Category Description</string>
     <string name="button_add_category">Create Category</string>
+    <string name="button_edit_category">Update Category</string>
+    <string name="button_delete">Delete</string>
     <string name="result_success_added_category">Category Added Correctly</string>
     <string name="result_failure_added_category">Error Adding Category:</string>
+    <string name="button_cancel">Cancel</string>
 </resources>

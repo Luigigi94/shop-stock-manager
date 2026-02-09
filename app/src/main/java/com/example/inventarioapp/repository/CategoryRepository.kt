@@ -54,11 +54,28 @@ class CategoryRepository {
         }
     }
 
+    suspend fun getCategoryById(id: String): Categories? {
+        return db.collection("Categories")
+            .document(id)
+            .get()
+            .await()
+            .toObject(Categories::class.java)
+    }
+
     /**
-     * Actualiza una categoria en firebnase
+     * Actualiza una categoria en firebase
      * */
-    suspend fun updateCategory(category: Categories){
-//        TODO: Implementar actualización en firebase
+    suspend fun updateCategory(category: Categories): Result<Unit>{
+        return try {
+            db.collection("Categories")
+                .document(category.idCategory)
+                .set(category)
+                .await()
+
+            Result.success(Unit)
+        } catch (e: Exception){
+            Result.failure(e)
+        }
     }
 
     /**
