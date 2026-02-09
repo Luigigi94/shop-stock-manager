@@ -9,5 +9,7 @@
     <string name="label_category_name">Nombre de la Categoria</string>
     <string name="label_category_description">Descripción de la Categoria</string>
     <string name="button_add_category">Crear Categoria</string>
+    <string name="result_success_added_category">Categoria Guardada Correctamente</string>
+    <string name="result_failure_added_category">Error al Guardar la Categoria:</string>
 
 </resources>

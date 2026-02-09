@@ -1,6 +1,5 @@
 package com.example.inventarioapp.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,32 +13,57 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Categories
+import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
+import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
+import java.util.UUID
+
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.runtime.collectAsState
+import com.example.inventarioapp.viewmodel.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddCategoryScreen(navController: NavController){
+fun AddCategoryScreen(navController: NavController, viewModel: CategoryViewModel = viewModel()){
     var nameInput by remember { mutableStateOf("") }
     var descriptionInput by remember { mutableStateOf("") }
-    var listCategories by remember { mutableStateOf(emptyList<Categories>()) }
+
+//    Lista reactiva desde viewModel (FireBase)
+    val listCategories by viewModel.categories.collectAsState()
+//    Mensajes para toast
+    val message by viewModel.uiMessage.collectAsState()
+//    Toast pendiente de hacer generico
+    LaunchedEffect(message) {
+        message?.let {
+            val text = when {
+                it == "SUCCEDED_ADD_CATEGORY" ->
+                    navController.context.getString(R.string.result_success_added_category)
+                it.startsWith("ERROR_ADD_CATEGORY") ->
+                    navController.context.getString(R.string.result_failure_added_category)
+                else -> it
+            }
+            Toast.makeText(navController.context, text, Toast.LENGTH_SHORT).show()
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -56,10 +80,9 @@ fun AddCategoryScreen(navController: NavController){
                     val newCategory = Categories(
                         nameCategory = nameInput,
                         descriptionCategory = descriptionInput,
-                        idCategory = null
+                        idCategory = UUID.randomUUID().toString()
                     )
-
-                    listCategories = listCategories + newCategory
+                    viewModel.addCategory(newCategory)
 
                     nameInput = ""
                     descriptionInput = ""
@@ -67,7 +90,7 @@ fun AddCategoryScreen(navController: NavController){
             }) {
                 Text(text = stringResource(R.string.button_add_category))
             }
-            ListedCategories(listCategories)
+            ListedCategories(listCategories, navController)
 
         }
     }
@@ -80,25 +103,15 @@ fun AddCategory(valueInput: String, texto: String, onValueChange: (String) -> Un
         horizontalAlignment = Alignment.Start
     ) {
         Spacer(modifier = Modifier.height(10.dp))
-        CustomizedOutlinedTextField(valueInput, texto, onValueChange = onValueChange)
+        CustomizedOutlinedTextField(valueInput, label = { Text(texto) }, onValueChange = onValueChange)
     }
 }
 
 @Composable
-fun CustomizedOutlinedTextField(valueInput: String, texto: String, modifier: Modifier = Modifier, onValueChange: (String) -> Unit){
-    OutlinedTextField(
-        value = valueInput,
-        modifier = modifier,
-        label = { Text(texto) },
-        onValueChange = onValueChange
-    )
-}
-
-@Composable
-fun ListedCategories(listCategories: List<Categories>) {
-    LazyColumn() {
+fun ListedCategories(listCategories: List<Categories>, navController: NavController) {
+    LazyColumn {
         items(listCategories) { category ->
-            CustomizedOutlinedCard(onClick = {/*TODO: New Screen to Edit Category*/}) {
+            CustomizedOutlinedCard(onClick = { navController.navigate(route = AppScreens.EditCategoryScreen.route+"/"+category.idCategory)}) {
                 Row(
                     modifier = Modifier,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -109,32 +122,6 @@ fun ListedCategories(listCategories: List<Categories>) {
                         contentDescription = "Editing Category"
                     )
                 }
-            }
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun previewAll(/*navController: NavController*/){
-    var valueInput by remember { mutableStateOf("") }
-    var listCategories by remember { mutableStateOf(emptyList<Categories>()) }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.menu_add_category)) }
-            )
-        }
-    ) { innerPading ->
-        Column(modifier = Modifier.padding(innerPading)) {
-            Text(text = stringResource(R.string.title_category))
-            AddCategory(texto = stringResource(R.string.label_category_name), valueInput = valueInput, onValueChange = { valueInput = it })
-            AddCategory(texto = stringResource(R.string.label_category_description), valueInput = valueInput, onValueChange = { valueInput = it })
-            ListedCategories(listCategories)
-            CustomizedButton(onClick = {}) {
-                Text(text = stringResource(R.string.button_add_category))
             }
         }
     }
