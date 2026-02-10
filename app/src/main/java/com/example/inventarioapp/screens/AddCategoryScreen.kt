@@ -36,12 +36,14 @@ import java.util.UUID
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.runtime.collectAsState
+import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,26 +86,37 @@ fun AddCategoryScreen(navController: NavController, viewModel: CategoryViewModel
         }
     ) { innerPading ->
         Column(modifier = Modifier.padding(innerPading)) {
-            Text(text = stringResource(R.string.title_category))
-            AddCategory(texto = stringResource(R.string.label_name_category), valueInput = nameInput, onValueChange = { nameInput = it })
-            AddCategory(texto = stringResource(R.string.label_description_category), valueInput = descriptionInput, onValueChange = { descriptionInput = it })
-            CustomizedButton(onClick = {
-                if (nameInput.isNotBlank()){
-                    val newCategory = Categories(
-                        nameCategory = nameInput,
-                        descriptionCategory = descriptionInput,
-                        idCategory = UUID.randomUUID().toString()
-                    )
-                    viewModel.addCategory(newCategory)
-
-                    nameInput = ""
-                    descriptionInput = ""
-                }
-            }) {
-                Text(text = stringResource(R.string.button_add_category))
+            CustomizedFilledCard(onClick = {}) {
+                Text(text = stringResource(R.string.title_category))
+                AddCategory(
+                    texto = stringResource(R.string.label_name_category),
+                    valueInput = nameInput,
+                    onValueChange = { nameInput = it })
+                AddCategory(
+                    texto = stringResource(R.string.label_description_category),
+                    valueInput = descriptionInput,
+                    onValueChange = { descriptionInput = it })
             }
-            ListedCategories(listCategories, navController)
+            Spacer(Modifier.size(10.dp))
+            CustomizedFilledCard(onClick = {}) {
+                CustomizedButton(onClick = {
+                    if (nameInput.isNotBlank()) {
+                        val newCategory = Categories(
+                            nameCategory = nameInput,
+                            descriptionCategory = descriptionInput,
+                            idCategory = UUID.randomUUID().toString()
+                        )
+                        viewModel.addCategory(newCategory)
 
+                        nameInput = ""
+                        descriptionInput = ""
+                    }
+                }) {
+                    Text(text = stringResource(R.string.button_add_category))
+                }
+            }
+            Spacer(Modifier.size(10.dp))
+            CustomizedFilledCard(onClick = {}) { ListedCategories(listCategories, navController) }
         }
     }
 }

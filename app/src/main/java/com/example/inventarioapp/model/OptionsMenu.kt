@@ -7,5 +7,6 @@ data class OptionsMenu(
     val icon: ImageVector?,
     val route: String,
     val role: String?,
-    val state: Boolean
+    val state: Boolean,
+    val contentDescription: String
 )

@@ -1,19 +1,16 @@
 package com.example.inventarioapp.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -22,41 +19,37 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.example.inventarioapp.viewmodel.ProductViewModel
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Categories
 import com.example.inventarioapp.model.Products
-import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
-import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
+import com.example.inventarioapp.viewmodel.ProductViewModel
 import com.google.firebase.Timestamp
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProductScreen(navController: NavController, viewModel: ProductViewModel = viewModel()){
+fun EditProductScreen(navController: NavController, productId: String?, viewModel: ProductViewModel = viewModel()){
     var nameProduct by remember { mutableStateOf("") }
     var quantityProduct by remember { mutableStateOf("") }
     var descriptionProduct by remember { mutableStateOf("") }
     var priceProduct by remember { mutableStateOf("") }
 
-    val listProducts by viewModel.products.collectAsState()
-    val message by viewModel.uiMessage.collectAsState()
 
     val categoryViewModel: CategoryViewModel = viewModel()
 
@@ -64,28 +57,31 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel =
 
     var selectedCategory by remember { mutableStateOf<Categories?>(null) }
 
-    LaunchedEffect(message) {
-        message?.let {
-            val text = when {
-                it == "SUCCEEDED_ADD_PRODUCT" ->
-                    navController.context.getString(R.string.result_success_added_product)
-                it.startsWith("ERROR_ADD_PRODUCT") ->
-                    navController.context.getString(R.string.result_failure_added_product)
-                else -> it
-            }
-            Toast.makeText(navController.context, text, Toast.LENGTH_SHORT).show()
-        }
+    val product = viewModel.selectedProduct.collectAsState()
+
+    LaunchedEffect(productId) {
+        productId?.let { viewModel.loadProduct(productId) }
     }
+
+    LaunchedEffect(product.value) {
+        val current = product.value ?: return@LaunchedEffect
+        nameProduct = current.nameProduct
+        quantityProduct = current.quantityProduct.toString()
+        descriptionProduct = current.descriptionProduct
+        priceProduct = current.priceProduct.toString()
+        selectedCategory = categories.find { it.idCategory == current.idCategory }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.menu_add_product)) },
+                title = { Text(stringResource(R.string.menu_edit_product)) },
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.menu_button_back),
                         modifier = Modifier
-                            .clickable{ navController.popBackStack() }
+                            .clickable { navController.popBackStack() }
                             .padding(horizontal = 12.dp)
                     )
                 }
@@ -93,7 +89,9 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel =
         }
     ) { innerPading ->
 
-        Column(modifier = Modifier.padding(innerPading).hideKeyboardOnTap()) {
+        Column(modifier = Modifier
+            .padding(innerPading)
+            .hideKeyboardOnTap()) {
             Text(text = stringResource(R.string.title_product))
             Spacer(modifier = Modifier.height(10.dp))
             CustomizedFilledCard(
@@ -119,65 +117,66 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel =
             }
             Spacer(modifier = Modifier.height(10.dp))
             CustomizedFilledCard(onClick = {}) {
+                Column {
+                    Row {
+                        CustomizedButton(
+                            modifier = Modifier.weight(2f),
+                            onClick = {
+                                navController.popBackStack()
+                            }
+                        ) {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = stringResource(R.string.button_cancel)
+                                )
+                                Text(text = stringResource(R.string.button_cancel))
+                            }
+                        }
+                        CustomizedButton(
+                            modifier = Modifier.weight(2f),
+                            onClick = {
+                                if (productId != null) {
+                                    viewModel.deleteProduct(productId)
+                                    navController.popBackStack()
+                                } else {
+                                    /*TODO: agregar toast para decir que algo falló*/
+                                }
+                            }) {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = stringResource(R.string.button_delete)
+                                )
+                                Text(text = stringResource(R.string.button_delete))
+                            }
+                        }
+                    }
+                }
                 CustomizedButton(
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         if (nameProduct.isNotBlank() && priceProduct.isNotBlank() && quantityProduct.isNotBlank() && selectedCategory != null) {
-                            val newProduct = Products(
-                                idProduct = UUID.randomUUID().toString(),
+                            val updatedProduct = Products(
+                                idProduct = productId.toString(),
                                 nameProduct = nameProduct,
                                 quantityProduct = quantityProduct.toInt(),
                                 descriptionProduct = descriptionProduct,
                                 priceProduct = priceProduct.toDouble(),
                                 statusProduct = true,
                                 idCategory = selectedCategory!!.idCategory,
-                                createdAt = Timestamp.now()
+                                updatedAt = Timestamp.now()
                             )
 
-                            viewModel.addProduct(newProduct)
-
-                            nameProduct = ""
-                            quantityProduct = ""
-                            descriptionProduct = ""
-                            priceProduct = ""
+                            viewModel.updateProduct(updatedProduct)
+                            navController.popBackStack()
                         }
                     }
                 ) {
-                    Text(text = stringResource(R.string.button_add_product))
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            CustomizedFilledCard(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {}
-            ) {
-                ListedProducts(listProducts, navController)
-            }
-        }
-
-    }
-}
-
-@Composable
-fun ListedProducts(listProducts: List<Products>, navController: NavController){
-    CustomizedFilledCard(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = {}
-    ) {
-        LazyColumn {
-            items(listProducts) { product ->
-                CustomizedOutlinedCard(onClick = { navController.navigate(route = AppScreens.EditProductScreen.route+"/"+product.idProduct)}) {
-                    Row (
-                        modifier = Modifier,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ){
-                        Text(text = product.nameProduct)
-                        Icon(
-                            imageVector = Icons.Filled.Edit,
-                            contentDescription = "Editing Product"
-                        )
-                    }
+                    Text(text = stringResource(R.string.button_edit_product))
                 }
             }
         }
+
     }
 }

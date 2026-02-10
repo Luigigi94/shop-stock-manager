@@ -92,7 +92,7 @@ fun ListedOptions(navController: NavController){
                     if (option.icon != null) {
                         Icon(
                             imageVector = option.icon,
-                            contentDescription = "Icon Add Product",
+                            contentDescription = option.contentDescription,
                         )
                     } else {
                         Icon(

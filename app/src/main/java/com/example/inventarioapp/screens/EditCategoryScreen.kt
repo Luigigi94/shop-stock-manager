@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Categories
 import com.example.inventarioapp.ui.components.CustomizedButton
+import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +41,7 @@ fun EditCategoryScreen(navController: NavController, categoryId: String?, viewMo
     val category = viewModel.selectedCategory.collectAsState()
 
     LaunchedEffect(categoryId) {
-        viewModel.loadCategory(categoryId.toString())
+        categoryId?.let { viewModel.loadCategory(categoryId) }
     }
 
     LaunchedEffect(category.value){
@@ -59,60 +60,69 @@ fun EditCategoryScreen(navController: NavController, categoryId: String?, viewMo
         }
     ) { innerPading ->
         Column(modifier = Modifier.padding(innerPading)) {
-            Text(text = stringResource(R.string.title_category))
-            AddCategory(texto = stringResource(R.string.label_name_category), valueInput = nameCategory, onValueChange = { nameCategory = it })
-            AddCategory(texto = stringResource(R.string.label_description_category), valueInput = descriptionCategory, onValueChange = { descriptionCategory = it })
+            CustomizedFilledCard(onClick = {}) {
+                Text(text = stringResource(R.string.title_category))
+                AddCategory(
+                    texto = stringResource(R.string.label_name_category),
+                    valueInput = nameCategory,
+                    onValueChange = { nameCategory = it })
+                AddCategory(
+                    texto = stringResource(R.string.label_description_category),
+                    valueInput = descriptionCategory,
+                    onValueChange = { descriptionCategory = it })
+            }
             Spacer(Modifier.size(10.dp))
-            Column {
-                Row {
-                    CustomizedButton(
-                        modifier = Modifier.weight(2f),
-                        onClick = {
-                            navController.popBackStack()
-                        }) {
-                        Row {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = stringResource(R.string.button_cancel),
-
-                                )
-                            Text(text = stringResource(R.string.button_cancel))
-                        }
-                    }
-                    CustomizedButton(
-                        modifier = Modifier.weight(2f),
-                        onClick = {
-                            if (categoryId != null){
-                                viewModel.deleteCategory(categoryId)
+            CustomizedFilledCard(onClick = {}) {
+                Column {
+                    Row {
+                        CustomizedButton(
+                            modifier = Modifier.weight(2f),
+                            onClick = {
                                 navController.popBackStack()
-                            } else {
-                                /*TODO: agregar toast para decir que algo falló*/
+                            }) {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = stringResource(R.string.button_cancel)
+                                )
+                                Text(text = stringResource(R.string.button_cancel))
                             }
-                    }) {
-                        Row {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = stringResource(R.string.button_delete)
-                            )
-                            Text(text = stringResource(R.string.button_delete))
+                        }
+                        CustomizedButton(
+                            modifier = Modifier.weight(2f),
+                            onClick = {
+                                if (categoryId != null) {
+                                    viewModel.deleteCategory(categoryId)
+                                    navController.popBackStack()
+                                } else {
+                                    /*TODO: agregar toast para decir que algo falló*/
+                                }
+                            }) {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = stringResource(R.string.button_delete)
+                                )
+                                Text(text = stringResource(R.string.button_delete))
+                            }
                         }
                     }
-                }
-                CustomizedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        if (nameCategory.isNotBlank()){
-                            val updateCategory = Categories(
-                                nameCategory = nameCategory,
-                                descriptionCategory = descriptionCategory,
-                                idCategory = categoryId.toString()
-                            )
+                    CustomizedButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            if (nameCategory.isNotBlank()) {
+                                val updateCategory = Categories(
+                                    nameCategory = nameCategory,
+                                    descriptionCategory = descriptionCategory,
+                                    idCategory = categoryId.toString()
+                                )
 
-                            viewModel.updateCategory(updateCategory)
-                            navController.popBackStack()
-                        }
-                    }) {
-                    Text(text = stringResource(R.string.button_edit_category))
+                                viewModel.updateCategory(updateCategory)
+                                navController.popBackStack()
+                            }
+                        }) {
+                        Text(text = stringResource(R.string.button_edit_category))
+                    }
                 }
             }
             /*text?.let{

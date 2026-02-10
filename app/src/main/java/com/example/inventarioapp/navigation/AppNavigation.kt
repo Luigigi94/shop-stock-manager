@@ -14,6 +14,7 @@ import com.example.inventarioapp.screens.AddCategoryScreen
 import com.example.inventarioapp.screens.NewOrderScreen
 import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.EditCategoryScreen
+import com.example.inventarioapp.screens.EditProductScreen
 
 @Composable
 fun AppNavigation(padding: Modifier) {
@@ -44,6 +45,14 @@ fun AppNavigation(padding: Modifier) {
             })
         ){
             EditCategoryScreen(navController, it.arguments?.getString("categoryUUID"))
+        }
+        composable(
+            route = AppScreens.EditProductScreen.route+"/{productUUID}",
+            arguments = listOf(navArgument(name = "productUUID"){
+                type = NavType.StringType
+            })
+        ){
+            EditProductScreen(navController, productId = it.arguments?.getString("productUUID"))
         }
     }
 
