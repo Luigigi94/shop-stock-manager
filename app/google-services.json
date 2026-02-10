@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "524930729946",
+    "project_id": "shop-stock-manger",
+    "storage_bucket": "shop-stock-manger.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524930729946:android:8f4e835269783c1f3722e3",
+        "android_client_info": {
+          "package_name": "com.example.inventarioapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ7q1F7f9EMIlEyB82gbncvydKg2iDsME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
