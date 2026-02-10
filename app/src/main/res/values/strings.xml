@@ -4,17 +4,33 @@
     <!--  Menu  -->
     <string name="menu_add_category" translatable="false">AddCategoryScreen</string>
     <string name="menu_edit_category" translatable="false">EditCategoryScreen</string>
-    <string name="menu_button_back" translatable="false">Back</string>
+    <string name="menu_add_product" translatable="false">AddProductScreen</string>
+    <string name="menu_edit_product" translatable="false">EditProductScreen</string>
 
     <!--  Forms  -->
-    <string name="title_category">Nueva Categoria</string>
-    <string name="label_category_name">Nombre de la Categoria</string>
-    <string name="label_category_description">Descripción de la Categoria</string>
-    <string name="button_add_category">Crear Categoria</string>
-    <string name="button_edit_category">Editar Categoria</string>
+    <string name="menu_button_back" translatable="false">Back</string>
     <string name="button_cancel">Cancelar</string>
     <string name="button_delete">Eliminar</string>
+
+    <!--  Categories-->
+    <string name="title_category">Nueva Categoria</string>
+    <string name="label_name_category">Nombre de la Categoria</string>
+    <string name="label_description_category">Descripción de la Categoria</string>
+    <string name="button_add_category">Crear Categoria</string>
+    <string name="button_edit_category">Editar Categoria</string>
     <string name="result_success_added_category">Categoria Guardada Correctamente</string>
     <string name="result_failure_added_category">Error al Guardar la Categoria:</string>
+
+    <!--  Products-->
+    <string name="title_product">Nuevo Producto</string>
+    <string name="label_name_product">Nombre del Producto</string>
+    <string name="label_description_product">Descripción del Producto</string>
+    <string name="label_quantity_product">Cantidad del Producto</string>
+    <string name="label_price_product">Precio del Producto</string>
+    <string name="label_category_product">Categoria del Producto</string>
+    <string name="button_add_product">Crear Producto</string>
+    <string name="button_edit_product">Editar Producto</string>
+    <string name="result_success_added_product">Producto Guardado Correctamente</string>
+    <string name="result_failure_added_product">Error al Guardar el Producto:</string>
 
 </resources>

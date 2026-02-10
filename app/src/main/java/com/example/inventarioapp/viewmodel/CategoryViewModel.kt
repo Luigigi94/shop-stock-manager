@@ -45,7 +45,7 @@ class CategoryViewModel (
             val result = repository.addCategory(category)
 
             result
-                .onSuccess { _uiMessage.value = "SUCCEDED_ADD_CATEGORY" }
+                .onSuccess { _uiMessage.value = "SUCCEEDED_ADD_CATEGORY" }
                 .onFailure { e-> _uiMessage.value = "ERROR_ADD_CATEGORY: ${e.message}" }
         }
     }
@@ -68,7 +68,7 @@ class CategoryViewModel (
             val result = repository.updateCategory(category)
 
             result
-                .onSuccess { _uiMessage.value = "SUCCEDED_UPDATE_CATEGORY" }
+                .onSuccess { _uiMessage.value = "SUCCEEDED_UPDATE_CATEGORY" }
                 .onFailure { e -> _uiMessage.value = "ERROR_UPDATE_CATEGORY: ${e.message}" }
         }
     }
@@ -78,7 +78,11 @@ class CategoryViewModel (
      */
     fun deleteCategory(categoryId: String) {
         viewModelScope.launch {
-            repository.deleteCategory(categoryId)
+            val result = repository.deleteCategory(categoryId)
+
+            result
+                .onSuccess { _uiMessage.value = "SUCCEEDED_DELETE_CATEGORY" }
+                .onFailure { e -> _uiMessage.value = "ERROR_DELETE_CATEGORY: ${e.message}" }
         }
     }
 }

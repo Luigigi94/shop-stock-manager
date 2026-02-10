@@ -1,11 +1,16 @@
 package com.example.inventarioapp.model
 
-import android.media.Image
+import com.google.firebase.Timestamp
 
 data class Products(
-    val idProducts: Int,
-    val nameProduct: String,
-    val quantity: Int,
-    val imageProduct: Image?,
-    val descriptionProduct: String?
+    val idProduct: String = "",
+    val nameProduct: String = "",
+    val quantityProduct: Int = 0,
+    val imageProduct: String = "",
+    val descriptionProduct: String = "",
+    val priceProduct: Double = 0.0,
+    val statusProduct: Boolean = false,
+    val idCategory: String = "",
+    val createdAt: Timestamp? = null,
+    val updatedAt: Timestamp? = null,
 )

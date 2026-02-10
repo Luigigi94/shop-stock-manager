@@ -58,7 +58,7 @@ fun AddCategoryScreen(navController: NavController, viewModel: CategoryViewModel
     LaunchedEffect(message) {
         message?.let {
             val text = when {
-                it == "SUCCEDED_ADD_CATEGORY" ->
+                it == "SUCCEEDED_ADD_CATEGORY" ->
                     navController.context.getString(R.string.result_success_added_category)
                 it.startsWith("ERROR_ADD_CATEGORY") ->
                     navController.context.getString(R.string.result_failure_added_category)
@@ -85,8 +85,8 @@ fun AddCategoryScreen(navController: NavController, viewModel: CategoryViewModel
     ) { innerPading ->
         Column(modifier = Modifier.padding(innerPading)) {
             Text(text = stringResource(R.string.title_category))
-            AddCategory(texto = stringResource(R.string.label_category_name), valueInput = nameInput, onValueChange = { nameInput = it })
-            AddCategory(texto = stringResource(R.string.label_category_description), valueInput = descriptionInput, onValueChange = { descriptionInput = it })
+            AddCategory(texto = stringResource(R.string.label_name_category), valueInput = nameInput, onValueChange = { nameInput = it })
+            AddCategory(texto = stringResource(R.string.label_description_category), valueInput = descriptionInput, onValueChange = { descriptionInput = it })
             CustomizedButton(onClick = {
                 if (nameInput.isNotBlank()){
                     val newCategory = Categories(

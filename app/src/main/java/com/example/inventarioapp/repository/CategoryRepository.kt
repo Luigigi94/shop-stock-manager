@@ -80,7 +80,15 @@ class CategoryRepository {
 
     /**
      * Elimina una categoria por su id en firebase*/
-    suspend fun deleteCategory(category: String){
-//        TODO: Implementar eliminación en firebase
+    suspend fun deleteCategory(category: String): Result<Unit>{
+        return try {
+            db.collection("Categories")
+                .document(category)
+                .delete()
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception){
+            Result.failure(e)
+        }
     }
 }

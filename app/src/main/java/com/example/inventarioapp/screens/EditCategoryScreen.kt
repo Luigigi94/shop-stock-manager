@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -59,8 +60,8 @@ fun EditCategoryScreen(navController: NavController, categoryId: String?, viewMo
     ) { innerPading ->
         Column(modifier = Modifier.padding(innerPading)) {
             Text(text = stringResource(R.string.title_category))
-            AddCategory(texto = stringResource(R.string.label_category_name), valueInput = nameCategory, onValueChange = { nameCategory = it })
-            AddCategory(texto = stringResource(R.string.label_category_description), valueInput = descriptionCategory, onValueChange = { descriptionCategory = it })
+            AddCategory(texto = stringResource(R.string.label_name_category), valueInput = nameCategory, onValueChange = { nameCategory = it })
+            AddCategory(texto = stringResource(R.string.label_description_category), valueInput = descriptionCategory, onValueChange = { descriptionCategory = it })
             Spacer(Modifier.size(10.dp))
             Column {
                 Row {
@@ -81,9 +82,20 @@ fun EditCategoryScreen(navController: NavController, categoryId: String?, viewMo
                     CustomizedButton(
                         modifier = Modifier.weight(2f),
                         onClick = {
-                        /*TODO: add functionality*/
+                            if (categoryId != null){
+                                viewModel.deleteCategory(categoryId)
+                                navController.popBackStack()
+                            } else {
+                                /*TODO: agregar toast para decir que algo falló*/
+                            }
                     }) {
-                        Text(text = stringResource(R.string.button_delete))
+                        Row {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = stringResource(R.string.button_delete)
+                            )
+                            Text(text = stringResource(R.string.button_delete))
+                        }
                     }
                 }
                 CustomizedButton(
