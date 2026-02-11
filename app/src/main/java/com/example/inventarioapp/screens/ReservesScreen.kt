@@ -12,16 +12,16 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewOrderScreen(navController: NavController){
+fun ReservesScreen(navController: NavController){
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "NewOrderScreen") }
+                title = { Text(text = "ReservesScreen") }
             )
         }
-    ) { innerPading ->
-        Column(modifier = Modifier.padding(innerPading)) {
-            Text(text = "Cuerpo NewOrderScreen")
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            Text(text = "Cuerpo ReservesScreen")
         }
 
     }

@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,6 +62,11 @@ fun EditCategoryScreen(navController: NavController, categoryId: String?, viewMo
     ) { innerPading ->
         Column(modifier = Modifier.padding(innerPading)) {
             CustomizedFilledCard(onClick = {}) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.SpaceAround
+                ) {
                 Text(text = stringResource(R.string.title_category))
                 AddCategory(
                     texto = stringResource(R.string.label_name_category),
@@ -70,10 +76,15 @@ fun EditCategoryScreen(navController: NavController, categoryId: String?, viewMo
                     texto = stringResource(R.string.label_description_category),
                     valueInput = descriptionCategory,
                     onValueChange = { descriptionCategory = it })
+                    }
             }
             Spacer(Modifier.size(10.dp))
             CustomizedFilledCard(onClick = {}) {
-                Column {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.SpaceAround
+                ) {
                     Row {
                         CustomizedButton(
                             modifier = Modifier.weight(2f),

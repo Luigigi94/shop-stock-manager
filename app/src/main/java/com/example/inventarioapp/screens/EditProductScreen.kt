@@ -88,7 +88,6 @@ fun EditProductScreen(navController: NavController, productId: String?, viewMode
             )
         }
     ) { innerPading ->
-
         Column(modifier = Modifier
             .padding(innerPading)
             .hideKeyboardOnTap()) {
@@ -102,9 +101,9 @@ fun EditProductScreen(navController: NavController, productId: String?, viewMode
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { nameProduct = it }, value = nameProduct, label = { Text(text = stringResource(R.string.label_name_product)) })
+                    CustomizedOutlinedTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { nameProduct = it }, value = nameProduct, label = { Text(text = stringResource(R.string.label_name_product)) })
                     Spacer(modifier = Modifier.height(10.dp))
-                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { descriptionProduct = it }, value = descriptionProduct, label = { Text(text = stringResource(R.string.label_description_product)) })
+                    CustomizedOutlinedTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { descriptionProduct = it }, value = descriptionProduct, label = { Text(text = stringResource(R.string.label_description_product)) })
                     Spacer(modifier = Modifier.height(10.dp))
                     Row {
                         CustomizedOutlinedTextField(modifier = Modifier.weight(2f), onValueChange = { priceProduct = it }, value = priceProduct, label = { Text(text = stringResource(R.string.label_price_product)) })
@@ -112,7 +111,7 @@ fun EditProductScreen(navController: NavController, productId: String?, viewMode
                     }
                     Spacer(modifier = Modifier.height(10.dp))
 //                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { idCategory = it }, value = idCategory, label = { Text(text = stringResource(R.string.label_category_product)) })
-                    CustomizedExposedDropdownMenu(items = categories, selectedItem = selectedCategory, label = "Categoria", itemLabel = { it.nameCategory }, onItemSelected = { selectedCategory = it})
+                    CustomizedExposedDropdownMenu(items = categories, selectedItem = selectedCategory, label = "Categoria", itemLabel = { it.nameCategory }, onItemSelected = { selectedCategory = it}, modifier = Modifier.fillMaxWidth())
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -152,28 +151,29 @@ fun EditProductScreen(navController: NavController, productId: String?, viewMode
                             }
                         }
                     }
-                }
-                CustomizedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        if (nameProduct.isNotBlank() && priceProduct.isNotBlank() && quantityProduct.isNotBlank() && selectedCategory != null) {
-                            val updatedProduct = Products(
-                                idProduct = productId.toString(),
-                                nameProduct = nameProduct,
-                                quantityProduct = quantityProduct.toInt(),
-                                descriptionProduct = descriptionProduct,
-                                priceProduct = priceProduct.toDouble(),
-                                statusProduct = true,
-                                idCategory = selectedCategory!!.idCategory,
-                                updatedAt = Timestamp.now()
-                            )
 
-                            viewModel.updateProduct(updatedProduct)
-                            navController.popBackStack()
-                        }
+                    CustomizedButton(
+                        onClick = {
+                            if (nameProduct.isNotBlank() && priceProduct.isNotBlank() && quantityProduct.isNotBlank() && selectedCategory != null) {
+                                val updatedProduct = Products(
+                                    idProduct = productId.toString(),
+                                    nameProduct = nameProduct,
+                                    quantityProduct = quantityProduct.toInt(),
+                                    descriptionProduct = descriptionProduct,
+                                    priceProduct = priceProduct.toDouble(),
+                                    statusProduct = true,
+                                    idCategory = selectedCategory!!.idCategory,
+                                    updatedAt = Timestamp.now()
+                                )
+
+                                viewModel.updateProduct(updatedProduct)
+                                navController.popBackStack()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(R.string.button_edit_product))
                     }
-                ) {
-                    Text(text = stringResource(R.string.button_edit_product))
                 }
             }
         }

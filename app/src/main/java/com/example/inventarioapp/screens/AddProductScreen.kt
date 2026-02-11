@@ -104,9 +104,9 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel =
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { nameProduct = it }, value = nameProduct, label = { Text(text = stringResource(R.string.label_name_product)) })
+                    CustomizedOutlinedTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { nameProduct = it }, value = nameProduct, label = { Text(text = stringResource(R.string.label_name_product)) })
                     Spacer(modifier = Modifier.height(10.dp))
-                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { descriptionProduct = it }, value = descriptionProduct, label = { Text(text = stringResource(R.string.label_description_product)) })
+                    CustomizedOutlinedTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { descriptionProduct = it }, value = descriptionProduct, label = { Text(text = stringResource(R.string.label_description_product)) })
                     Spacer(modifier = Modifier.height(10.dp))
                     Row {
                         CustomizedOutlinedTextField(modifier = Modifier.weight(2f), onValueChange = { priceProduct = it }, value = priceProduct, label = { Text(text = stringResource(R.string.label_price_product)) })
@@ -114,7 +114,7 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel =
                     }
                     Spacer(modifier = Modifier.height(10.dp))
 //                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { idCategory = it }, value = idCategory, label = { Text(text = stringResource(R.string.label_category_product)) })
-                    CustomizedExposedDropdownMenu(items = categories, selectedItem = selectedCategory, label = "Categoria", itemLabel = { it.nameCategory }, onItemSelected = { selectedCategory = it})
+                    CustomizedExposedDropdownMenu(items = categories, selectedItem = selectedCategory, label = "Categoria", itemLabel = { it.nameCategory }, onItemSelected = { selectedCategory = it}, modifier = Modifier.fillMaxWidth())
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))

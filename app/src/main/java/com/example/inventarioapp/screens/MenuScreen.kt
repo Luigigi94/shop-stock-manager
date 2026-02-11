@@ -21,6 +21,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.inventarioapp.constants.MenuOptions
@@ -72,12 +73,6 @@ fun MenuBodyContent(navController: NavController, modifier: Modifier = Modifier)
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-//        Text(text = "Inventario")
-//        Button(
-//            onClick = {/*TODO: Create button to add an Item*/}
-//        ) {
-//            Text(text = "Agregar Objeto")
-//        }
         ContentCards(navController)
     }
 }
@@ -101,7 +96,7 @@ fun ListedOptions(navController: NavController){
                         )
                     }
                     Text(
-                        text = option.label
+                        text = stringResource( option.label)
                     )
                 }
             }

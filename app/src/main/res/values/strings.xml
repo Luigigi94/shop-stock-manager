@@ -6,6 +6,11 @@
     <string name="menu_edit_category" translatable="false">EditCategoryScreen</string>
     <string name="menu_add_product" translatable="false">AddProductScreen</string>
     <string name="menu_edit_product" translatable="false">EditProductScreen</string>
+    <string name="menu_label_add_product">Agregar Producto</string>
+    <string name="menu_label_add_category">Nueva Categoria</string>
+    <string name="menu_label_add_order">Apartados</string>
+    <string name="menu_label_add_purchase">Registrar Compra</string>
+    <string name="menu_label_add_client">Registrar Cliente</string>
 
     <!--  Forms  -->
     <string name="menu_button_back" translatable="false">Back</string>
@@ -32,5 +37,16 @@
     <string name="button_edit_product">Editar Producto</string>
     <string name="result_success_added_product">Producto Guardado Correctamente</string>
     <string name="result_failure_added_product">Error al Guardar el Producto:</string>
+
+    <!--  Clients-->
+    <string name="title_client">Nuevo Cliente</string>
+    <string name="label_name_client">Nombre</string>
+    <string name="label_apep_client">Apellido Paterno</string>
+    <string name="label_apem_client">Apellido Materno</string>
+    <string name="label_telephone_client">Telefono</string>
+    <string name="button_add_client">Crear Cliente</string>
+    <string name="button_edit_client">Editar Cliente</string>
+    <string name="result_success_added_client">Cliente Guardado Correctamente</string>
+    <string name="result_failure_added_client">Error al Guardar el Cliente:</string>
 
 </resources>

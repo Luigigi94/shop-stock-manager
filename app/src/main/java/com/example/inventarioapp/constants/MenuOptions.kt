@@ -5,14 +5,17 @@ import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.PointOfSale
 import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.ui.res.stringResource
+import com.example.inventarioapp.R
 import com.example.inventarioapp.model.OptionsMenu
 
 object MenuOptions {
     val options = listOf(
         OptionsMenu(
-            label = "Agregar Producto",
+            label = R.string.menu_label_add_product,
             icon = Icons.Default.AddBox,
             route = "AddProductScreen",
             role = null,
@@ -20,7 +23,7 @@ object MenuOptions {
             contentDescription = "Icon Add Product"
         ),
         OptionsMenu(
-            label = "Nueva Categoria",
+            label = R.string.menu_label_add_category,
             icon = Icons.Filled.Folder,
             route = "AddCategoryScreen",
             role = null,
@@ -28,20 +31,28 @@ object MenuOptions {
             contentDescription = "Icon Add Category"
         ),
         OptionsMenu(
-            label = "Nueva Orden",
+            label = R.string.menu_label_add_order,
             icon = Icons.AutoMirrored.Filled.ReceiptLong,
-            route = "NewOrderScreen",
+            route = "ReservesScreen",
             role = null,
             state = true,
             contentDescription = "Icon New Order"
         ),
         OptionsMenu(
-            label = "Registrar Compra",
+            label = R.string.menu_label_add_purchase,
             icon = Icons.Filled.PointOfSale,
             route = "PurchaseScreen",
             role = null,
             state = true,
             contentDescription = "Icon New Purchase"
+        ),
+        OptionsMenu(
+            label = R.string.menu_label_add_client,
+            icon = Icons.Filled.PersonAdd,
+            route = "ClientScreen",
+            role = null,
+            state = true,
+            contentDescription = "Icon Add Client"
         )
     )
 }

@@ -11,10 +11,11 @@ import com.example.inventarioapp.screens.MenuScreen
 import com.example.inventarioapp.screens.LoginScreen
 import com.example.inventarioapp.screens.AddProductScreen
 import com.example.inventarioapp.screens.AddCategoryScreen
-import com.example.inventarioapp.screens.NewOrderScreen
+import com.example.inventarioapp.screens.ClientScreen
 import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.EditCategoryScreen
 import com.example.inventarioapp.screens.EditProductScreen
+import com.example.inventarioapp.screens.ReservesScreen
 
 @Composable
 fun AppNavigation(padding: Modifier) {
@@ -32,11 +33,14 @@ fun AppNavigation(padding: Modifier) {
         composable(route = AppScreens.AddCategoryScreen.route){
             AddCategoryScreen(navController)
         }
-        composable(route = AppScreens.NewOrderScreen.route){
-            NewOrderScreen(navController)
+        composable(route = AppScreens.ReservesScreen.route){
+            ReservesScreen(navController)
         }
         composable(route = AppScreens.PurchaseScreen.route){
             PurchaseScreen(navController)
+        }
+        composable(route = AppScreens.ClientScreen.route){
+            ClientScreen(navController)
         }
         composable(
             route = AppScreens.EditCategoryScreen.route+"/{categoryUUID}",

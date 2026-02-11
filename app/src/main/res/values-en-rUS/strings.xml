@@ -20,4 +20,18 @@
     <string name="label_description_product">Product Description</string>
     <string name="label_quantity_product">Product Quantity</string>
     <string name="label_price_product">Product Price</string>
+    <string name="menu_label_add_product">Add Product</string>
+    <string name="menu_label_add_category">New Category</string>
+    <string name="menu_label_add_order">Reservs</string>
+    <string name="menu_label_add_purchase">Register Purchase</string>
+    <string name="menu_label_add_client">Add Client</string>
+    <string name="title_client">New Client</string>
+    <string name="label_telephone_client">Phone</string>
+    <string name="button_add_client">Create Client</string>
+    <string name="button_edit_client">Edit Client</string>
+    <string name="result_success_added_client">Client Added Correctly</string>
+    <string name="result_failure_added_client">Error Adding Client</string>
+    <string name="label_name_client">Name</string>
+    <string name="label_apep_client">Last Name</string>
+    <string name="label_apem_client">Second Last Name</string>
 </resources>
