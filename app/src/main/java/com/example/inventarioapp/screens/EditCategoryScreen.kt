@@ -13,10 +13,12 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,11 +33,12 @@ import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Categories
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
+import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditCategoryScreen(navController: NavController, categoryId: String?, viewModel: CategoryViewModel = viewModel()){
+fun EditCategoryScreen(darkThemeState: MutableState<Boolean>, navController: NavController, categoryId: String?, viewModel: CategoryViewModel = viewModel()){
     var nameCategory by remember { mutableStateOf("") }
     var descriptionCategory by remember { mutableStateOf("") }
 
@@ -55,15 +58,20 @@ fun EditCategoryScreen(navController: NavController, categoryId: String?, viewMo
     
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.menu_edit_category)) }
+            CustomizedTopAppBar(
+                title = stringResource(R.string.menu_edit_category),
+                navController = navController,
+                darkThemeState = darkThemeState,
+                showBack = true,
+                showThemeSwitch = true
             )
         }
-    ) { innerPading ->
-        Column(modifier = Modifier.padding(innerPading)) {
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
             CustomizedFilledCard(onClick = {}) {
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(16.dp),
                     verticalArrangement = Arrangement.SpaceAround
                 ) {
@@ -81,7 +89,8 @@ fun EditCategoryScreen(navController: NavController, categoryId: String?, viewMo
             Spacer(Modifier.size(10.dp))
             CustomizedFilledCard(onClick = {}) {
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(16.dp),
                     verticalArrangement = Arrangement.SpaceAround
                 ) {

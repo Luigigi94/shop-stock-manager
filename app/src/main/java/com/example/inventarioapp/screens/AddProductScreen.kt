@@ -17,10 +17,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +44,7 @@ import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
+import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.google.firebase.Timestamp
@@ -49,7 +52,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProductScreen(navController: NavController, viewModel: ProductViewModel = viewModel()){
+fun AddProductScreen(darkThemeState: MutableState<Boolean>, navController: NavController, viewModel: ProductViewModel = viewModel()){
     var nameProduct by remember { mutableStateOf("") }
     var quantityProduct by remember { mutableStateOf("") }
     var descriptionProduct by remember { mutableStateOf("") }
@@ -78,17 +81,12 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel =
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.menu_add_product)) },
-                navigationIcon = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.menu_button_back),
-                        modifier = Modifier
-                            .clickable{ navController.popBackStack() }
-                            .padding(horizontal = 12.dp)
-                    )
-                }
+            CustomizedTopAppBar(
+                title = stringResource(R.string.menu_add_product),
+                navController = navController,
+                darkThemeState = darkThemeState,
+                showBack = true,
+                showThemeSwitch = true
             )
         }
     ) { innerPading ->

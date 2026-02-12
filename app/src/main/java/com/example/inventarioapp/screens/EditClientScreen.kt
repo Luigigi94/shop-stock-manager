@@ -1,25 +1,19 @@
 package com.example.inventarioapp.screens
 
-import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -36,41 +30,36 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Clients
-import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
+import com.example.inventarioapp.ui.components.CustomizedEditRows
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
-import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.ClientViewModel
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavController, viewModel: ClientViewModel = viewModel()){
+fun EditClientScreen(darkThemeState: MutableState<Boolean>, navController: NavController, clientId: String?, viewModel: ClientViewModel = viewModel()){
     var nameClient by remember { mutableStateOf("") }
     var apePClient by remember { mutableStateOf("") }
     var apeMClient by remember { mutableStateOf("") }
     var telephone by remember { mutableStateOf("") }
 
-    val listClients by viewModel.clients.collectAsState()
-    val message by viewModel.uiMessage.collectAsState()
+    val client = viewModel.selectedClient.collectAsState()
 
-    LaunchedEffect(message) {
-        message?.let {
-            val text = when {
-                it == "SUCCEEDED_ADD_CLIENT" ->
-                    navController.context.getString(R.string.result_success_added_client)
-
-                it.startsWith("ERROR_ADD_CLIENT") ->
-                    navController.context.getString(R.string.result_failure_added_client)
-
-                else -> it
-            }
-            Toast.makeText(navController.context, text, Toast.LENGTH_SHORT).show()
-        }
+    LaunchedEffect(clientId) {
+        clientId?.let { viewModel.loadClient(clientId) }
     }
+
+    LaunchedEffect(client.value) {
+        val current = client.value ?: return@LaunchedEffect
+        nameClient = current.nameClient
+        apePClient = current.apePClient
+        apeMClient = current.apeMClient
+        telephone = current.telephone
+    }
+
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
@@ -85,8 +74,7 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .hideKeyboardOnTap()
-                .background(MaterialTheme.colorScheme.background),
+                .hideKeyboardOnTap(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(text = stringResource(R.string.title_client))
@@ -126,60 +114,31 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
             CustomizedFilledCard(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {}
             ) {
-                CustomizedButton(
-                    onClick = {
+                CustomizedEditRows(
+                    onCancel = { navController.popBackStack() },
+                    onDelete = {
+                        viewModel.deleteClient(clientId.toString())
+                        navController.popBackStack()
+                    },
+                    onUpdate = {
                         if (nameClient.isNotBlank() && apePClient.isNotBlank()){
-                            val newClient = Clients(
-                                idClient = UUID.randomUUID().toString(),
+                            val updateClient = Clients(
                                 nameClient = nameClient,
                                 apePClient = apePClient,
                                 apeMClient = apeMClient,
                                 telephone = telephone
                             )
 
-                            viewModel.addClient(newClient)
-
-                            nameClient = ""
-                            apePClient = ""
-                            apeMClient = ""
-                            telephone= ""
-
+                            viewModel.updateClient(updateClient)
+                            navController.popBackStack()
                         }
                     }
-                ) {
-                    Text(text = stringResource(R.string.button_add_client))
-                }
-            }
-            CustomizedFilledCard(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {}
-            ) {
-                ListedClients(listClients, navController)
-            }
-        }
-    }
-}
-
-@Composable
-fun ListedClients(listClients: List<Clients>, navController: NavController){
-    LazyColumn {
-        items(listClients){ client ->
-            CustomizedOutlinedCard(
-                onClick = { navController.navigate(route = AppScreens.EditClientScreen.route+"/"+client.idClient)}) {
-                Row(
-                    modifier = Modifier,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = client.nameClient +" "+ client.apePClient +" "+ client.apeMClient)
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = "Editing Client"
-                    )
-                }
+                )
             }
         }
     }

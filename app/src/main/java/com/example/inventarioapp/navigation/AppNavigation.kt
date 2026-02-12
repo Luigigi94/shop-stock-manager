@@ -1,6 +1,7 @@
 package com.example.inventarioapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,33 +15,55 @@ import com.example.inventarioapp.screens.AddCategoryScreen
 import com.example.inventarioapp.screens.ClientScreen
 import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.EditCategoryScreen
+import com.example.inventarioapp.screens.EditClientScreen
 import com.example.inventarioapp.screens.EditProductScreen
 import com.example.inventarioapp.screens.ReservesScreen
 
 @Composable
-fun AppNavigation(padding: Modifier) {
+fun AppNavigation(padding: Modifier, darkThemeState: MutableState<Boolean>) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route){
         composable(route = AppScreens.LoginScreen.route){
-            LoginScreen(navController)
+            LoginScreen(
+                darkThemeState,
+                navController
+            )
         }
         composable(route = AppScreens.MenuScreen.route){
-            MenuScreen(navController)
+            MenuScreen(
+                darkThemeState,
+                navController
+            )
         }
         composable(route = AppScreens.AddProductScreen.route){
-            AddProductScreen(navController)
+            AddProductScreen(
+                darkThemeState,
+                navController
+            )
         }
         composable(route = AppScreens.AddCategoryScreen.route){
-            AddCategoryScreen(navController)
+            AddCategoryScreen(
+                darkThemeState,
+                navController
+            )
         }
         composable(route = AppScreens.ReservesScreen.route){
-            ReservesScreen(navController)
+            ReservesScreen(
+                darkThemeState,
+                navController
+            )
         }
         composable(route = AppScreens.PurchaseScreen.route){
-            PurchaseScreen(navController)
+            PurchaseScreen(
+                darkThemeState,
+                navController
+            )
         }
         composable(route = AppScreens.ClientScreen.route){
-            ClientScreen(navController)
+            ClientScreen(
+                darkThemeState,
+                navController
+            )
         }
         composable(
             route = AppScreens.EditCategoryScreen.route+"/{categoryUUID}",
@@ -48,7 +71,7 @@ fun AppNavigation(padding: Modifier) {
                 type = NavType.StringType
             })
         ){
-            EditCategoryScreen(navController, it.arguments?.getString("categoryUUID"))
+            EditCategoryScreen(darkThemeState, navController, it.arguments?.getString("categoryUUID"))
         }
         composable(
             route = AppScreens.EditProductScreen.route+"/{productUUID}",
@@ -56,7 +79,15 @@ fun AppNavigation(padding: Modifier) {
                 type = NavType.StringType
             })
         ){
-            EditProductScreen(navController, productId = it.arguments?.getString("productUUID"))
+            EditProductScreen(darkThemeState, navController, productId = it.arguments?.getString("productUUID"))
+        }
+        composable(
+            route = AppScreens.EditClientScreen.route+"/{clientUUID}",
+            arguments = listOf(navArgument(name = "clientUUID"){
+                type = NavType.StringType
+            })
+        ){
+            EditClientScreen(darkThemeState, navController, clientId = it.arguments?.getString("clientUUID"))
         }
     }
 
