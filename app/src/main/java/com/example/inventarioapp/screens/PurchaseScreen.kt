@@ -43,6 +43,7 @@ import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
+import com.example.inventarioapp.ui.components.CustomizedListedPurchaseItems
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
@@ -65,6 +66,7 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
 
     var quantityProduct by remember { mutableStateOf("") }
     val cart by purchaseViewModel.cart.collectAsState()
+    var expandedFAB by remember { mutableStateOf(false) }
 //    val total by purchaseViewModel.total
 
     Scaffold(
@@ -78,15 +80,48 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate(route = AppScreens.InvoiceScreen.route+"/current_purchase" ) },
-                containerColor = MaterialTheme.colorScheme.primary,
+            if (expandedFAB) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    FloatingActionButton(
+                        onClick = {/*TODO: Show ProductForm*/}
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCartCheckout,
+                            contentDescription = "Confirmar Compra"
+                        )
+                    }
+                    FloatingActionButton(
+                        onClick = {/*TODO: Navigate To Invoice*/}
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCartCheckout,
+                            contentDescription = "Confirmar Compra"
+                        )
+                    }
+                    FloatingActionButton(
+                        onClick = {expandedFAB = false}
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCartCheckout,
+                            contentDescription = "Confirmar Compra"
+                        )
+                    }
+                }
+            } else {
+                FloatingActionButton(
+//                    onClick = { navController.navigate(route = AppScreens.InvoiceScreen.route+"/current_purchase" ) },
+                    onClick = { expandedFAB = true },
+                    containerColor = MaterialTheme.colorScheme.primary,
 
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ShoppingCartCheckout,
-                    contentDescription = "Confirmar Compra"
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCartCheckout,
+                        contentDescription = "Confirmar Compra"
+                    )
+                }
             }
         },
     ) { innerPadding ->
@@ -127,34 +162,7 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
                     Text(text = "Agregar al carrito")
                 }
             }
-            ListedPurchaseItems(cart)
-        }
-    }
-}
-
-@Composable
-fun ListedPurchaseItems(
-    items: List<PurchaseItem>
-){
-    CustomizedFilledCard(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = {}
-    ) {
-        LazyColumn {
-            items(items) { item ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column() {
-                        Text(text = "${item.product.nameProduct} x ${item.quantity}")
-                        Text(text = "${item.subtotal}")
-                    }
-                }
-
-            }
+            CustomizedListedPurchaseItems(cart, invoiceMode = false)
         }
     }
 }

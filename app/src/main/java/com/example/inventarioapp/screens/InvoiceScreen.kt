@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.inventarioapp.ui.components.CustomizedListedPurchaseItems
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
@@ -36,7 +37,7 @@ fun InvoiceScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxWidth()) {
             Text(text = "Invoice")
-            ListedPurchaseItems(cart)
+            CustomizedListedPurchaseItems(cart, false)
         }
     }
 }
