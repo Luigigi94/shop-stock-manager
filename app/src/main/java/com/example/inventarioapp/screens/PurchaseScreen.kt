@@ -39,6 +39,7 @@ import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.model.PurchaseItem
+import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
@@ -78,7 +79,7 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* confirmar compra */ },
+                onClick = { navController.navigate(route = AppScreens.InvoiceScreen.route+"/current_purchase" ) },
                 containerColor = MaterialTheme.colorScheme.primary,
 
             ) {
