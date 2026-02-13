@@ -1,5 +1,6 @@
 package com.example.inventarioapp.repository
 
+import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.Categories
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -25,7 +26,7 @@ class CategoryRepository {
     */
     fun getCategories(): Flow<List<Categories>> {
         return callbackFlow {
-            val listener = db.collection("Categories").addSnapshotListener { snapshot, error ->
+            val listener = db.collection(FirestorePaths.Collections.CATEGORIES).addSnapshotListener { snapshot, error ->
                 if (error != null || snapshot == null) return@addSnapshotListener
                 val list = snapshot.documents.mapNotNull { doc ->
                     doc.toObject(Categories::class.java)
@@ -43,7 +44,7 @@ class CategoryRepository {
      * */
     suspend fun addCategory(category: Categories): Result<Unit>{
         return try {
-            db.collection("Categories")
+            db.collection(FirestorePaths.Collections.CATEGORIES)
                 .document(category.idCategory)
                 .set(category)
                 .await()
@@ -55,7 +56,7 @@ class CategoryRepository {
     }
 
     suspend fun getCategoryById(id: String): Categories? {
-        return db.collection("Categories")
+        return db.collection(FirestorePaths.Collections.CATEGORIES)
             .document(id)
             .get()
             .await()
@@ -67,7 +68,7 @@ class CategoryRepository {
      * */
     suspend fun updateCategory(category: Categories): Result<Unit>{
         return try {
-            db.collection("Categories")
+            db.collection(FirestorePaths.Collections.CATEGORIES)
                 .document(category.idCategory)
                 .set(category)
                 .await()
@@ -82,7 +83,7 @@ class CategoryRepository {
      * Elimina una categoria por su id en firebase*/
     suspend fun deleteCategory(category: String): Result<Unit>{
         return try {
-            db.collection("Categories")
+            db.collection(FirestorePaths.Collections.CATEGORIES)
                 .document(category)
                 .delete()
                 .await()

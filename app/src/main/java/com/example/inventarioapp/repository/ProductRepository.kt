@@ -1,5 +1,6 @@
 package com.example.inventarioapp.repository
 
+import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.Products
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
@@ -14,7 +15,7 @@ class ProductRepository {
 
     fun getProducts(): Flow<List<Products>>{
         return callbackFlow {
-            val listener = db.collection("Products").addSnapshotListener{ snapshot, error ->
+            val listener = db.collection(FirestorePaths.Collections.PRODUCTS).addSnapshotListener{ snapshot, error ->
                 if (error != null || snapshot == null) return@addSnapshotListener
                 val list = snapshot.documents.mapNotNull{ doc ->
                     doc.toObject(Products::class.java)
@@ -28,7 +29,7 @@ class ProductRepository {
 
     suspend fun addProduct(product: Products): Result<Unit>{
         return try {
-            db.collection("Products")
+            db.collection(FirestorePaths.Collections.PRODUCTS)
                 .document(product.idProduct)
                 .set(product)
                 .await()
@@ -40,7 +41,7 @@ class ProductRepository {
     }
 
     suspend fun getProductById(id: String): Products? {
-        return db.collection("Products")
+        return db.collection(FirestorePaths.Collections.PRODUCTS)
             .document(id)
             .get()
             .await()
@@ -49,7 +50,7 @@ class ProductRepository {
 
     suspend fun updateProduct(product: Products): Result<Unit>{
         return try {
-            db.collection("Products")
+            db.collection(FirestorePaths.Collections.PRODUCTS)
                 .document(product.idProduct)
                 .set(product)
                 .await()
@@ -62,7 +63,7 @@ class ProductRepository {
 
     suspend fun deleteProduct(product: String): Result<Unit>{
         return try {
-            db.collection("Products")
+            db.collection(FirestorePaths.Collections.PRODUCTS)
                 .document(product)
                 .delete()
                 .await()

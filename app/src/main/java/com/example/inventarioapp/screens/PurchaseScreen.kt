@@ -47,12 +47,14 @@ import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.ClientViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
+import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavController){
     val productViewModel: ProductViewModel = viewModel()
     val clientViewModel: ClientViewModel = viewModel()
+    val purchaseViewModel: PurchaseViewModel = viewModel()
 
     val clients by clientViewModel.clients.collectAsState()
     val products by productViewModel.products.collectAsState()
@@ -61,7 +63,8 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
     var selectedProduct by remember { mutableStateOf<Products?>(null) }
 
     var quantityProduct by remember { mutableStateOf("") }
-    var cart by remember { mutableStateOf(listOf<PurchaseItem>()) }
+    val cart by purchaseViewModel.cart.collectAsState()
+//    val total by purchaseViewModel.total
 
     Scaffold(
         topBar = {
@@ -114,7 +117,7 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
 
                         val item = PurchaseItem(product, qty)
 
-                        cart = cart + item
+                        purchaseViewModel.addItem(item, selectedClient)
 
                         quantityProduct = ""
                         selectedProduct = null
@@ -123,26 +126,33 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
                     Text(text = "Agregar al carrito")
                 }
             }
-            CustomizedFilledCard(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {}
-            ) {
-                LazyColumn {
-                    items(cart) { item ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column() {
-                                Text(text = "${item.product.nameProduct} x ${item.quantity}")
-                                Text(text = "${item.subtotal}")
-                            }
-                        }
+            ListedPurchaseItems(cart)
+        }
+    }
+}
 
+@Composable
+fun ListedPurchaseItems(
+    items: List<PurchaseItem>
+){
+    CustomizedFilledCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {}
+    ) {
+        LazyColumn {
+            items(items) { item ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column() {
+                        Text(text = "${item.product.nameProduct} x ${item.quantity}")
+                        Text(text = "${item.subtotal}")
                     }
                 }
+
             }
         }
     }
