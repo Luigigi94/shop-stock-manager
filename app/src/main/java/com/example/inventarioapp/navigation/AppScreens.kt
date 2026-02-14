@@ -12,4 +12,5 @@ sealed class    AppScreens(val route: String) {
     object EditProductScreen: AppScreens(route = "EditProductScreen")
     object EditClientScreen: AppScreens(route = "EditClientScreen")
     object InvoiceScreen: AppScreens(route = "InvoiceScreen")
+    object PurchaseProductScreen: AppScreens(route = "PurchaseProductScreen")
 }

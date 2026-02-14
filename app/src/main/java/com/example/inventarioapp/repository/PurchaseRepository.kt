@@ -7,6 +7,7 @@ import com.example.inventarioapp.model.Purchase
 import com.example.inventarioapp.model.PurchaseItem
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -85,20 +86,54 @@ class PurchaseRepository {
         }
     }
 
-    fun confirmPurchase(purchase: Purchase){
-        val newPurchaseDoc = purchaseCollection.document()
-        val confirmedPurchase = purchase.copy(
-            idPurchase = newPurchaseDoc.id,
-            purchaseTimeStamp = Timestamp.now()
-        )
+    fun confirmPurchase(){
+        val currentPurchaseDoc = purchaseCollection.document(FirestorePaths.Documents.CURRENT_PURCHASE)
 
-        newPurchaseDoc.set(confirmedPurchase)
-            .addOnSuccessListener { Log.d("PurchaseRepo", "Compra Confirmada") }
+        currentPurchaseDoc.get()
+            .addOnSuccessListener { snapshot ->
+                if (!snapshot.exists()) {
+                    Log.w("PurchaseRepo", "No hay compra activa")
+                    return@addOnSuccessListener
+                }
+
+                val newPurchaseDoc = purchaseCollection.document()
+
+                val data = snapshot.data ?: emptyMap<String, Any>()
+
+                val confirmedData = data.toMutableMap().apply {
+                    put("idPurchase", newPurchaseDoc.id)
+                    put("purchaseTimeStamp", Timestamp.now())
+                    put("confirmed", true)
+                }
+
+                newPurchaseDoc.set(confirmedData)
+                    .addOnSuccessListener { Log.d("PurchaseRepo", "Compra Confirmada") }
+                    .addOnFailureListener { e -> Log.e("PurchaseRepo", "Error en Compra: ", e) }
+
+                currentPurchaseDoc.delete()
+                    .addOnSuccessListener { Log.d("PurchaseRepo", "Compra Activa Eliminada") }
+                    .addOnFailureListener { e -> Log.e("PurchaseRepo", "Error al eliminar la compra activa: ", e) }
+            }
             .addOnFailureListener { e -> Log.e("PurchaseRepo", "Error en Compra: ", e) }
-
-        purchaseCollection.document(FirestorePaths.Documents.CURRENT_PURCHASE).delete()
-            .addOnSuccessListener { Log.d("PurchaseRepo", "Compra Activa Eliminada") }
-            .addOnFailureListener { e -> Log.e("PurchaseRepo", "Error al eliminar la compra activa: ", e) }
-
     }
+
+    fun getLastConfirmedPurchase(): Flow<Purchase?> = callbackFlow {
+        val query = purchaseCollection
+            .whereEqualTo("confirmed", true)
+            .orderBy("purchaseTimeStamp", Query.Direction.DESCENDING)
+            .limit(1)
+
+        val listener = query.addSnapshotListener { snapshot, exception ->
+            if (exception != null || snapshot == null) {
+                trySend(null)
+                return@addSnapshotListener
+            }
+
+            val lastPurchase = snapshot.documents.firstOrNull()?.toObject(Purchase::class.java)
+            trySend(lastPurchase)
+        }
+        awaitClose { listener.remove() }
+    }
+
+
 }

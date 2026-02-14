@@ -14,13 +14,12 @@ import androidx.compose.ui.graphics.Shape
 fun CustomizedElevatedCard(
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    elevation: CardElevation = CardDefaults.elevatedCardElevation(),
     enabled: Boolean = true,
     shape: Shape = CardDefaults.elevatedShape,
     colors: CardColors = CardDefaults.elevatedCardColors(),
-    elevation: CardElevation = CardDefaults.elevatedCardElevation(),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit
-
 ){
     ElevatedCard(
         onClick = onClick ?: {},

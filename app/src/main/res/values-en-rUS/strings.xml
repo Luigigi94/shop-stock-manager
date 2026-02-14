@@ -25,6 +25,7 @@
     <string name="menu_label_add_order">Reservs</string>
     <string name="menu_label_add_purchase">Register Purchase</string>
     <string name="menu_label_add_client">Add Client</string>
+    <string name="title_purchase_product">Buy Product</string>
     <string name="title_client">New Client</string>
     <string name="label_telephone_client">Phone</string>
     <string name="button_add_client">Create Client</string>

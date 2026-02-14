@@ -18,6 +18,7 @@ import com.example.inventarioapp.screens.EditCategoryScreen
 import com.example.inventarioapp.screens.EditClientScreen
 import com.example.inventarioapp.screens.EditProductScreen
 import com.example.inventarioapp.screens.InvoiceScreen
+import com.example.inventarioapp.screens.PurchaseProductScreen
 import com.example.inventarioapp.screens.ReservesScreen
 
 @Composable
@@ -90,13 +91,19 @@ fun AppNavigation(padding: Modifier, darkThemeState: MutableState<Boolean>) {
         ){
             EditClientScreen(darkThemeState, navController, clientId = it.arguments?.getString("clientUUID"))
         }
+        composable(route = AppScreens.InvoiceScreen.route) {
+            InvoiceScreen(
+                darkThemeState,
+                navController
+            )
+        }
         composable(
-            route = AppScreens.InvoiceScreen.route+"/{current_purchase}",
+            route = AppScreens.PurchaseProductScreen.route+"/{current_purchase}",
             arguments = listOf(navArgument(name = "current_purchase"){
                 type = NavType.StringType
             })
         ){
-            InvoiceScreen(darkThemeState, navController, current_purchase = it.arguments?.getString("current_purchase"))
+            PurchaseProductScreen(darkThemeState, navController, current_purchase = it.arguments?.getString("current_purchase"))
         }
     }
 

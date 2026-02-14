@@ -38,6 +38,9 @@
     <string name="result_success_added_product">Producto Guardado Correctamente</string>
     <string name="result_failure_added_product">Error al Guardar el Producto:</string>
 
+<!--  PurchaseProducts  -->
+    <string name="title_purchase_product">Comprar Producto</string>
+
     <!--  Clients-->
     <string name="title_client">Nuevo Cliente</string>
     <string name="label_name_client">Nombre</string>
@@ -54,5 +57,7 @@
     <string name="label_client_purchase">Cliente</string>
     <string name="label_product_purchase">Producto</string>
     <string name="label_quantity_purchase">Cantidad</string>
+
+
 
 </resources>

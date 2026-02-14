@@ -9,8 +9,12 @@ import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.model.Purchase
 import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.repository.PurchaseRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PurchaseViewModel(
@@ -21,6 +25,9 @@ class PurchaseViewModel(
 
     private val _confirmedPurchases = MutableStateFlow<List<Purchase>>(emptyList())
     val confirmedPurchase: StateFlow<List<Purchase>> = _confirmedPurchases
+
+    private val _lastPurchase = MutableStateFlow<Purchase?>(null)
+    val lastPurchase: StateFlow<Purchase?> = _lastPurchase
 
     var uiMessage by mutableStateOf<String?>(null)
         private set
@@ -61,12 +68,7 @@ class PurchaseViewModel(
 
     fun confirmPurchase(){
         viewModelScope.launch {
-            val purchase = Purchase(
-                client = currentClient ?: return@launch,
-                items = _cart.value
-            )
-
-            repository.confirmPurchase(purchase)
+            repository.confirmPurchase()
             _cart.value = emptyList()
             currentClient = null
             uiMessage = "PURCHASE_CONFIRMED_SUCCESSFULLY"
@@ -75,5 +77,13 @@ class PurchaseViewModel(
 
     fun clearMessage(){
         uiMessage = null
+    }
+
+    fun fetchLastConfirmedPurchase() {
+        viewModelScope.launch {
+            repository.getLastConfirmedPurchase().collect { purchase ->
+                _lastPurchase.value = purchase
+            }
+        }
     }
 }
