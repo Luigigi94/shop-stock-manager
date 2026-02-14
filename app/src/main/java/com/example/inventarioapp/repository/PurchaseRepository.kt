@@ -86,7 +86,7 @@ class PurchaseRepository {
         }
     }
 
-    fun confirmPurchase(){
+    /*fun confirmPurchase(){
         val currentPurchaseDoc = purchaseCollection.document(FirestorePaths.Documents.CURRENT_PURCHASE)
 
         currentPurchaseDoc.get()
@@ -115,6 +115,30 @@ class PurchaseRepository {
                     .addOnFailureListener { e -> Log.e("PurchaseRepo", "Error al eliminar la compra activa: ", e) }
             }
             .addOnFailureListener { e -> Log.e("PurchaseRepo", "Error en Compra: ", e) }
+    }*/
+
+    suspend fun confirmPurchase(): Purchase? {
+        val snapshot = currentPurchaseDoc.get().await()
+
+        if (!snapshot.exists()) return null
+
+        val newPurchaseDoc = purchaseCollection.document()
+
+        val purchase = snapshot.toObject(Purchase::class.java) ?: return null
+
+        Log.d("PurchaseRepo", "ANTES CONFIRMAR -> $purchase")
+        Log.d("PurchaseRepo", "CLIENT -> ${purchase?.client}")
+
+        val confirmedPurchase = purchase.copy(
+            idPurchase = newPurchaseDoc.id,
+            confirmed = true,
+            purchaseTimeStamp = Timestamp.now()
+        )
+
+        newPurchaseDoc.set(confirmedPurchase).await()
+        currentPurchaseDoc.delete().await()
+
+        return confirmedPurchase
     }
 
     fun getLastConfirmedPurchase(): Flow<Purchase?> = callbackFlow {

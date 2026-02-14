@@ -51,20 +51,8 @@ import com.example.inventarioapp.viewmodel.PurchaseViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavController, purchaseViewModel: PurchaseViewModel = viewModel()){
-    val purchaseViewModel: PurchaseViewModel = viewModel()
-    /*val productViewModel: ProductViewModel = viewModel()
-    val clientViewModel: ClientViewModel = viewModel()
-
-    val clients by clientViewModel.clients.collectAsState()
-    val products by productViewModel.products.collectAsState()
-
-    var selectedClient by remember { mutableStateOf<Clients?>(null) }
-    var selectedProduct by remember { mutableStateOf<Products?>(null) }
-
-    var quantityProduct by remember { mutableStateOf("") }*/
     val cart by purchaseViewModel.cart.collectAsState()
     var expandedFAB by remember { mutableStateOf(false) }
-//    val total by purchaseViewModel.total
 
     Scaffold(
         topBar = {
@@ -96,8 +84,9 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
                     }
                     FloatingActionButton(
                         onClick = {
-                            purchaseViewModel.confirmPurchase()
-                            navController.navigate(AppScreens.InvoiceScreen.route)
+                            purchaseViewModel.confirmPurchase {
+                                navController.navigate(AppScreens.InvoiceScreen.route)
+                            }
                         }
                     ) {
                         Icon(
@@ -134,75 +123,7 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
             .hideKeyboardOnTap(),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(text = stringResource(R.string.title_purchase))
-            CustomizedListedPurchaseItems(cart, invoiceMode = false)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ScaffoldFabPreview() {
-    val darkThemeState = remember { mutableStateOf(false) }
-    var expandedFAB by remember { mutableStateOf(true) }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("PurchaseScreen") },
-                actions = {
-                    // Dummy theme switch
-                    Text(if (darkThemeState.value) "🌙" else "☀️")
-                }
-            )
-        },
-        floatingActionButton = {
-            if (expandedFAB) {
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    FloatingActionButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Filled.AddShoppingCart,
-                            contentDescription = "Agregar"
-                        )
-                    }
-                    FloatingActionButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Filled.ShoppingCartCheckout,
-                            contentDescription = "Checkout"
-                        )
-                    }
-                    FloatingActionButton(onClick = { expandedFAB = false }) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Cerrar"
-                        )
-                    }
-                }
-            } else {
-                FloatingActionButton(
-                    onClick = { expandedFAB = true },
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCartCheckout,
-                        contentDescription = "Checkout"
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        // Contenido dummy solo para ver layout
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Contenido de prueba")
+            CustomizedListedPurchaseItems(cart)
         }
     }
 }

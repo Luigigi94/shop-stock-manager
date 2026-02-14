@@ -17,8 +17,7 @@ import com.example.inventarioapp.model.PurchaseItem
 
 @Composable
 fun CustomizedListedPurchaseItems(
-    items: List<PurchaseItem>,
-    invoiceMode: Boolean
+    items: List<PurchaseItem>
 ) {
     CustomizedElevatedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -30,30 +29,14 @@ fun CustomizedListedPurchaseItems(
     ) {
         LazyColumn {
             items(items) { item ->
-                if (invoiceMode) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text(text = "${item.product.nameProduct} x ${item.quantity}")
-                            Text(text = "${item.subtotal}")
-                        }
-                    }
-
-                } else {
-                    CustomizedFilledCard(
-                        onClick = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp)
-                    ) {
-                        Column {
-                            Text(text = "${item.product.nameProduct} x ${item.quantity}")
-                            Text(text = "${item.subtotal}")
-                        }
+                CustomizedFilledCard(
+                    onClick = {}, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                ) {
+                    Column {
+                        Text(text = "${item.product.nameProduct} x ${item.quantity}")
+                        Text(text = "${item.subtotal}")
                     }
                 }
             }

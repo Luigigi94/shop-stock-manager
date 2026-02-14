@@ -1,5 +1,6 @@
 package com.example.inventarioapp.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
@@ -45,10 +46,15 @@ class PurchaseViewModel(
         }
     }
 
-    fun addItem(item: PurchaseItem, client: Clients?){
+    fun addItem(item: PurchaseItem, client: Clients?) {
         viewModelScope.launch {
-            repository.addPurchasedItem(client, item)
-            uiMessage = "PURCHASE_ITEM_ADDED_SUCCESSFULLY"
+            val result = repository.addPurchasedItem(client, item)
+
+            if (result.isSuccess) {
+                uiMessage = "PURCHASE_ITEM_ADDED_SUCCESSFULLY"
+            } else {
+                Log.e("_Log.ViewModel", "Error")
+            }
         }
     }
 
@@ -66,12 +72,29 @@ class PurchaseViewModel(
         }
     }
 
-    fun confirmPurchase(){
+    /*fun confirmPurchase(){
         viewModelScope.launch {
             repository.confirmPurchase()
             _cart.value = emptyList()
             currentClient = null
             uiMessage = "PURCHASE_CONFIRMED_SUCCESSFULLY"
+        }
+    }*/
+
+    fun confirmPurchase(onSuccess: () -> Unit) {
+        viewModelScope.launch {
+
+            val purchase = repository.confirmPurchase()
+
+            Log.d("PurchaseVM", "CONFIRMED PURCHASE -> $purchase")
+            Log.d("PurchaseVM", "CLIENT -> ${purchase?.client}")
+
+            if (purchase != null) {
+                _lastPurchase.value = purchase
+                _cart.value = emptyList()
+                currentClient = null
+                onSuccess()
+            }
         }
     }
 
