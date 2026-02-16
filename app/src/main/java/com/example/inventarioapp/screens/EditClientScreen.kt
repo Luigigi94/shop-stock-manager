@@ -114,26 +114,27 @@ fun EditClientScreen(darkThemeState: MutableState<Boolean>, navController: NavCo
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {}
             ) {
-                CustomizedEditRows(
-                    onCancel = { navController.popBackStack() },
-                    onDelete = {
-                        viewModel.deleteClient(clientId.toString())
-                        navController.popBackStack()
-                    },
-                    onUpdate = {
-                        if (nameClient.isNotBlank() && apePClient.isNotBlank()){
-                            val updateClient = Clients(
-                                nameClient = nameClient,
-                                apePClient = apePClient,
-                                apeMClient = apeMClient,
-                                telephone = telephone
-                            )
-
-                            viewModel.updateClient(updateClient)
-                            navController.popBackStack()
-                        }
-                    }
-                )
+//                CustomizedEditRows(
+//                    onCancel = { navController.popBackStack() },
+//                    onDelete = {
+//                        viewModel.deleteClient(clientId.toString())
+//                        navController.popBackStack()
+//                    },
+//                    onAction = {
+//                        if (nameClient.isNotBlank() && apePClient.isNotBlank()){
+//                            val updateClient = Clients(
+//                                nameClient = nameClient,
+//                                apePClient = apePClient,
+//                                apeMClient = apeMClient,
+//                                telephone = telephone
+//                            )
+//
+//                            viewModel.updateClient(updateClient)
+//                            navController.popBackStack()
+//                        }
+//                    },
+//                    isEdit = true
+//                )
             }
         }
     }

@@ -140,7 +140,7 @@ fun EditProductScreen(
                         viewModel.deleteProduct(productId.toString())
                         navController.popBackStack()
                     },
-                    onUpdate = {
+                    onAction = {
                         if (nameProduct.isNotBlank() && priceProduct.isNotBlank() && quantityProduct.isNotBlank() && selectedCategory != null) {
                             val updatedProduct = Products(
                                 idProduct = productId.toString(),
@@ -156,7 +156,9 @@ fun EditProductScreen(
                             viewModel.updateProduct(updatedProduct)
                             navController.popBackStack()
                         }
-                    }
+                    },
+                    isEdit = true,
+                    label = "Producto"
                 )
             }
         }

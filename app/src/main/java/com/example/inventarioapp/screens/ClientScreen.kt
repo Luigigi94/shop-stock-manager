@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,15 +8,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +31,7 @@ import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
+import com.example.inventarioapp.ui.components.CustomizedEditRows
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
@@ -36,32 +42,44 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavController, viewModel: ClientViewModel = viewModel()){
-//    var nameClient by remember { mutableStateOf("") }
-//    var apePClient by remember { mutableStateOf("") }
-//    var apeMClient by remember { mutableStateOf("") }
-//    var telephone by remember { mutableStateOf("") }
+fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavController, clientId: String?, viewModel: ClientViewModel = viewModel()){
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(clientId) {
+        if (clientId == null){
+//            Log.w("ClientScreen","onCreate")
+            viewModel.startCreate()
+        } else {
+//            Log.w("ClientScreen","onLoad ${clientId}")
+            viewModel.loadClient(clientId)
+        }
+    }
 
     val stateClient by viewModel.uiState.collectAsState()
 
+    if (stateClient.isLoading){
+        CircularProgressIndicator()
+        return
+    }
+
+    LaunchedEffect(stateClient.success) {
+        if (stateClient.success) {
+            navController.popBackStack()
+        }
+    }
+
+
     val listClients by viewModel.clients.collectAsState()
-    val message by viewModel.uiMessage.collectAsState()
 
-    LaunchedEffect(message) {
-        message?.let {
-            val text = when {
-                it == "SUCCEEDED_ADD_CLIENT" ->
-                    navController.context.getString(R.string.result_success_added_client)
-
-                it.startsWith("ERROR_ADD_CLIENT") ->
-                    navController.context.getString(R.string.result_failure_added_client)
-
-                else -> it
-            }
-            Toast.makeText(navController.context, text, Toast.LENGTH_SHORT).show()
+    if(stateClient.success){
+        val text = stringResource(R.string.result_success_added_client)
+        LaunchedEffect(Unit) {
+            snackbarHostState.showSnackbar(text)
         }
     }
     Scaffold(
+        snackbarHost = {SnackbarHost(snackbarHostState)},
         topBar = {
             CustomizedTopAppBar(
                 title = "ClientScreen",
@@ -79,7 +97,11 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                 .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(text = stringResource(R.string.title_client))
+            if (stateClient.isEdit) {
+                Text(text = stringResource(R.string.button_edit_client))
+            } else {
+                Text(text = stringResource(R.string.title_client))
+            }
             CustomizedFilledCard(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {}
@@ -120,7 +142,7 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {}
             ) {
-                CustomizedButton(
+                /*CustomizedButton(
                     onClick = {
                         if (stateClient.nameClient.isNotBlank() && stateClient.apePClient.isNotBlank()){
                             val newClient = Clients(
@@ -137,21 +159,43 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                         }
                     }
                 ) {
-                    Text(text = stringResource(R.string.button_add_client))
-                }
-            }
-            CustomizedFilledCard(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {}
-            ) {
-                CustomizedListOfEditables(
-                    listClients,
-                    modifier = Modifier,
-                    label = { it.nameClient },
-                    onItemClick = {
-                        navController.navigate(route = AppScreens.EditProductScreen.route + "/" + it.idClient)
+                    if (stateClient.isEdit) {
+
+                    } else {
+                        Text(text = stringResource(R.string.button_add_client))
                     }
+                }*/
+                CustomizedEditRows(
+                    onCancel = { navController.popBackStack() },
+                    onDelete = { viewModel.deleteClient() },
+                    onAction = {
+                        if (stateClient.isEdit){
+                            viewModel.updateClient()
+                        } else {
+                            viewModel.addClient()
+                        }
+                    },
+                    isEdit = stateClient.isEdit,
+                    label = "Cliente"
                 )
+            }
+            if (!stateClient.isEdit) {
+                CustomizedFilledCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {}
+                ) {
+                    CustomizedListOfEditables(
+                        listClients,
+                        modifier = Modifier,
+                        label = { it.nameClient },
+                        onItemClick = {
+                            navController.navigate(
+//                            route = AppScreens.EditProductScreen.route + "/" + it.idClient
+                                route = "${AppScreens.ClientScreen.route}?clientId=${it.idClient}"
+                            )
+                        }
+                    )
+                }
             }
         }
     }
