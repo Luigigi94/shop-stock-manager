@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,15 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
-import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.components.CustomizedElevatedCard
-import com.example.inventarioapp.ui.components.CustomizedFilledCard
+import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.viewmodel.PurchaseViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -82,7 +80,8 @@ fun InvoiceScreen(
                 CustomizedButton(
                     onClick = {
                         navController.navigate(route = AppScreens.MenuScreen.route)
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = stringResource(R.string.label_end_purchase_invoice))
                 }
@@ -118,7 +117,7 @@ fun InvoiceScreen(
                         Text(text = "$purchaseDate")
                     }
                 }
-                Divider()
+                HorizontalDivider()
 
                 Text(stringResource(R.string.label_products_invoice), style = MaterialTheme.typography.titleMedium)
 
@@ -128,7 +127,7 @@ fun InvoiceScreen(
                     Text("Qty", modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                     Text("Subtotal", modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                 }
-                Divider()
+                HorizontalDivider()
                 LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
                     items(itemsPurch) { product ->
                         Row(modifier = Modifier.fillMaxWidth()) {
@@ -154,7 +153,7 @@ fun InvoiceScreen(
                         }
                     }
                 }
-                Divider(thickness = 2.dp)
+                HorizontalDivider(thickness = 2.dp)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End

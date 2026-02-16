@@ -36,7 +36,7 @@ fun <T> CustomizedExposedDropdownMenu(
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it },
+        onExpandedChange = { },
         modifier = modifier.fillMaxWidth()
     ) {
 

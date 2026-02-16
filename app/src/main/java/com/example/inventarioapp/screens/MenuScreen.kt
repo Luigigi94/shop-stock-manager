@@ -16,9 +16,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -31,9 +29,9 @@ import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 
 @Composable
-fun ContentCards(navController: NavController){
-    val texto: String = "Hola"
-    val numeral: Int = 1
+fun ContentCards(/*navController: NavController*/){
+    val text = "Hola"
+    val numeral = 1
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -44,14 +42,14 @@ fun ContentCards(navController: NavController){
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                CustomizedElevatedCard(texto, numeral)
-                CustomizedElevatedCard(texto, (numeral + 1))
+                CustomizedElevatedCard(text, numeral)
+                CustomizedElevatedCard(text, (numeral + 1))
             }
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                CustomizedElevatedCard(texto, (numeral + 2))
-                CustomizedElevatedCard(texto, (numeral + 3))
+                CustomizedElevatedCard(text, (numeral + 2))
+                CustomizedElevatedCard(text, (numeral + 3))
             }
         }
     }
@@ -70,23 +68,23 @@ fun CustomizedElevatedCard(texto: String, numeral: Int){
     }
 }
 @Composable
-fun MenuBodyContent(navController: NavController, modifier: Modifier = Modifier) {
+fun MenuBodyContent(/*navController: NavController,*/ modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        ContentCards(navController)
+        ContentCards(/*navController*/)
     }
 }
 
 @Composable
 fun ListedOptions(navController: NavController){
     val listedMenuOptions = MenuOptions.options
-    LazyColumn() {
+    LazyColumn {
         items(listedMenuOptions) { option ->
             CustomizedOutlinedCard(onClick = { navController.navigate(option.route) }) {
-                Row() {
+                Row {
                     if (option.icon != null) {
                         Icon(
                             imageVector = option.icon,
@@ -119,7 +117,7 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
         )
     }) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            MenuBodyContent(navController)
+            MenuBodyContent(/*navController*/)
             ListedOptions(navController)
         }
     }

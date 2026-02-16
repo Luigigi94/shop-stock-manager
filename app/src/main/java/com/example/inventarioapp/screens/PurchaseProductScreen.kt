@@ -26,7 +26,6 @@ import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
-import com.example.inventarioapp.ui.components.CustomizedListedPurchaseItems
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
@@ -35,10 +34,13 @@ import com.example.inventarioapp.viewmodel.ProductViewModel
 import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
 @Composable
-fun PurchaseProductScreen(darkTheme: MutableState<Boolean>, navController: NavController, current_purchase: String?, purchaseViewModel: PurchaseViewModel = viewModel()){
+fun PurchaseProductScreen(
+    darkTheme: MutableState<Boolean>,
+    navController: NavController,
+    purchaseViewModel: PurchaseViewModel = viewModel()
+){
     val productViewModel: ProductViewModel = viewModel()
     val clientViewModel: ClientViewModel = viewModel()
-//    val purchaseViewModel: PurchaseViewModel = viewModel()
 
     val clients by clientViewModel.clients.collectAsState()
     val products by productViewModel.products.collectAsState()

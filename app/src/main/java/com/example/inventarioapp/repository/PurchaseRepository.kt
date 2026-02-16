@@ -127,7 +127,7 @@ class PurchaseRepository {
         val purchase = snapshot.toObject(Purchase::class.java) ?: return null
 
         Log.d("PurchaseRepo", "ANTES CONFIRMAR -> $purchase")
-        Log.d("PurchaseRepo", "CLIENT -> ${purchase?.client}")
+        Log.d("PurchaseRepo", "CLIENT -> ${purchase.client}")
 
         val confirmedPurchase = purchase.copy(
             idPurchase = newPurchaseDoc.id,

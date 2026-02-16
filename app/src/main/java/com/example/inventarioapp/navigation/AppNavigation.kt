@@ -1,5 +1,6 @@
 package com.example.inventarioapp.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -22,9 +23,9 @@ import com.example.inventarioapp.screens.PurchaseProductScreen
 import com.example.inventarioapp.screens.ReservesScreen
 
 @Composable
-fun AppNavigation(padding: Modifier, darkThemeState: MutableState<Boolean>) {
+fun AppNavigation(darkThemeState: MutableState<Boolean>, modifier: Modifier) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route){
+    NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route, modifier = modifier){
         composable(route = AppScreens.LoginScreen.route){
             LoginScreen(
                 darkThemeState,
@@ -103,7 +104,7 @@ fun AppNavigation(padding: Modifier, darkThemeState: MutableState<Boolean>) {
                 type = NavType.StringType
             })
         ){
-            PurchaseProductScreen(darkThemeState, navController, current_purchase = it.arguments?.getString("current_purchase"))
+            PurchaseProductScreen(darkThemeState, navController)
         }
     }
 

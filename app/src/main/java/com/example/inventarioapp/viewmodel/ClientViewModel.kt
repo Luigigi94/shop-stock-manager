@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.repository.ClientRepository
+import com.example.inventarioapp.state.ClientUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,6 +21,26 @@ class ClientViewModel (
 
     private val _selectedClient = MutableStateFlow<Clients?>(null)
     val selectedClient: StateFlow<Clients?> get() = _selectedClient
+
+    private val _uiState = MutableStateFlow(ClientUiState())
+    val uiState: StateFlow<ClientUiState> = _uiState
+
+    /*
+    * Setters para el apoyo del state hoisting
+    */
+
+    fun onNameChange(value: String){
+        _uiState.value = _uiState.value.copy(nameClient = value)
+    }
+    fun onApePChange(value: String){
+        _uiState.value = _uiState.value.copy(apePClient = value)
+    }
+    fun onApeMChange(value: String){
+        _uiState.value = _uiState.value.copy(apeMClient = value)
+    }
+    fun onTelephone(value: String){
+        _uiState.value = _uiState.value.copy(telephone = value)
+    }
 
     init {
 
@@ -64,5 +85,9 @@ class ClientViewModel (
                 .onSuccess { _uiMessage.value = "SUCCEEDED_DELETE_CLIENT" }
                 .onFailure { e -> _uiMessage.value = "ERROR_DELETE_CLIENT: ${e.message}" }
         }
+    }
+
+    fun clearForm(){
+        _uiState.value = ClientUiState()
     }
 }
