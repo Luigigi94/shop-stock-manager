@@ -39,6 +39,7 @@ import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
+import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
@@ -158,28 +159,14 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {}
             ) {
-                ListedClients(listClients, navController)
-            }
-        }
-    }
-}
-
-@Composable
-fun ListedClients(listClients: List<Clients>, navController: NavController){
-    LazyColumn {
-        items(listClients){ client ->
-            CustomizedOutlinedCard(
-                onClick = { navController.navigate(route = AppScreens.EditClientScreen.route+"/"+client.idClient)}) {
-                Row(
+                CustomizedListOfEditables(
+                    listClients,
                     modifier = Modifier,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = client.nameClient +" "+ client.apePClient +" "+ client.apeMClient)
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = "Editing Client"
-                    )
-                }
+                    label = { it.nameClient },
+                    onItemClick = {
+                        navController.navigate(route = AppScreens.EditProductScreen.route + "/" + it.idClient)
+                    }
+                )
             }
         }
     }

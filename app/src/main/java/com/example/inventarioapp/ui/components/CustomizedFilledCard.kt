@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -13,22 +14,37 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomizedFilledCard(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
+    colors: CardColors = CardDefaults.cardColors(),
     content: @Composable () -> Unit
 ){
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        onClick = onClick
-    ) {
-        Box(
-            modifier = Modifier.padding(16.dp)
-        ){
-            content()
+    if (onClick != null) {
+        Card(
+            colors = colors,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            onClick = onClick
+        ) {
+            Box(
+                modifier = Modifier.padding(16.dp)
+            ){
+                content()
+            }
         }
+    } else {
+        Card(
+            colors = colors,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        ) {
+            Box(
+                modifier = Modifier.padding(16.dp)
+            ){
+                content()
+            }
+        }
+
     }
 }

@@ -40,6 +40,7 @@ import com.example.inventarioapp.model.Categories
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
+import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
@@ -129,7 +130,14 @@ fun AddCategoryScreen(darkThemeState: MutableState<Boolean>, navController: NavC
                 modifier = Modifier.fillMaxWidth(1f),
                 onClick = {}
             ) {
-                ListedCategories(listCategories, navController)
+                CustomizedListOfEditables(
+                    listCategories,
+                    modifier = Modifier,
+                    label = { it.nameCategory },
+                    onItemClick = {
+                        navController.navigate(route = AppScreens.EditProductScreen.route + "/" + it.idCategory)
+                    }
+                )
             }
         }
     }
@@ -146,24 +154,4 @@ fun AddCategory(valueInput: String, texto: String, onValueChange: (String) -> Un
         onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth()
     )
-}
-
-@Composable
-fun ListedCategories(listCategories: List<Categories>, navController: NavController) {
-    LazyColumn {
-        items(listCategories) { category ->
-            CustomizedOutlinedCard(onClick = { navController.navigate(route = AppScreens.EditCategoryScreen.route + "/" + category.idCategory) }) {
-                Row(
-                    modifier = Modifier,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = category.nameCategory)
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Editing Category"
-                    )
-                }
-            }
-        }
-    }
 }

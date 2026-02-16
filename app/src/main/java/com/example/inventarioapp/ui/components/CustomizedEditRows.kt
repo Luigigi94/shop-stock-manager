@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -56,7 +57,7 @@ fun CustomizedEditRows(
                 content = {
                     Row {
                         Icon(
-                            imageVector = Icons.Filled.Close,
+                            imageVector = Icons.Filled.Edit,
                             contentDescription = stringResource(R.string.button_edit_client)
                         )
                     }

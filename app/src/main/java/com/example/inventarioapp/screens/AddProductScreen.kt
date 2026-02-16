@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -42,6 +43,7 @@ import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
+import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
@@ -52,7 +54,11 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProductScreen(darkThemeState: MutableState<Boolean>, navController: NavController, viewModel: ProductViewModel = viewModel()){
+fun AddProductScreen(
+    darkThemeState: MutableState<Boolean>,
+    navController: NavController,
+    viewModel: ProductViewModel = viewModel()
+) {
     var nameProduct by remember { mutableStateOf("") }
     var quantityProduct by remember { mutableStateOf("") }
     var descriptionProduct by remember { mutableStateOf("") }
@@ -70,10 +76,10 @@ fun AddProductScreen(darkThemeState: MutableState<Boolean>, navController: NavCo
     LaunchedEffect(message) {
         message?.let {
             val text = when {
-                it == "SUCCEEDED_ADD_PRODUCT" ->
-                    navController.context.getString(R.string.result_success_added_product)
-                it.startsWith("ERROR_ADD_PRODUCT") ->
-                    navController.context.getString(R.string.result_failure_added_product)
+                it == "SUCCEEDED_ADD_PRODUCT" -> navController.context.getString(R.string.result_success_added_product)
+
+                it.startsWith("ERROR_ADD_PRODUCT") -> navController.context.getString(R.string.result_failure_added_product)
+
                 else -> it
             }
             Toast.makeText(navController.context, text, Toast.LENGTH_SHORT).show()
@@ -88,31 +94,68 @@ fun AddProductScreen(darkThemeState: MutableState<Boolean>, navController: NavCo
                 showBack = true,
                 showThemeSwitch = true
             )
-        }
-    ) { innerPading ->
+        }) { innerPading ->
 
-        Column(modifier = Modifier.padding(innerPading).hideKeyboardOnTap()) {
+        Column(
+            modifier = Modifier
+                .padding(innerPading)
+                .hideKeyboardOnTap()
+        ) {
             Text(text = stringResource(R.string.title_product))
             Spacer(modifier = Modifier.height(10.dp))
             CustomizedFilledCard(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {}
-            ) {
+                modifier = Modifier.fillMaxWidth(), onClick = {}) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start
+                    modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start
                 ) {
-                    CustomizedOutlinedTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { nameProduct = it }, value = nameProduct, label = { Text(text = stringResource(R.string.label_name_product)) })
+                    CustomizedOutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        onValueChange = { nameProduct = it },
+                        value = nameProduct,
+                        label = { Text(text = stringResource(R.string.label_name_product)) })
                     Spacer(modifier = Modifier.height(10.dp))
-                    CustomizedOutlinedTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { descriptionProduct = it }, value = descriptionProduct, label = { Text(text = stringResource(R.string.label_description_product)) })
+                    CustomizedOutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        onValueChange = { descriptionProduct = it },
+                        value = descriptionProduct,
+                        label = { Text(text = stringResource(R.string.label_description_product)) })
                     Spacer(modifier = Modifier.height(10.dp))
                     Row {
-                        CustomizedOutlinedTextField(modifier = Modifier.weight(2f), onValueChange = { priceProduct = it }, value = priceProduct, label = { Text(text = stringResource(R.string.label_price_product)) })
-                        CustomizedOutlinedTextField(modifier = Modifier.weight(2f), onValueChange = { quantityProduct = it }, value = quantityProduct, label = { Text(text = stringResource(R.string.label_quantity_product)) })
+                        CustomizedOutlinedTextField(
+                            modifier = Modifier.weight(2f),
+                            onValueChange = { priceProduct = it },
+                            value = priceProduct,
+                            label = { Text(text = stringResource(R.string.label_price_product)) })
+                        CustomizedOutlinedTextField(
+                            modifier = Modifier.weight(2f),
+                            onValueChange = { quantityProduct = it },
+                            value = quantityProduct,
+                            label = { Text(text = stringResource(R.string.label_quantity_product)) })
                     }
                     Spacer(modifier = Modifier.height(10.dp))
 //                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { idCategory = it }, value = idCategory, label = { Text(text = stringResource(R.string.label_category_product)) })
-                    CustomizedExposedDropdownMenu(items = categories, selectedItem = selectedCategory, label = "Categoria", itemLabel = { it.nameCategory }, onItemSelected = { selectedCategory = it}, modifier = Modifier.fillMaxWidth())
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        CustomizedExposedDropdownMenu(
+                            items = categories,
+                            selectedItem = selectedCategory,
+                            label = "Categoria",
+                            itemLabel = { it.nameCategory },
+                            onItemSelected = { selectedCategory = it },
+                            modifier = Modifier.weight(1f)
+                        )
+                        CustomizedButton(
+                            onClick = {
+                                navController.navigate(route = AppScreens.AddCategoryScreen.route)
+                            }, modifier = Modifier.weight(0.3f)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Folder,
+                                contentDescription = "Icon Add Category"
+                            )
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -138,44 +181,23 @@ fun AddProductScreen(darkThemeState: MutableState<Boolean>, navController: NavCo
                             descriptionProduct = ""
                             priceProduct = ""
                         }
-                    }
-                ) {
+                    }) {
                     Text(text = stringResource(R.string.button_add_product))
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
             CustomizedFilledCard(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {}
-            ) {
-                ListedProducts(listProducts, navController)
-            }
-        }
-
-    }
-}
-
-@Composable
-fun ListedProducts(listProducts: List<Products>, navController: NavController){
-    CustomizedFilledCard(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = {}
-    ) {
-        LazyColumn {
-            items(listProducts) { product ->
-                CustomizedOutlinedCard(onClick = { navController.navigate(route = AppScreens.EditProductScreen.route+"/"+product.idProduct)}) {
-                    Row (
-                        modifier = Modifier,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ){
-                        Text(text = product.nameProduct)
-                        Icon(
-                            imageVector = Icons.Filled.Edit,
-                            contentDescription = "Editing Product"
-                        )
+                modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                CustomizedListOfEditables(
+                    listProducts,
+                    modifier = Modifier,
+                    label = { it.nameProduct },
+                    onItemClick = {
+                        navController.navigate(route = AppScreens.EditProductScreen.route + "/" + it.idProduct)
                     }
-                }
+                )
             }
         }
+
     }
 }

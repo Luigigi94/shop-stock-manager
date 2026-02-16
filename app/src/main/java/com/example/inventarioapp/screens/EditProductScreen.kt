@@ -132,7 +132,6 @@ fun EditProductScreen(
                             label = { Text(text = stringResource(R.string.label_quantity_product)) })
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-//                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { idCategory = it }, value = idCategory, label = { Text(text = stringResource(R.string.label_category_product)) })
                     CustomizedExposedDropdownMenu(
                         items = categories,
                         selectedItem = selectedCategory,
@@ -169,65 +168,6 @@ fun EditProductScreen(
                         }
                     }
                 )
-//                Column {
-//                    Row {
-//                        CustomizedButton(
-//                            modifier = Modifier.weight(2f),
-//                            onClick = {
-//                                navController.popBackStack()
-//                            }
-//                        ) {
-//                            Row {
-//                                Icon(
-//                                    imageVector = Icons.Filled.Close,
-//                                    contentDescription = stringResource(R.string.button_cancel)
-//                                )
-//                                Text(text = stringResource(R.string.button_cancel))
-//                            }
-//                        }
-//                        CustomizedButton(
-//                            modifier = Modifier.weight(2f),
-//                            onClick = {
-//                                if (productId != null) {
-//                                    viewModel.deleteProduct(productId)
-//                                    navController.popBackStack()
-//                                } else {
-//                                    /*TODO: agregar toast para decir que algo falló*/
-//                                }
-//                            }) {
-//                            Row {
-//                                Icon(
-//                                    imageVector = Icons.Filled.Delete,
-//                                    contentDescription = stringResource(R.string.button_delete)
-//                                )
-//                                Text(text = stringResource(R.string.button_delete))
-//                            }
-//                        }
-//                    }
-//
-//                    CustomizedButton(
-//                        onClick = {
-//                            if (nameProduct.isNotBlank() && priceProduct.isNotBlank() && quantityProduct.isNotBlank() && selectedCategory != null) {
-//                                val updatedProduct = Products(
-//                                    idProduct = productId.toString(),
-//                                    nameProduct = nameProduct,
-//                                    quantityProduct = quantityProduct.toInt(),
-//                                    descriptionProduct = descriptionProduct,
-//                                    priceProduct = priceProduct.toDouble(),
-//                                    statusProduct = true,
-//                                    idCategory = selectedCategory!!.idCategory,
-//                                    updatedAt = Timestamp.now()
-//                                )
-//
-//                                viewModel.updateProduct(updatedProduct)
-//                                navController.popBackStack()
-//                            }
-//                        },
-//                        modifier = Modifier.fillMaxWidth()
-//                    ) {
-//                        Text(text = stringResource(R.string.button_edit_product))
-//                    }
-//                }
             }
         }
 

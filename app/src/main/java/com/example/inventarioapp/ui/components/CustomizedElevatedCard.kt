@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.Shape
 
 @Composable
 fun CustomizedElevatedCard(
-    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
     enabled: Boolean = true,
     shape: Shape = CardDefaults.elevatedShape,
