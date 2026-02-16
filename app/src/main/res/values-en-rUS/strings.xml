@@ -39,4 +39,12 @@
     <string name="label_client_purchase">Client</string>
     <string name="label_product_purchase">Product</string>
     <string name="label_quantity_purchase">Quanitity</string>
+    <string name="title_invoice">Invoice</string>
+    <string name="label_client_invoice">Client</string>
+    <string name="label_timestamp_invoice">Purchase Date</string>
+    <string name="label_products_invoice">Products</string>
+    <string name="label_product_invoice">Product</string>
+    <string name="label_price_invoice">Price</string>
+    <string name="label_quantity_invoice">Quantity</string>
+    <string name="label_end_purchase_invoice">End Purchase</string>
 </resources>

@@ -58,6 +58,18 @@
     <string name="label_product_purchase">Producto</string>
     <string name="label_quantity_purchase">Cantidad</string>
 
+<!--    Invoice-->
+    <string name="title_invoice">Recibo de Compra</string>
+    <string name="label_client_invoice">Cliente</string>
+    <string name="label_timestamp_invoice">Fecha de compra</string>
+    <string name="label_products_invoice">Producto(s)</string>
+    <string name="label_product_invoice">Producto</string>
+    <string name="label_price_invoice">Precio</string>
+    <string name="label_quantity_invoice">Cantidad</string>
+    <string name="label_subtotal_invoice" translatable="false">Subtotal</string>
+    <string name="label_end_purchase_invoice">Finalizar Venta</string>
+
+
 
 
 </resources>
