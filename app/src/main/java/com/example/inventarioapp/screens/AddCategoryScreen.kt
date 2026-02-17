@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +32,7 @@ import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Categories
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
+import com.example.inventarioapp.ui.components.CustomizedEditRows
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
@@ -38,30 +43,45 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddCategoryScreen(darkThemeState: MutableState<Boolean>, navController: NavController, viewModel: CategoryViewModel = viewModel()) {
-    var nameInput by remember { mutableStateOf("") }
-    var descriptionInput by remember { mutableStateOf("") }
+fun AddCategoryScreen(
+    darkThemeState: MutableState<Boolean>,
+    navController: NavController,
+    categoryId: String?,
+    viewModel: CategoryViewModel = viewModel()
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val stateCategory by viewModel.uiState.collectAsState()
 
-//    Lista reactiva desde viewModel (FireBase)
-    val listCategories by viewModel.categories.collectAsState()
-//    Mensajes para toast
-    val message by viewModel.uiMessage.collectAsState()
-//    Toast pendiente de hacer generico
-    LaunchedEffect(message) {
-        message?.let {
-            val text = when {
-                it == "SUCCEEDED_ADD_CATEGORY" ->
-                    navController.context.getString(R.string.result_success_added_category)
-
-                it.startsWith("ERROR_ADD_CATEGORY") ->
-                    navController.context.getString(R.string.result_failure_added_category)
-
-                else -> it
-            }
-            Toast.makeText(navController.context, text, Toast.LENGTH_SHORT).show()
+    LaunchedEffect(categoryId) {
+        if (categoryId == null) {
+            viewModel.startCreate()
+        } else {
+            viewModel.loadCategory(id = categoryId)
         }
     }
+
+    if (stateCategory.isLoading) {
+        CircularProgressIndicator()
+        return
+    }
+
+    LaunchedEffect(stateCategory.success) {
+        if (stateCategory.success && stateCategory.isEdit) {
+            navController.popBackStack()
+        }
+    }
+
+    val listCategories by viewModel.categories.collectAsState()
+
+    if (stateCategory.success) {
+        val text = stringResource(R.string.result_success_added_category)
+        LaunchedEffect(Unit) {
+            snackbarHostState.showSnackbar(text)
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CustomizedTopAppBar(
                 title = stringResource(R.string.menu_add_category),
@@ -71,11 +91,18 @@ fun AddCategoryScreen(darkThemeState: MutableState<Boolean>, navController: NavC
                 showThemeSwitch = true
             )
         }
-    ) { innerPading ->
-        Column(modifier = Modifier
-            .padding(innerPading)
-            .hideKeyboardOnTap()) {
-            Text(text = stringResource(R.string.title_category))
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .hideKeyboardOnTap()
+        ) {
+
+            if (stateCategory.isEdit) {
+                Text(text = stringResource(R.string.button_edit_category))
+            } else {
+                Text(text = stringResource(R.string.title_category))
+            }
             Spacer(modifier = Modifier.height(10.dp))
             CustomizedFilledCard(
                 modifier = Modifier.fillMaxWidth(),
@@ -86,56 +113,63 @@ fun AddCategoryScreen(darkThemeState: MutableState<Boolean>, navController: NavC
                 ) {
                     AddCategory(
                         texto = stringResource(R.string.label_name_category),
-                        valueInput = nameInput,
-                        onValueChange = { nameInput = it })
+                        valueInput = stateCategory.nameCategory,
+                        onValueChange = viewModel::onNameCategory
+                    )
                     AddCategory(
                         texto = stringResource(R.string.label_description_category),
-                        valueInput = descriptionInput,
-                        onValueChange = { descriptionInput = it })
+                        valueInput = stateCategory.descriptionCategory,
+                        onValueChange = viewModel::onDescriptionCategory
+                    )
                 }
             }
             Spacer(Modifier.size(10.dp))
-            CustomizedFilledCard(onClick = {}) {
-                CustomizedButton(
-                    onClick = {
-                        if (nameInput.isNotBlank()) {
-                            val newCategory = Categories(
-                                nameCategory = nameInput,
-                                descriptionCategory = descriptionInput,
-                                idCategory = UUID.randomUUID().toString()
-                            )
-                            viewModel.addCategory(newCategory)
-
-                            nameInput = ""
-                            descriptionInput = ""
-                        }
-                    }) {
-                    Text(text = stringResource(R.string.button_add_category))
-                }
-            }
-            Spacer(Modifier.height(10.dp))
-            CustomizedFilledCard(
-                modifier = Modifier.fillMaxWidth(1f),
-                onClick = {}
-            ) {
-                CustomizedListOfEditables(
-                    listCategories,
-                    modifier = Modifier,
-                    label = { it.nameCategory },
-                    onItemClick = {
-                        navController.navigate(route = AppScreens.EditProductScreen.route + "/" + it.idCategory)
+            CustomizedEditRows(
+                onCancel = {
+                    navController.popBackStack()
+                },
+                onDelete = {
+                    viewModel.deleteCategory()
+                },
+                onAction = {
+                    if (stateCategory.isEdit) {
+                        viewModel.updateCategory()
+                    } else {
+                        viewModel.addCategory()
                     }
-                )
+                },
+                isEdit = stateCategory.isEdit,
+                label = "Categoria"
+            )
+            if (!stateCategory.isEdit) {
+                Spacer(Modifier.height(10.dp))
+                CustomizedFilledCard(
+                    modifier = Modifier.fillMaxWidth(1f),
+                    onClick = {}
+                ) {
+                    CustomizedListOfEditables(
+                        listCategories,
+                        modifier = Modifier,
+                        label = { it.nameCategory },
+                        onItemClick = {
+                            navController.navigate(
+                                route = "${AppScreens.AddCategoryScreen.route}?categoryId=${it.idCategory}"
+                            )
+                        }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun AddCategory(valueInput: String, texto: String, onValueChange: (String) -> Unit) {
-    Spacer(modifier = Modifier
-        .height(10.dp)
-        .fillMaxWidth())
+fun AddCategory(valueInput: String?, texto: String, onValueChange: (String) -> Unit) {
+    Spacer(
+        modifier = Modifier
+            .height(10.dp)
+            .fillMaxWidth()
+    )
     CustomizedOutlinedTextField(
         valueInput,
         label = { Text(texto) },
@@ -143,3 +177,22 @@ fun AddCategory(valueInput: String, texto: String, onValueChange: (String) -> Un
         modifier = Modifier.fillMaxWidth()
     )
 }
+
+//            CustomizedFilledCard(onClick = {}) {
+//                CustomizedButton(
+//                    onClick = {
+//                        if (nameInput.isNotBlank()) {
+//                            val newCategory = Categories(
+//                                nameCategory = nameInput,
+//                                descriptionCategory = descriptionInput,
+//                                idCategory = UUID.randomUUID().toString()
+//                            )
+//                            viewModel.addCategory(newCategory)
+//
+//                            nameInput = ""
+//                            descriptionInput = ""
+//                        }
+//                    }) {
+//                    Text(text = stringResource(R.string.button_add_category))
+//                }
+//            }

@@ -1,12 +1,16 @@
 package com.example.inventarioapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.model.Categories
 import com.example.inventarioapp.repository.CategoryRepository
+import com.example.inventarioapp.state.CategoryUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /**
  * ViewModel de Categories
@@ -14,10 +18,10 @@ import kotlinx.coroutines.launch
  * Mantiene el estado reactivo para Compose
  * Consume datos desde CcategoryRepository*/
 
-class CategoryViewModel (
+class CategoryViewModel(
     private val repository: CategoryRepository = CategoryRepository()
-): ViewModel(){
-//    Lista de categorias expuestas a la UI
+) : ViewModel() {
+    //    Lista de categorias expuestas a la UI
     private val _categories = MutableStateFlow<List<Categories>>(emptyList())
     val categories: StateFlow<List<Categories>> get() = _categories
 
@@ -26,6 +30,25 @@ class CategoryViewModel (
 
     private val _selectedCategory = MutableStateFlow<Categories?>(null)
     val selectedCategory: StateFlow<Categories?> get() = _selectedCategory
+
+    private val _uiState = MutableStateFlow(CategoryUiState())
+    val uiState: StateFlow<CategoryUiState> = _uiState
+
+    /*
+    * Setters para el support del state hoisting
+    */
+
+    fun onNameCategory(value: String) {
+        _uiState.value = _uiState.value.copy(nameCategory = value)
+    }
+
+    fun onDescriptionCategory(value: String) {
+        _uiState.value = _uiState.value.copy(descriptionCategory = value)
+    }
+
+    fun startCreate(){
+        _uiState.value = CategoryUiState()
+    }
 
     init {
 //        Inicialización: suscribirse a los datos de Firebase
@@ -40,13 +63,30 @@ class CategoryViewModel (
      * Agrega una nueva categoria
      * La UI llama a esta función desde el botón
      * */
-    fun addCategory(category: Categories){
-        viewModelScope.launch {
-            val result = repository.addCategory(category)
+    fun addCategory() {
+        val state = _uiState.value
 
-            result
-                .onSuccess { _uiMessage.value = "SUCCEEDED_ADD_CATEGORY" }
-                .onFailure { e-> _uiMessage.value = "ERROR_ADD_CATEGORY: ${e.message}" }
+        if (state.nameCategory.isBlank()) return
+
+        val category = Categories(
+            idCategory = UUID.randomUUID().toString(),
+            nameCategory = state.nameCategory,
+            descriptionCategory = state.descriptionCategory
+        )
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
+            repository.addCategory(category)
+                .onSuccess {
+                    _uiState.value = CategoryUiState(success = true)
+                }
+                .onFailure { exception ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = exception.message
+                        )
+                    }
+                }
         }
     }
 
@@ -54,35 +94,84 @@ class CategoryViewModel (
      * Obtiene los valores de categoria por Id
      * @param id: UUID del documento
      * */
-    fun loadCategory(id: String){
+    fun loadCategory(id: String) {
         viewModelScope.launch {
-            _selectedCategory.value = repository.getCategoryById(id)
+//            _selectedCategory.value = repository.getCategoryById(id)
+            _uiState.update { it.copy(isLoading = true) }
+
+            val category = repository.getCategoryById(id)
+
+            if (category != null){
+                _uiState.value = CategoryUiState(
+                    idCategory = category.idCategory,
+                    nameCategory = category.nameCategory,
+                    descriptionCategory = category.descriptionCategory,
+                    isEdit = true,
+                    isLoading = false
+                )
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Categoria no encontrada"
+                    )
+                }
+            }
         }
     }
 
     /**
      * Actualiza una categoría existente.
      */
-    fun updateCategory(category: Categories) {
-        viewModelScope.launch {
-            val result = repository.updateCategory(category)
+    fun updateCategory() {
+        val state = _uiState.value
 
-            result
-                .onSuccess { _uiMessage.value = "SUCCEEDED_UPDATE_CATEGORY" }
-                .onFailure { e -> _uiMessage.value = "ERROR_UPDATE_CATEGORY: ${e.message}" }
+        val category = Categories(
+            idCategory = state.idCategory,
+            nameCategory = state.nameCategory,
+            descriptionCategory = state.descriptionCategory
+        )
+        viewModelScope.launch {
+            repository.updateCategory(category)
+                .onSuccess {
+                    _uiState.value = CategoryUiState(success = true)
+                }
+                .onFailure { exception ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = exception.message
+                        )
+                    }
+                }
         }
     }
 
     /**
      * Elimina una categoría.
      */
-    fun deleteCategory(categoryId: String) {
-        viewModelScope.launch {
-            val result = repository.deleteCategory(categoryId)
+    fun deleteCategory() {
 
-            result
-                .onSuccess { _uiMessage.value = "SUCCEEDED_DELETE_CATEGORY" }
-                .onFailure { e -> _uiMessage.value = "ERROR_DELETE_CATEGORY: ${e.message}" }
+        val categoryId = _uiState.value.idCategory
+
+        if (categoryId.isBlank()) return
+
+        viewModelScope.launch {
+            repository.deleteCategory(categoryId)
+                .onSuccess { _uiState.value = CategoryUiState(success = true) }
+                .onFailure { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = e.message
+                        )
+                    }
+                }
         }
     }
+
+    fun clearForm() {
+        _uiState.value = CategoryUiState()
+    }
+
 }

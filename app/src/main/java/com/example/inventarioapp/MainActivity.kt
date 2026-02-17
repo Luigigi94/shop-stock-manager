@@ -29,8 +29,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                     .fillMaxSize(),
                     containerColor = MaterialTheme.colorScheme.background
-                ) { innerPadding ->
-                    AppNavigation(darkThemeState = themeState, Modifier.padding(innerPadding))
+                ) {
+                    AppNavigation(darkThemeState = themeState)
                 }
             }
         }

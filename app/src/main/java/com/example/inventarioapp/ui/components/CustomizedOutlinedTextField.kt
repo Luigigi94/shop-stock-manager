@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun CustomizedOutlinedTextField(
-    value: String,
+    value: String? = null,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: @Composable () -> Unit
@@ -14,7 +14,7 @@ fun CustomizedOutlinedTextField(
     OutlinedTextField(
         modifier = modifier,
         onValueChange = onValueChange,
-        value = value,
+        value = value?: "",
         label = label
     )
 }

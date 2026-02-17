@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -49,6 +51,19 @@ fun PurchaseProductScreen(
     var selectedProduct by remember { mutableStateOf<Products?>(null) }
 
     var quantityProduct by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        Log.e("SPIDER_TEST", "ENTRO A LA SCREEN")
+        throw RuntimeException("TEST CRASH")
+    }
+
+    LaunchedEffect(clients) {
+        Log.d("PurchaseProductScreen", "clients size = ${clients.size}")
+    }
+
+    LaunchedEffect(products) {
+        Log.d("PurchaseProductScreen", "products size = ${products.size}")
+    }
 
     Scaffold(
         topBar = {

@@ -1,6 +1,5 @@
 package com.example.inventarioapp.navigation
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -9,27 +8,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.inventarioapp.constants.AppNavigationUUIDs
-import com.example.inventarioapp.screens.MenuScreen
-import com.example.inventarioapp.screens.LoginScreen
-import com.example.inventarioapp.screens.AddProductScreen
 import com.example.inventarioapp.screens.AddCategoryScreen
+import com.example.inventarioapp.screens.AddProductScreen
 import com.example.inventarioapp.screens.ClientScreen
-import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.EditCategoryScreen
-import com.example.inventarioapp.screens.EditClientScreen
 import com.example.inventarioapp.screens.EditProductScreen
 import com.example.inventarioapp.screens.InvoiceScreen
+import com.example.inventarioapp.screens.LoginScreen
+import com.example.inventarioapp.screens.MenuScreen
 import com.example.inventarioapp.screens.PurchaseProductScreen
+import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.ReservesScreen
 
 @Composable
-fun AppNavigation(darkThemeState: MutableState<Boolean>, modifier: Modifier) {
+fun AppNavigation(darkThemeState: MutableState<Boolean>) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = AppScreens.LoginScreen.route,
-        modifier = modifier
+        startDestination = AppScreens.LoginScreen.route
     ) {
         composable(route = AppScreens.LoginScreen.route) {
             LoginScreen(
@@ -49,22 +45,22 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>, modifier: Modifier) {
                 navController
             )
         }
-        composable(route = AppScreens.AddCategoryScreen.route) {
+        composable(
+            route = "${AppScreens.AddCategoryScreen.route}?categoryId={categoryId}",
+            arguments = listOf(
+                navArgument("categoryId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {backStackEntry ->
+
+            val categoryId = backStackEntry.arguments?.getString("categoryId")
             AddCategoryScreen(
                 darkThemeState,
-                navController
-            )
-        }
-        composable(route = AppScreens.ReservesScreen.route) {
-            ReservesScreen(
-                darkThemeState,
-                navController
-            )
-        }
-        composable(route = AppScreens.PurchaseScreen.route) {
-            PurchaseScreen(
-                darkThemeState,
-                navController
+                navController,
+                categoryId = categoryId
             )
         }
         composable(
@@ -84,7 +80,18 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>, modifier: Modifier) {
                 clientId = clientId
             )
         }
-
+        composable(route = AppScreens.ReservesScreen.route) {
+            ReservesScreen(
+                darkThemeState,
+                navController
+            )
+        }
+        composable(route = AppScreens.PurchaseScreen.route) {
+            PurchaseScreen(
+                darkThemeState,
+                navController
+            )
+        }
         composable(
             route = AppScreens.EditCategoryScreen.route + "/{categoryUUID}",
             arguments = listOf(navArgument(name = "categoryUUID") {

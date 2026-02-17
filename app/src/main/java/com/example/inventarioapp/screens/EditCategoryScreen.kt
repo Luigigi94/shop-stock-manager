@@ -49,8 +49,8 @@ fun EditCategoryScreen(darkThemeState: MutableState<Boolean>, navController: Nav
     LaunchedEffect(category.value){
         val current = category.value ?: return@LaunchedEffect
 
-        nameCategory = current.nameCategory
-        descriptionCategory = current.descriptionCategory
+//        nameCategory = current.nameCategory
+//        descriptionCategory = current.descriptionCategory
     }
 
     
@@ -110,7 +110,7 @@ fun EditCategoryScreen(darkThemeState: MutableState<Boolean>, navController: Nav
                             modifier = Modifier.weight(2f),
                             onClick = {
                                 if (categoryId != null) {
-                                    viewModel.deleteCategory(categoryId)
+                                    viewModel.deleteCategory(/*categoryId*/)
                                     navController.popBackStack()
                                 } else {
                                     /*TODO: agregar toast para decir que algo falló*/
@@ -128,16 +128,16 @@ fun EditCategoryScreen(darkThemeState: MutableState<Boolean>, navController: Nav
                     CustomizedButton(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            if (nameCategory.isNotBlank()) {
-                                val updateCategory = Categories(
-                                    nameCategory = nameCategory,
-                                    descriptionCategory = descriptionCategory,
-                                    idCategory = categoryId.toString()
-                                )
-
-                                viewModel.updateCategory(updateCategory)
-                                navController.popBackStack()
-                            }
+//                            if (nameCategory.isNotBlank()) {
+//                                val updateCategory = Categories(
+//                                    nameCategory = nameCategory,
+//                                    descriptionCategory = descriptionCategory,
+//                                    idCategory = categoryId.toString()
+//                                )
+//
+//                                viewModel.updateCategory(updateCategory)
+//                                navController.popBackStack()
+//                            }
                         }) {
                         Text(text = stringResource(R.string.button_edit_category))
                     }
