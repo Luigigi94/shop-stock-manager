@@ -3,6 +3,7 @@ package com.example.inventarioapp.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavArgs
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,10 +40,21 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 navController
             )
         }
-        composable(route = AppScreens.AddProductScreen.route) {
+        composable(
+            route = "${AppScreens.AddProductScreen.route}?productId={productId}",
+            arguments = listOf(
+                navArgument("productId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId")
             AddProductScreen(
                 darkThemeState,
-                navController
+                navController,
+                productId = productId
             )
         }
         composable(

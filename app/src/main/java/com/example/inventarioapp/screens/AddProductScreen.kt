@@ -1,6 +1,5 @@
 package com.example.inventarioapp.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +8,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,9 +31,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Categories
-import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
+import com.example.inventarioapp.ui.components.CustomizedEditRows
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
@@ -40,43 +42,61 @@ import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
-import com.google.firebase.Timestamp
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductScreen(
     darkThemeState: MutableState<Boolean>,
     navController: NavController,
+    productId: String?,
     viewModel: ProductViewModel = viewModel()
 ) {
-    var nameProduct by remember { mutableStateOf("") }
-    var quantityProduct by remember { mutableStateOf("") }
-    var descriptionProduct by remember { mutableStateOf("") }
-    var priceProduct by remember { mutableStateOf("") }
+//    var nameProduct by remember { mutableStateOf("") }
+//    var quantityProduct by remember { mutableStateOf("") }
+//    var descriptionProduct by remember { mutableStateOf("") }
+//    var priceProduct by remember { mutableStateOf("") }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val stateProduct by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(productId) {
+        if (productId == null){
+            viewModel.startCreate()
+        } else {
+            viewModel.loadProduct(productId)
+        }
+    }
+
+    if (stateProduct.isLoading){
+        CircularProgressIndicator()
+        return
+    }
+
+    LaunchedEffect(stateProduct.success) {
+        if (stateProduct.success && stateProduct.isEdit){
+            navController.popBackStack()
+        }
+    }
 
     val listProducts by viewModel.products.collectAsState()
-    val message by viewModel.uiMessage.collectAsState()
+
+    if (stateProduct.success){
+        val text = stringResource(R.string.result_success_added_product)
+        LaunchedEffect(Unit) {
+            snackbarHostState.showSnackbar(text)
+        }
+    }
 
     val categoryViewModel: CategoryViewModel = viewModel()
 
     val categories by categoryViewModel.categories.collectAsState()
 
-    var selectedCategory by remember { mutableStateOf<Categories?>(null) }
-
-    LaunchedEffect(message) {
-        message?.let {
-            val text = when {
-                it == "SUCCEEDED_ADD_PRODUCT" -> navController.context.getString(R.string.result_success_added_product)
-
-                it.startsWith("ERROR_ADD_PRODUCT") -> navController.context.getString(R.string.result_failure_added_product)
-
-                else -> it
-            }
-            Toast.makeText(navController.context, text, Toast.LENGTH_SHORT).show()
-        }
+//    var selectedCategory by remember { mutableStateOf<Categories?>(null) }
+    var selectedCategory = categories.firstOrNull{
+        it.idCategory == stateProduct.idCategory
     }
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CustomizedTopAppBar(
                 title = stringResource(R.string.menu_add_product),
@@ -92,7 +112,11 @@ fun AddProductScreen(
                 .padding(innerPading)
                 .hideKeyboardOnTap()
         ) {
-            Text(text = stringResource(R.string.title_product))
+            if (stateProduct.isEdit){
+                Text(text = stringResource(R.string.button_edit_product))
+            } else{
+                Text(text = stringResource(R.string.title_product))
+            }
             Spacer(modifier = Modifier.height(10.dp))
             CustomizedFilledCard(
                 modifier = Modifier.fillMaxWidth(), onClick = {}) {
@@ -101,26 +125,26 @@ fun AddProductScreen(
                 ) {
                     CustomizedOutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        onValueChange = { nameProduct = it },
-                        value = nameProduct,
+                        onValueChange = viewModel::onNameProduct,
+                        value = stateProduct.nameProduct,
                         label = { Text(text = stringResource(R.string.label_name_product)) })
                     Spacer(modifier = Modifier.height(10.dp))
                     CustomizedOutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        onValueChange = { descriptionProduct = it },
-                        value = descriptionProduct,
+                        onValueChange = viewModel::onDescriptionProduct,
+                        value = stateProduct.descriptionProduct,
                         label = { Text(text = stringResource(R.string.label_description_product)) })
                     Spacer(modifier = Modifier.height(10.dp))
                     Row {
                         CustomizedOutlinedTextField(
                             modifier = Modifier.weight(2f),
-                            onValueChange = { priceProduct = it },
-                            value = priceProduct,
+                            onValueChange = viewModel::onPriceProduct,
+                            value = stateProduct.priceProduct.toString(),
                             label = { Text(text = stringResource(R.string.label_price_product)) })
                         CustomizedOutlinedTextField(
                             modifier = Modifier.weight(2f),
-                            onValueChange = { quantityProduct = it },
-                            value = quantityProduct,
+                            onValueChange = viewModel::onQuantityProduct,
+                            value = stateProduct.quantityProduct.toString(),
                             label = { Text(text = stringResource(R.string.label_quantity_product)) })
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -133,7 +157,7 @@ fun AddProductScreen(
                             selectedItem = selectedCategory,
                             label = "Categoria",
                             itemLabel = { it.nameCategory },
-                            onItemSelected = { selectedCategory = it },
+                            onItemSelected = { viewModel.onIdCategory(it.idCategory) },
                             modifier = Modifier.weight(1f)
                         )
                         CustomizedButton(
@@ -151,7 +175,20 @@ fun AddProductScreen(
             }
             Spacer(modifier = Modifier.height(10.dp))
             CustomizedFilledCard(onClick = {}) {
-                CustomizedButton(
+                CustomizedEditRows(
+                    onCancel = { navController.popBackStack() },
+                    onDelete = { viewModel.deleteProduct() },
+                    onAction = {
+                        if (stateProduct.isEdit){
+                            viewModel.updateProduct()
+                        } else {
+                            viewModel.addProduct()
+                        }
+                    },
+                    isEdit = stateProduct.isEdit,
+                    label = "Producto"
+                )
+                /*CustomizedButton(
                     onClick = {
                         if (nameProduct.isNotBlank() && priceProduct.isNotBlank() && quantityProduct.isNotBlank() && selectedCategory != null) {
                             val newProduct = Products(
@@ -174,19 +211,21 @@ fun AddProductScreen(
                         }
                     }) {
                     Text(text = stringResource(R.string.button_add_product))
-                }
+                }*/
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            CustomizedFilledCard(
-                modifier = Modifier.fillMaxWidth(), onClick = {}) {
-                CustomizedListOfEditables(
-                    listProducts,
-                    modifier = Modifier,
-                    label = { it.nameProduct },
-                    onItemClick = {
-                        navController.navigate(route = AppScreens.EditProductScreen.route + "/" + it.idProduct)
-                    }
-                )
+            if (!stateProduct.isEdit) {
+                Spacer(modifier = Modifier.height(10.dp))
+                CustomizedFilledCard(
+                    modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                    CustomizedListOfEditables(
+                        listProducts,
+                        modifier = Modifier,
+                        label = { it.nameProduct },
+                        onItemClick = {
+                            navController.navigate(route = "${AppScreens.AddProductScreen.route}?productId=${it.idProduct}")
+                        }
+                    )
+                }
             }
         }
 

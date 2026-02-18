@@ -137,7 +137,7 @@ fun EditProductScreen(
                 CustomizedEditRows(
                     onCancel = { navController.popBackStack() },
                     onDelete = {
-                        viewModel.deleteProduct(productId.toString())
+//                        viewModel.deleteProduct(productId.toString())
                         navController.popBackStack()
                     },
                     onAction = {
@@ -153,7 +153,7 @@ fun EditProductScreen(
                                 updatedAt = Timestamp.now()
                             )
 
-                            viewModel.updateProduct(updatedProduct)
+//                            viewModel.updateProduct(updatedProduct)
                             navController.popBackStack()
                         }
                     },

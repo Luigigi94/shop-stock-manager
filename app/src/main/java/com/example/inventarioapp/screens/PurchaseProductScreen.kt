@@ -52,10 +52,6 @@ fun PurchaseProductScreen(
 
     var quantityProduct by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
-        Log.e("SPIDER_TEST", "ENTRO A LA SCREEN")
-        throw RuntimeException("TEST CRASH")
-    }
 
     LaunchedEffect(clients) {
         Log.d("PurchaseProductScreen", "clients size = ${clients.size}")
