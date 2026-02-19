@@ -1,11 +1,12 @@
 package com.example.inventarioapp.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.model.Categories
 import com.example.inventarioapp.repository.CategoryRepository
 import com.example.inventarioapp.state.CategoryUiState
+import com.example.inventarioapp.validators.CategoryValidator
+import com.example.inventarioapp.validators.model.ValidationResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -39,14 +40,25 @@ class CategoryViewModel(
     */
 
     fun onNameCategory(value: String) {
-        _uiState.value = _uiState.value.copy(nameCategory = value)
+        _uiState.value = validateForm(
+            uiState.value.copy(
+                nameCategory = value,
+                nameTouched = true
+            )
+        )
+    }
+
+    fun onNameBlur() {
+        _uiState.value = validateForm(
+            _uiState.value.copy(nameTouched = true)
+        )
     }
 
     fun onDescriptionCategory(value: String) {
         _uiState.value = _uiState.value.copy(descriptionCategory = value)
     }
 
-    fun startCreate(){
+    fun startCreate() {
         _uiState.value = CategoryUiState()
     }
 
@@ -64,14 +76,20 @@ class CategoryViewModel(
      * La UI llama a esta función desde el botón
      * */
     fun addCategory() {
-        val state = _uiState.value
+        val validatedState = validateForm(
+            _uiState.value.copy(
+                nameTouched = true
+            )
+        )
 
-        if (state.nameCategory.isBlank()) return
+        _uiState.value = validatedState
+
+        if (!validatedState.isValid) return
 
         val category = Categories(
             idCategory = UUID.randomUUID().toString(),
-            nameCategory = state.nameCategory,
-            descriptionCategory = state.descriptionCategory
+            nameCategory = validatedState.nameCategory,
+            descriptionCategory = validatedState.descriptionCategory
         )
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
@@ -101,7 +119,7 @@ class CategoryViewModel(
 
             val category = repository.getCategoryById(id)
 
-            if (category != null){
+            if (category != null) {
                 _uiState.value = CategoryUiState(
                     idCategory = category.idCategory,
                     nameCategory = category.nameCategory,
@@ -174,4 +192,20 @@ class CategoryViewModel(
         _uiState.value = CategoryUiState()
     }
 
+    private fun validateForm(state: CategoryUiState): CategoryUiState {
+        val nameResult = CategoryValidator.name(state.nameCategory)
+
+        val isValid =
+            nameResult is ValidationResult.Valid
+
+        return state.copy(
+            nameError =
+                if (state.nameTouched)
+                    (nameResult as? ValidationResult.Invalid)?.message
+                else
+                    null,
+
+            isValid = isValid
+        )
+    }
 }

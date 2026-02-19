@@ -107,7 +107,9 @@ fun AddCategoryScreen(
                     CustomizedOutlinedTextField(
                         label = { Text(stringResource(R.string.label_name_category)) },
                         value = stateCategory.nameCategory,
-                        onValueChange = viewModel::onNameCategory
+                        onValueChange = viewModel::onNameCategory,
+                        onFocusLost = viewModel::onNameBlur,
+                        error = stateCategory.nameError
                     )
                     CustomizedOutlinedTextField(
                         label = { Text(stringResource(R.string.label_description_category)) },

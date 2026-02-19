@@ -8,5 +8,11 @@ data class CategoryUiState(
 
     val idCategory: String = "",
     val nameCategory: String = "",
-    val descriptionCategory: String? = ""
+    val descriptionCategory: String? = "",
+
+    val nameError: String? = null,
+
+    val nameTouched: Boolean = false,
+
+    val isValid: Boolean = false
 )

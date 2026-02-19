@@ -110,8 +110,6 @@ class ClientViewModel(
 
         if (!validatedState.isValid) return
 
-        if (validatedState.nameClient.isBlank() || validatedState.apePClient.isBlank()) return
-
         val newClient = Clients(
             idClient = UUID.randomUUID().toString(),
             nameClient = validatedState.nameClient,
