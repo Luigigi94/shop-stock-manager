@@ -15,7 +15,7 @@ data class ProductUiState (
     val descriptionProduct: String = "",
     val priceProduct: Double = 0.0,
     val statusProduct: Boolean = false,
-    val idCategory: String = "",
+    val idCategory: String? = null,
     val createdAt: Timestamp? = null,
     val updatedAt: Timestamp? = null,
 

@@ -33,8 +33,8 @@ object ProductValidator {
         return ValidationResult.Valid
     }
 
-    fun idCategory(value: String): ValidationResult{
-        if (value.isBlank())
+    fun idCategory(value: String?): ValidationResult{
+        if (value == null)
             return ValidationResult.Invalid("Campo Obligatorio")
         return ValidationResult.Valid
     }

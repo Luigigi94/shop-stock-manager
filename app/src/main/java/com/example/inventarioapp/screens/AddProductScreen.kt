@@ -167,7 +167,9 @@ fun AddProductScreen(
                             label = "Categoria",
                             itemLabel = { it.nameCategory },
                             onItemSelected = { viewModel.onIdCategory(it.idCategory) },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            isError = stateProduct.idCategoryError != null,
+                            supportingText = stateProduct.idCategoryError
                         )
                         CustomizedButton(
                             onClick = {

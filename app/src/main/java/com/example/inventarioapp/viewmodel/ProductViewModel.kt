@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.repository.ProductRepository
 import com.example.inventarioapp.state.ProductUiState
-import com.example.inventarioapp.validators.ClientValidator
 import com.example.inventarioapp.validators.ProductValidator
 import com.example.inventarioapp.validators.model.ValidationResult
 import com.google.firebase.Timestamp
@@ -93,12 +92,6 @@ class ProductViewModel(
         )
     }
 
-    fun onIdCategoryBlur() {
-        _uiState.value = validateForm(
-            _uiState.value.copy(idCategoryTouched = true)
-        )
-    }
-
     fun startCreate() {
         _uiState.value = ProductUiState()
     }
@@ -112,17 +105,26 @@ class ProductViewModel(
     }
 
     fun addProduct() {
-        val state = _uiState.value
+        val validateState = validateForm(
+            _uiState.value.copy(
+                nameTouched = true,
+                quantityTouched = true,
+                priceTouched = true,
+                idCategoryTouched = true,
+            )
+        )
 
-        if (state.nameProduct.isBlank()) return
+        _uiState.value = validateState
+
+        if (!validateState.isValid) return
 
         val product = Products(
             idProduct = UUID.randomUUID().toString(),
-            nameProduct = state.nameProduct,
-            quantityProduct = state.quantityProduct,
-            descriptionProduct = state.descriptionProduct,
-            priceProduct = state.priceProduct,
-            idCategory = state.idCategory,
+            nameProduct = validateState.nameProduct,
+            quantityProduct = validateState.quantityProduct,
+            descriptionProduct = validateState.descriptionProduct,
+            priceProduct = validateState.priceProduct,
+            idCategory = validateState.idCategory?: "",
             createdAt = Timestamp.now(),
         )
         viewModelScope.launch {
@@ -179,7 +181,7 @@ class ProductViewModel(
             quantityProduct = state.quantityProduct,
             descriptionProduct = state.descriptionProduct,
             priceProduct = state.priceProduct,
-            idCategory = state.idCategory,
+            idCategory = state.idCategory?: "",
             updatedAt = Timestamp.now(),
         )
         viewModelScope.launch {
@@ -221,8 +223,8 @@ class ProductViewModel(
     private fun validateForm(state: ProductUiState): ProductUiState {
         val nameResult = ProductValidator.name(state.nameProduct)
         val quantityResult = ProductValidator.quantity(state.quantityProduct.toString())
-        val priceResult = ProductValidator.quantity(state.priceProduct.toString())
-        val idCategoryResult = ProductValidator.quantity(state.idCategory)
+        val priceResult = ProductValidator.price(state.priceProduct.toString())
+        val idCategoryResult = ProductValidator.idCategory(state.idCategory)
 
         val isValid =
             nameResult is ValidationResult.Valid &&

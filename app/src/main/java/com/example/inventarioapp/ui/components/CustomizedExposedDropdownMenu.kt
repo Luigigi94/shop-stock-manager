@@ -25,7 +25,9 @@ fun <T> CustomizedExposedDropdownMenu(
     label: String,                      // label del TextField
     itemLabel: (T) -> String,           // cómo convertir T → String visible
     onItemSelected: (T) -> Unit,        // callback cuando seleccionan
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    supportingText: String? = null
 ) {
 
     // Estado interno SOLO de UI (expandido/cerrado)
@@ -51,8 +53,9 @@ fun <T> CustomizedExposedDropdownMenu(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
-            modifier = Modifier.menuAnchor(),
-            singleLine = true
+            modifier = Modifier.menuAnchor().fillMaxWidth(),
+            singleLine = true,
+            isError = isError
         )
 
         /**
@@ -77,6 +80,13 @@ fun <T> CustomizedExposedDropdownMenu(
                     }
                 )
             }
+        }
+        if (isError && supportingText != null) {
+            Text(
+                text = supportingText,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error
+            )
         }
     }
 }
