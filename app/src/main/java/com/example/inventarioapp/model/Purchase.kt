@@ -8,5 +8,5 @@ data class Purchase(
     var items: List<PurchaseItem> = emptyList(),
     var total: Double = 0.0,
     var confirmed: Boolean = false,
-    var purchaseTimeStamp: Timestamp = Timestamp.now()
+    var purchaseTimeStamp: Timestamp? = null
 )

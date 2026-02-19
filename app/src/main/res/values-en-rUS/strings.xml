@@ -36,6 +36,7 @@
     <string name="label_apep_client">Last Name</string>
     <string name="label_apem_client">Second Last Name</string>
     <string name="title_purchase">New Purchase</string>
+    <string name="title_edit_purchase">Editar Compra</string>
     <string name="label_client_purchase">Client</string>
     <string name="label_product_purchase">Product</string>
     <string name="label_quantity_purchase">Quanitity</string>

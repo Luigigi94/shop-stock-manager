@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,21 +50,43 @@ fun PurchaseProductScreen(
     val clients by clientViewModel.clients.collectAsState()
     val products by productViewModel.products.collectAsState()
 
-    var selectedClient by remember { mutableStateOf<Clients?>(null) }
+/*    var selectedClient by remember { mutableStateOf<Clients?>(null) }
     var selectedProduct by remember { mutableStateOf<Products?>(null) }
 
-    var quantityProduct by remember { mutableStateOf("") }
+    var quantityProduct by remember { mutableStateOf("") }*/
+    val snackbarHostState = remember { SnackbarHostState() }
+    val statePurchaseItem by purchaseViewModel.uiState.collectAsState()
 
-
-    LaunchedEffect(clients) {
-        Log.d("PurchaseProductScreen", "clients size = ${clients.size}")
+    val selectedClient = clients.firstOrNull{
+        it.idClient == statePurchaseItem.idClient
+    }
+    val selectedProduct = products.firstOrNull{
+        it.idProduct == statePurchaseItem.idProduct
     }
 
-    LaunchedEffect(products) {
-        Log.d("PurchaseProductScreen", "products size = ${products.size}")
+
+    LaunchedEffect(purchaseId) {
+        if (purchaseId == null){
+            purchaseViewModel.startCreate()
+        } else {
+            purchaseViewModel.loadPurchase(purchaseId)
+        }
+    }
+
+    if (statePurchaseItem.isLoading){
+        CircularProgressIndicator()
+        return
+    }
+
+    if (statePurchaseItem.success) {
+        val text = stringResource(R.string.menu_label_add_purchase)
+        LaunchedEffect(Unit) {
+            snackbarHostState.showSnackbar(text)
+        }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CustomizedTopAppBar(
                 title = stringResource(R.string.title_purchase_product),
@@ -75,7 +100,11 @@ fun PurchaseProductScreen(
         Column(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(innerPadding).hideKeyboardOnTap(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(text = stringResource(R.string.title_purchase))
+                if (statePurchaseItem.isEdit) {
+                    Text(text = stringResource(R.string.title_edit_purchase))
+                } else {
+                    Text(text = stringResource(R.string.title_purchase))
+                }
                 CustomizedFilledCard(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
@@ -85,9 +114,31 @@ fun PurchaseProductScreen(
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        CustomizedExposedDropdownMenu(items = clients, selectedItem = selectedClient, label = "Cliente", itemLabel = { it.nameClient+" "+it.apePClient+" "+it.apeMClient }, onItemSelected = { selectedClient = it }, modifier = Modifier.fillMaxWidth())
-                        CustomizedExposedDropdownMenu(items = products, selectedItem = selectedProduct, label = "Producto", itemLabel = { it.nameProduct }, onItemSelected = { selectedProduct = it }, modifier = Modifier.fillMaxWidth())
-                        CustomizedOutlinedTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { quantityProduct = it }, value = quantityProduct, label = { Text(text = stringResource(R.string.label_quantity_purchase))})
+                        CustomizedExposedDropdownMenu(
+                            items = clients,
+                            selectedItem = selectedClient,
+                            label = "Cliente",
+                            itemLabel = { it.nameClient+" "+it.apePClient+" "+it.apeMClient },
+                            onItemSelected = { purchaseViewModel.onIdClient(it.idClient) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        CustomizedExposedDropdownMenu(
+                            items = products,
+                            selectedItem = selectedProduct,
+                            label = "Producto",
+                            itemLabel = { it.nameProduct },
+                            onItemSelected = { purchaseViewModel.onIdProduct(it.idProduct) },
+                            modifier = Modifier.fillMaxWidth(),
+                            isError = statePurchaseItem.idProductError != null,
+                            supportingText = statePurchaseItem.idProductError
+                        )
+                        CustomizedOutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            onValueChange = purchaseViewModel::onQuantity,
+                            value = statePurchaseItem.quantity,
+                            label = { Text(text = stringResource(R.string.label_quantity_purchase)) },
+                            onFocusLost = purchaseViewModel::onQuantityBlur
+                        )
                     }
                 }
                 CustomizedFilledCard(
@@ -97,7 +148,7 @@ fun PurchaseProductScreen(
                     CustomizedButton(
                         onClick = {
                             val product = selectedProduct ?: return@CustomizedButton
-                            val qty = quantityProduct.toIntOrNull() ?: return@CustomizedButton
+                            val qty = statePurchaseItem.quantity.toIntOrNull() ?: return@CustomizedButton
 
                             val item = PurchaseItem(product, qty)
 

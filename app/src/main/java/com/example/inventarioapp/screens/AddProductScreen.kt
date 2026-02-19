@@ -92,7 +92,7 @@ fun AddProductScreen(
     val categories by categoryViewModel.categories.collectAsState()
 
 //    var selectedCategory by remember { mutableStateOf<Categories?>(null) }
-    var selectedCategory = categories.firstOrNull{
+    val selectedCategory = categories.firstOrNull{
         it.idCategory == stateProduct.idCategory
     }
     Scaffold(

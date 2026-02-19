@@ -132,7 +132,7 @@ fun InvoiceScreen(
                     items(itemsPurch) { product ->
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                product.product.nameProduct,
+                                product.nameProduct,
                                 modifier = Modifier.weight(2f)
                             )
                             Text(

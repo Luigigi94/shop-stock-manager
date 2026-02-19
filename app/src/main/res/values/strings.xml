@@ -54,6 +54,7 @@
 
     <!--  Purchase-->
     <string name="title_purchase">Nueva Compra</string>
+    <string name="title_edit_purchase">Nueva Compra</string>
     <string name="label_client_purchase">Cliente</string>
     <string name="label_product_purchase">Producto</string>
     <string name="label_quantity_purchase">Cantidad</string>
