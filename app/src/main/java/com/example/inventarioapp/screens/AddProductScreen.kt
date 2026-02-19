@@ -127,25 +127,34 @@ fun AddProductScreen(
                         modifier = Modifier.fillMaxWidth(),
                         onValueChange = viewModel::onNameProduct,
                         value = stateProduct.nameProduct,
-                        label = { Text(text = stringResource(R.string.label_name_product)) })
+                        label = { Text(text = stringResource(R.string.label_name_product)) },
+                        error = stateProduct.nameError,
+                        onFocusLost = viewModel::onNameBlur
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
                     CustomizedOutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         onValueChange = viewModel::onDescriptionProduct,
                         value = stateProduct.descriptionProduct,
-                        label = { Text(text = stringResource(R.string.label_description_product)) })
+                        label = { Text(text = stringResource(R.string.label_description_product)) }
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
                     Row {
                         CustomizedOutlinedTextField(
                             modifier = Modifier.weight(2f),
                             onValueChange = viewModel::onPriceProduct,
                             value = stateProduct.priceProduct.toString(),
-                            label = { Text(text = stringResource(R.string.label_price_product)) })
+                            label = { Text(text = stringResource(R.string.label_price_product)) },
+                            error = stateProduct.priceError,
+                            onFocusLost = viewModel::onPriceBlur
+                        )
                         CustomizedOutlinedTextField(
                             modifier = Modifier.weight(2f),
                             onValueChange = viewModel::onQuantityProduct,
                             value = stateProduct.quantityProduct.toString(),
-                            label = { Text(text = stringResource(R.string.label_quantity_product)) })
+                            label = { Text(text = stringResource(R.string.label_quantity_product)) },
+                            error = stateProduct.quantityError,
+                            onFocusLost = viewModel::onQuantityBlur)
                     }
                     Spacer(modifier = Modifier.height(10.dp))
 //                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { idCategory = it }, value = idCategory, label = { Text(text = stringResource(R.string.label_category_product)) })

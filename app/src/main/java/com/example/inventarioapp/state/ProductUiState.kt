@@ -18,4 +18,16 @@ data class ProductUiState (
     val idCategory: String = "",
     val createdAt: Timestamp? = null,
     val updatedAt: Timestamp? = null,
+
+    val nameError: String? = null,
+    val quantityError: String? = null,
+    val priceError: String? = null,
+    val idCategoryError: String? = null,
+
+    val nameTouched: Boolean = false,
+    val quantityTouched: Boolean = false,
+    val priceTouched: Boolean = false,
+    val idCategoryTouched: Boolean = false,
+
+    val isValid: Boolean = false
 )

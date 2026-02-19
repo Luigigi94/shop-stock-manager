@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.repository.ProductRepository
 import com.example.inventarioapp.state.ProductUiState
+import com.example.inventarioapp.validators.ClientValidator
+import com.example.inventarioapp.validators.ProductValidator
+import com.example.inventarioapp.validators.model.ValidationResult
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,9 +15,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class ProductViewModel (
+class ProductViewModel(
     private val repository: ProductRepository = ProductRepository()
-): ViewModel(){
+) : ViewModel() {
     private val _products = MutableStateFlow<List<Products>>(emptyList())
     val products: StateFlow<List<Products>> get() = _products
 
@@ -33,11 +36,33 @@ class ProductViewModel (
     */
 
     fun onNameProduct(value: String) {
-        _uiState.value = _uiState.value.copy(nameProduct = value)
+        _uiState.value = validateForm(
+            _uiState.value.copy(
+                nameProduct = value,
+                nameTouched = true
+            )
+        )
     }
+
+    fun onNameBlur() {
+        _uiState.value = validateForm(
+            _uiState.value.copy(nameTouched = true)
+        )
+    }
+
     fun onQuantityProduct(value: String) {
-        val quant = value.toInt()
-        _uiState.value = _uiState.value.copy(quantityProduct = quant)
+        _uiState.value = validateForm(
+            _uiState.value.copy(
+                quantityProduct = value.toInt(),
+                quantityTouched = true
+            )
+        )
+    }
+
+    fun onQuantityBlur() {
+        _uiState.value = validateForm(
+            _uiState.value.copy(quantityTouched = true)
+        )
     }
 
     fun onDescriptionProduct(value: String) {
@@ -45,14 +70,36 @@ class ProductViewModel (
     }
 
     fun onPriceProduct(value: String) {
-        val priceValue = value.toDouble()
-        _uiState.value = _uiState.value.copy(priceProduct = priceValue)
-    }
-    fun onIdCategory(value: String) {
-        _uiState.value = _uiState.value.copy(idCategory = value)
+        _uiState.value = validateForm(
+            _uiState.value.copy(
+                priceProduct = value.toDouble(),
+                quantityTouched = true
+            )
+        )
     }
 
-    fun startCreate(){
+    fun onPriceBlur() {
+        _uiState.value = validateForm(
+            _uiState.value.copy(priceTouched = true)
+        )
+    }
+
+    fun onIdCategory(value: String) {
+        _uiState.value = validateForm(
+            _uiState.value.copy(
+                idCategory = value,
+                idCategoryTouched = true
+            )
+        )
+    }
+
+    fun onIdCategoryBlur() {
+        _uiState.value = validateForm(
+            _uiState.value.copy(idCategoryTouched = true)
+        )
+    }
+
+    fun startCreate() {
         _uiState.value = ProductUiState()
     }
 
@@ -64,7 +111,7 @@ class ProductViewModel (
         }
     }
 
-    fun addProduct(){
+    fun addProduct() {
         val state = _uiState.value
 
         if (state.nameProduct.isBlank()) return
@@ -95,13 +142,13 @@ class ProductViewModel (
         }
     }
 
-    fun loadProduct(id: String){
+    fun loadProduct(id: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy( isLoading = true) }
+            _uiState.update { it.copy(isLoading = true) }
 
             val product = repository.getProductById(id)
 
-            if (product != null){
+            if (product != null) {
                 _uiState.value = ProductUiState(
                     idProduct = product.idProduct,
                     nameProduct = product.nameProduct,
@@ -124,7 +171,7 @@ class ProductViewModel (
         }
     }
 
-    fun updateProduct(){
+    fun updateProduct() {
         val state = _uiState.value
         val product = Products(
             idProduct = state.idProduct,
@@ -149,7 +196,7 @@ class ProductViewModel (
         }
     }
 
-    fun deleteProduct(){
+    fun deleteProduct() {
         val productId = _uiState.value.idProduct
 
         if (productId.isBlank()) return
@@ -167,7 +214,49 @@ class ProductViewModel (
         }
     }
 
-    fun clearForm(){
+    fun clearForm() {
         _uiState.value = ProductUiState()
+    }
+
+    private fun validateForm(state: ProductUiState): ProductUiState {
+        val nameResult = ProductValidator.name(state.nameProduct)
+        val quantityResult = ProductValidator.quantity(state.quantityProduct.toString())
+        val priceResult = ProductValidator.quantity(state.priceProduct.toString())
+        val idCategoryResult = ProductValidator.quantity(state.idCategory)
+
+        val isValid =
+            nameResult is ValidationResult.Valid &&
+                    quantityResult is ValidationResult.Valid &&
+                    priceResult is ValidationResult.Valid &&
+                    idCategoryResult is ValidationResult.Valid
+
+        return state.copy(
+            nameError =
+                if (state.nameTouched)
+                    (nameResult as? ValidationResult.Invalid)?.message
+                else
+                    null,
+
+            quantityError =
+                if (state.quantityTouched)
+                    (quantityResult as? ValidationResult.Invalid)?.message
+                else
+                    null,
+
+            priceError =
+                if (state.priceTouched)
+                    (priceResult as? ValidationResult.Invalid)?.message
+                else
+                    null,
+
+            idCategoryError =
+                if (state.idCategoryTouched)
+                    (idCategoryResult as? ValidationResult.Invalid)?.message
+                else
+                    null,
+
+            isValid = isValid
+
+        )
     }
 }
