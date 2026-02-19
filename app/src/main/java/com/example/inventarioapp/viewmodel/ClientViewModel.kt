@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.repository.ClientRepository
 import com.example.inventarioapp.state.ClientUiState
+import com.example.inventarioapp.validators.ClientValidator
+import com.example.inventarioapp.validators.model.ValidationResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -34,19 +36,52 @@ class ClientViewModel(
     */
 
     fun onNameChange(value: String) {
-        _uiState.value = _uiState.value.copy(nameClient = value)
+        _uiState.value = validateForm(
+            _uiState.value.copy(
+                nameClient = value,
+                nameTouched = true
+            )
+        )
+    }
+
+    fun onNameBlur(){
+        _uiState.value = validateForm(
+            _uiState.value.copy(nameTouched = true)
+        )
     }
 
     fun onApePChange(value: String) {
-        _uiState.value = _uiState.value.copy(apePClient = value)
+        _uiState.value = validateForm(
+            _uiState.value.copy(
+                apePClient = value,
+                apePTouched = true
+            )
+        )
+    }
+
+    fun onApePBlur() {
+        _uiState.value = validateForm(
+            _uiState.value.copy(apePTouched = true)
+        )
     }
 
     fun onApeMChange(value: String) {
-        _uiState.value = _uiState.value.copy(apeMClient = value)
+        _uiState.value.copy(apeMClient = value)
     }
 
     fun onTelephone(value: String) {
-        _uiState.value = _uiState.value.copy(telephone = value)
+        _uiState.value = validateForm(
+            _uiState.value.copy(
+                telephone = value.filter { it.isDigit() },
+                telephoneTouched = true
+            )
+        )
+    }
+
+    fun onTelephoneBlur() {
+        _uiState.value = validateForm(
+            _uiState.value.copy(telephoneTouched = true)
+        )
     }
 
     fun startCreate() {
@@ -63,16 +98,26 @@ class ClientViewModel(
     }
 
     fun addClient() {
-        val state = _uiState.value
+        val validatedState = validateForm(
+            _uiState.value.copy(
+                nameTouched = true,
+                apePTouched = true,
+                telephoneTouched = true
+            )
+        )
 
-        if (state.nameClient.isBlank() || state.apePClient.isBlank()) return
+        _uiState.value = validatedState
+
+        if (!validatedState.isValid) return
+
+        if (validatedState.nameClient.isBlank() || validatedState.apePClient.isBlank()) return
 
         val newClient = Clients(
             idClient = UUID.randomUUID().toString(),
-            nameClient = state.nameClient,
-            apePClient = state.apePClient,
-            apeMClient = state.apeMClient,
-            telephone = state.telephone
+            nameClient = validatedState.nameClient,
+            apePClient = validatedState.apePClient,
+            apeMClient = validatedState.apeMClient,
+            telephone = validatedState.telephone
         )
 
 
@@ -102,7 +147,7 @@ class ClientViewModel(
 
             val client = repository.getClientById(idClient)
 
-            if (client != null){
+            if (client != null) {
                 _uiState.value = ClientUiState(
                     isLoading = false,
                     isEdit = true,
@@ -126,10 +171,10 @@ class ClientViewModel(
     fun updateClient() {
         val state = _uiState.value
 
-        Log.w("ClientViewModel","Valor de idClient: ${state.idClient}")
+        Log.w("ClientViewModel", "Valor de idClient: ${state.idClient}")
 
         val client = Clients(
-            idClient = state.idClient?: return,
+            idClient = state.idClient ?: return,
             nameClient = state.nameClient,
             apePClient = state.apePClient,
             apeMClient = state.apeMClient,
@@ -183,5 +228,37 @@ class ClientViewModel(
 
     fun clearForm() {
         _uiState.value = ClientUiState()
+    }
+
+    private fun validateForm(state: ClientUiState): ClientUiState {
+
+        val nameResult = ClientValidator.name(state.nameClient)
+        val apePResult = ClientValidator.apeP(state.apePClient)
+        val phoneResult = ClientValidator.telephone(state.telephone)
+
+        val isValid =
+            nameResult is ValidationResult.Valid &&
+                    apePResult is ValidationResult.Valid &&
+                    phoneResult is ValidationResult.Valid
+
+        return state.copy(
+            nameError =
+                if (state.nameTouched)
+                    (nameResult as? ValidationResult.Invalid)?.message
+                else
+                    null,
+
+            apePError =
+                if (state.apePTouched)
+                    (apePResult as? ValidationResult.Invalid)?.message
+                else
+                    null,
+            telephoneError =
+                if (state.telephoneTouched)
+                    (phoneResult as? ValidationResult.Invalid)?.message
+                else
+                    null,
+            isValid = isValid
+        )
     }
 }

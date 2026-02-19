@@ -104,14 +104,14 @@ fun AddCategoryScreen(
                 Column(
                     horizontalAlignment = Alignment.Start
                 ) {
-                    AddCategory(
-                        texto = stringResource(R.string.label_name_category),
-                        valueInput = stateCategory.nameCategory,
+                    CustomizedOutlinedTextField(
+                        label = { Text(stringResource(R.string.label_name_category)) },
+                        value = stateCategory.nameCategory,
                         onValueChange = viewModel::onNameCategory
                     )
-                    AddCategory(
-                        texto = stringResource(R.string.label_description_category),
-                        valueInput = stateCategory.descriptionCategory,
+                    CustomizedOutlinedTextField(
+                        label = { Text(stringResource(R.string.label_description_category)) },
+                        value = stateCategory.descriptionCategory ?: "",
                         onValueChange = viewModel::onDescriptionCategory
                     )
                 }
@@ -155,37 +155,3 @@ fun AddCategoryScreen(
         }
     }
 }
-
-@Composable
-fun AddCategory(valueInput: String?, texto: String, onValueChange: (String) -> Unit) {
-    Spacer(
-        modifier = Modifier
-            .height(10.dp)
-            .fillMaxWidth()
-    )
-    CustomizedOutlinedTextField(
-        valueInput,
-        label = { Text(texto) },
-        onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-//            CustomizedFilledCard(onClick = {}) {
-//                CustomizedButton(
-//                    onClick = {
-//                        if (nameInput.isNotBlank()) {
-//                            val newCategory = Categories(
-//                                nameCategory = nameInput,
-//                                descriptionCategory = descriptionInput,
-//                                idCategory = UUID.randomUUID().toString()
-//                            )
-//                            viewModel.addCategory(newCategory)
-//
-//                            nameInput = ""
-//                            descriptionInput = ""
-//                        }
-//                    }) {
-//                    Text(text = stringResource(R.string.button_add_category))
-//                }
-//            }

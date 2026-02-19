@@ -10,5 +10,15 @@ data class ClientUiState(
     val nameClient: String = "",
     val apePClient: String = "",
     val apeMClient: String = "",
-    val telephone : String = ""
+    val telephone : String = "",
+
+    val nameError: String? = null,
+    val apePError: String? = null,
+    val telephoneError: String? = null,
+
+    val nameTouched: Boolean = false,
+    val apePTouched: Boolean = false,
+    val telephoneTouched: Boolean = false,
+
+    val isValid: Boolean = false
 )

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -114,14 +116,19 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                         value = stateClient.nameClient,
                         label = { Text( stringResource(R.string.label_name_client)) },
                         onValueChange = viewModel::onNameChange,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        error = stateClient.nameError,
+                        onFocusLost = viewModel::onNameBlur
+
                     )
                     Row {
                         CustomizedOutlinedTextField(
                             value = stateClient.apePClient,
                             label = { Text( stringResource(R.string.label_apep_client)) },
                             onValueChange = viewModel::onApePChange,
-                            modifier = Modifier.weight(2f)
+                            modifier = Modifier.weight(2f),
+                            error = stateClient.apePError,
+                            onFocusLost = viewModel::onApePBlur
                         )
                         CustomizedOutlinedTextField(
                             value = stateClient.apeMClient,
@@ -134,7 +141,12 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                         value = stateClient.telephone,
                         label = { Text( stringResource(R.string.label_telephone_client)) },
                         onValueChange = viewModel::onTelephone,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        error = stateClient.telephoneError,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Phone
+                        ),
+                        onFocusLost = viewModel::onTelephoneBlur
                     )
                 }
             }
