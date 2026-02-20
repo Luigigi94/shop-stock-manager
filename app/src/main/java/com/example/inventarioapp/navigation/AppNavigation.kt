@@ -98,12 +98,6 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 navController
             )
         }
-        composable(route = AppScreens.PurchaseScreen.route) {
-            PurchaseScreen(
-                darkThemeState,
-                navController
-            )
-        }
         composable(
             route = AppScreens.EditCategoryScreen.route + "/{categoryUUID}",
             arguments = listOf(navArgument(name = "categoryUUID") {
@@ -136,20 +130,57 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         ){
             EditClientScreen(darkThemeState, navController, clientId = it.arguments?.getString("clientUUID"))
         }*/
+        /*composable(route = AppScreens.PurchaseScreen.route) {
+            PurchaseScreen(
+                darkThemeState,
+                navController
+            )
+        }
         composable(route = AppScreens.InvoiceScreen.route) {
             InvoiceScreen(
                 darkThemeState,
                 navController
             )
-        }
-        composable(
-            route = AppScreens.PurchaseProductScreen.route + "/{current_purchase}",
+        }*/
+        /*composable(
+            route = AppScreens.PurchaseProductScreen.route *//*+ "/{current_purchase}",
             arguments = listOf(navArgument(name = "current_purchase") {
                 type = NavType.StringType
-            })
+            })*//*
         ) {
             PurchaseProductScreen(darkThemeState, navController)
+        }*/
+
+        composable(AppScreens.PurchaseScreen.route) {
+            PurchaseScreen(darkThemeState, navController)
+        }
+        composable(
+            route = "${AppScreens.PurchaseProductScreen.route}/{purchaseId}?itemId={itemId}",
+            arguments = listOf(
+                navArgument("purchaseId"){ type = NavType.StringType },
+                navArgument("itemId"){
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+
+            val purchaseId = backStackEntry.arguments?.getString("purchaseId")
+            val itemId = backStackEntry.arguments?.getString("itemId")
+
+            PurchaseProductScreen(
+                darkThemeState,
+                navController,
+                onSave = { navController.popBackStack() },
+                purchaseId = purchaseId,
+                itemId = itemId
+            )
+        }
+        composable(route = "${AppScreens.InvoiceScreen.route}/{purchaseId}"){
+            InvoiceScreen(darkThemeState, navController)
         }
     }
 
 }
+

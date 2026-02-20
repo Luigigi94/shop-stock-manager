@@ -10,10 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.inventarioapp.model.PurchaseItem
+import com.example.inventarioapp.navigation.AppScreens
+import com.example.inventarioapp.state.PurchaseItemList
 
 @Composable
 fun CustomizedListedPurchaseItems(
+    navController: NavController,
     items: List<PurchaseItem>
 ) {
     CustomizedElevatedCard(
@@ -27,12 +31,14 @@ fun CustomizedListedPurchaseItems(
         LazyColumn {
             items(items) { item ->
                 CustomizedFilledCard(
-                    onClick = {}, modifier = Modifier
+                    onClick = {
+                        navController.navigate(route = "${AppScreens.PurchaseProductScreen.route}")
+                    }, modifier = Modifier
                         .fillMaxWidth()
                         .padding(12.dp)
                 ) {
                     Column {
-                        Text(text = "${item.product.nameProduct} x ${item.quantity}")
+                        Text(text = "${item.productName} x ${item.quantity}")
                         Text(text = "${item.subtotal}")
                     }
                 }

@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,9 +37,14 @@ import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavController, purchaseViewModel: PurchaseViewModel = viewModel()){
+fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavController, idUser: String? = "Admin", purchaseViewModel: PurchaseViewModel = viewModel()){
+//    val cart by purchaseViewModel.cart.collectAsState()
     val cart by purchaseViewModel.cart.collectAsState()
     var expandedFAB by remember { mutableStateOf(false) }
+
+    LaunchedEffect(idUser) {
+        purchaseViewModel.observeCart(idUser.toString())
+    }
 
     Scaffold(
         topBar = {
@@ -58,9 +64,8 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
                 ) {
                     FloatingActionButton(
                         onClick = {
-                            navController.currentBackStackEntry?.let {
-                                navController.navigate(route = "${AppScreens.PurchaseProductScreen.route}/current_purchase")
-                            }
+                            val cartId = cart?.id ?: "new"
+                            navController.navigate("${AppScreens.PurchaseProductScreen.route}/${cart?.id}?itemId=${null}")
                         }
                     ) {
                         Icon(
@@ -70,8 +75,8 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
                     }
                     FloatingActionButton(
                         onClick = {
-                            purchaseViewModel.confirmPurchase {
-                                navController.navigate(AppScreens.InvoiceScreen.route)
+                            cart?.let { currentCart ->
+                                navController.navigate("${AppScreens.PurchaseProductScreen.route}/${currentCart.id}/null")
                             }
                         }
                     ) {
@@ -103,13 +108,16 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
                 }
             }
         },
+        bottomBar = {
+            Text(text = "Total: ${cart?.total ?: 0}")
+        }
     ) { innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)
             .hideKeyboardOnTap(),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(text = stringResource(R.string.title_purchase))
-            CustomizedListedPurchaseItems(cart)
+            CustomizedListedPurchaseItems(navController,cart?.items ?: emptyList())
         }
     }
 }

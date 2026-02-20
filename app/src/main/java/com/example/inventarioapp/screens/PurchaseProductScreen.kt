@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.model.Products
-import com.example.inventarioapp.model.PurchaseItem
+//import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
@@ -42,7 +42,10 @@ import com.example.inventarioapp.viewmodel.PurchaseViewModel
 fun PurchaseProductScreen(
     darkTheme: MutableState<Boolean>,
     navController: NavController,
-    purchaseViewModel: PurchaseViewModel = viewModel()
+    purchaseViewModel: PurchaseViewModel = viewModel(),
+    onSave: () -> Unit = { navController.popBackStack() },
+    purchaseId: String?,
+    itemId: String?
 ){
     val productViewModel: ProductViewModel = viewModel()
     val clientViewModel: ClientViewModel = viewModel()
@@ -50,27 +53,34 @@ fun PurchaseProductScreen(
     val clients by clientViewModel.clients.collectAsState()
     val products by productViewModel.products.collectAsState()
 
-/*    var selectedClient by remember { mutableStateOf<Clients?>(null) }
+    val clientsWithAnonymous = remember(clients) {
+        listOf(null) + clients
+    }
+    var selectedClient by remember { mutableStateOf<Clients?>(null) }
     var selectedProduct by remember { mutableStateOf<Products?>(null) }
 
-    var quantityProduct by remember { mutableStateOf("") }*/
+    var quantityProduct by remember { mutableStateOf("1") }
     val snackbarHostState = remember { SnackbarHostState() }
-    val statePurchaseItem by purchaseViewModel.uiState.collectAsState()
+    val statePurchaseItem by purchaseViewModel.cart.collectAsState()
 
-    val selectedClient = clients.firstOrNull{
-        it.idClient == statePurchaseItem.idClient
+    /*val selectedClient = clients.firstOrNull{
+        it.idClient == statePurchaseItem?.clientId
     }
     val selectedProduct = products.firstOrNull{
-        it.idProduct == statePurchaseItem.idProduct
-    }
+        it.idProduct == statePurchaseItem.
+    }*/
 
 
-    LaunchedEffect(purchaseId) {
+    /*LaunchedEffect(purchaseId) {
         if (purchaseId == null){
             purchaseViewModel.startCreate()
         } else {
             purchaseViewModel.loadPurchase(purchaseId)
         }
+    }*/
+
+    /*LaunchedEffect(Unit) {
+        purchaseViewModel.startCreate()
     }
 
     if (statePurchaseItem.isLoading){
@@ -83,7 +93,7 @@ fun PurchaseProductScreen(
         LaunchedEffect(Unit) {
             snackbarHostState.showSnackbar(text)
         }
-    }
+    }*/
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -100,11 +110,11 @@ fun PurchaseProductScreen(
         Column(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(innerPadding).hideKeyboardOnTap(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                if (statePurchaseItem.isEdit) {
+                /*if (statePurchaseItem.isEdit) {
                     Text(text = stringResource(R.string.title_edit_purchase))
-                } else {
+                } else {*/
                     Text(text = stringResource(R.string.title_purchase))
-                }
+//                }
                 CustomizedFilledCard(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
@@ -115,11 +125,11 @@ fun PurchaseProductScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         CustomizedExposedDropdownMenu(
-                            items = clients,
+                            items = clientsWithAnonymous,
                             selectedItem = selectedClient,
-                            label = "Cliente",
-                            itemLabel = { it.nameClient+" "+it.apePClient+" "+it.apeMClient },
-                            onItemSelected = { purchaseViewModel.onIdClient(it.idClient) },
+                            label = "Cliente (Opcional)",
+                            itemLabel = { (it?.nameClient+" "+it?.apePClient+" "+it?.apeMClient)?: "Anonimo" },
+                            onItemSelected = { selectedClient = it },
                             modifier = Modifier.fillMaxWidth(),
                         )
                         CustomizedExposedDropdownMenu(
@@ -127,17 +137,18 @@ fun PurchaseProductScreen(
                             selectedItem = selectedProduct,
                             label = "Producto",
                             itemLabel = { it.nameProduct },
-                            onItemSelected = { purchaseViewModel.onIdProduct(it.idProduct) },
+                            onItemSelected = { selectedProduct = it },
                             modifier = Modifier.fillMaxWidth(),
-                            isError = statePurchaseItem.idProductError != null,
-                            supportingText = statePurchaseItem.idProductError
+                            /*isError = statePurchaseItem.idProductError != null,
+                            supportingText = statePurchaseItem.idProductError*/
                         )
                         CustomizedOutlinedTextField(
                             modifier = Modifier.fillMaxWidth(),
-                            onValueChange = purchaseViewModel::onQuantity,
-                            value = statePurchaseItem.quantity,
+                            onValueChange = { quantityProduct = it},
+//                            onValueChange = purchaseViewModel::onQuantity,
+                            value = quantityProduct,
                             label = { Text(text = stringResource(R.string.label_quantity_purchase)) },
-                            onFocusLost = purchaseViewModel::onQuantityBlur
+//                            onFocusLost = purchaseViewModel::onQuantityBlur
                         )
                     }
                 }
@@ -147,7 +158,7 @@ fun PurchaseProductScreen(
                 ) {
                     CustomizedButton(
                         onClick = {
-                            val product = selectedProduct ?: return@CustomizedButton
+                            /*val product = selectedProduct ?: return@CustomizedButton
                             val qty = statePurchaseItem.quantity.toIntOrNull() ?: return@CustomizedButton
 
                             val item = PurchaseItem(product, qty)
@@ -155,8 +166,15 @@ fun PurchaseProductScreen(
                             purchaseViewModel.addItem(item, selectedClient)
 
                             quantityProduct = ""
-                            selectedProduct = null
-                            navController.popBackStack()
+                            selectedProduct = null*/
+
+//                            purchaseViewModel.addItem()
+                            selectedProduct?.let {
+//                                purchaseViewModel.addItemAndSave(it, quantityProduct.toInt(), selectedClient)
+//                                purchaseViewModel.savePurchase(selectedClient)
+                                purchaseViewModel.addOrUpdateItem(it, quantityProduct.toInt()/*, "Admin"*/)
+                                onSave()
+                            }
                         }
                     ) {
                         Text(text = "Agregar al carrito")

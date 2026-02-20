@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -39,9 +38,10 @@ import java.util.Locale
 @Composable
 fun InvoiceScreen(
     darkThemeState: MutableState<Boolean>,
-    navController: NavController
+    navController: NavController,
+    viewModel: PurchaseViewModel = viewModel()
 ) {
-    val parentEntry = remember(navController) {
+    /*val parentEntry = remember(navController) {
         navController.getBackStackEntry(AppScreens.PurchaseScreen.route)
     }
 
@@ -50,7 +50,8 @@ fun InvoiceScreen(
     val purchase by purchaseViewModel.lastPurchase.collectAsState()
 
     val client = purchase?.client
-    val itemsPurch = purchase?.items ?: emptyList()
+//    val itemsPurch = purchase?.items ?: emptyList()
+    val itemsPurch by purchaseViewModel.invoiceList.collectAsState()
     val total = purchase?.total ?: 0.0
     val purchaseDate = purchase?.purchaseTimeStamp?.toDate()?.let {
         SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it)
@@ -63,7 +64,9 @@ fun InvoiceScreen(
     LaunchedEffect(purchase) {
         Log.d("InvoiceScreen", "PURCHASE -> $purchase")
         Log.d("InvoiceScreen", "CLIENT -> ${purchase?.client}")
-    }
+    }*/
+
+    val purchase by viewModel.cart.collectAsState()
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
@@ -110,11 +113,11 @@ fun InvoiceScreen(
                             text = stringResource(R.string.label_client_invoice),
                             style = MaterialTheme.typography.labelMedium
                         )
-                        Text(text = "$clientName $clientApP $clientApM")
+                        Text(text = "{purchase?.clientName}")
                     }
                     Column {
                         Text(text = stringResource(R.string.label_timestamp_invoice), style = MaterialTheme.typography.labelMedium)
-                        Text(text = "$purchaseDate")
+                        Text(text = "purchaseDate")
                     }
                 }
                 HorizontalDivider()
@@ -128,20 +131,21 @@ fun InvoiceScreen(
                     Text("Subtotal", modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                 }
                 HorizontalDivider()
+                /*
                 LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
                     items(itemsPurch) { product ->
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                product.nameProduct,
+                                product.name,
                                 modifier = Modifier.weight(2f)
                             )
                             Text(
-                                "$${product.product.priceProduct}",
+                                "$${product.price}",
                                 modifier = Modifier.weight(1f),
                                 textAlign = TextAlign.End
                             )
                             Text(
-                                text = "${product.product.quantityProduct}",
+                                text = "${product.quantity}",
                                 modifier = Modifier.weight(1f),
                                 textAlign = TextAlign.End
                             )
@@ -153,18 +157,21 @@ fun InvoiceScreen(
                         }
                     }
                 }
+                */
+                purchase?.items?.forEach {
+                    Text("${it.productName} x${it.quantity} = $${it.subtotal}")
+                }
                 HorizontalDivider(thickness = 2.dp)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = "$${total}",
+                        text = "$${purchase?.total}",
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
             }
-//            }
         }
     }
 }
