@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.inventarioapp.navigation.AppScreens
+import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
+import com.example.inventarioapp.viewmodel.SessionViewModel
 
 @Composable
-fun LoginBodyContent(navController: NavController, modifier: Modifier = Modifier){
+fun LoginBodyContent(navController: NavController, modifier: Modifier = Modifier, sessionViewModel: SessionViewModel){
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -27,6 +29,7 @@ fun LoginBodyContent(navController: NavController, modifier: Modifier = Modifier
         Text(text = "Inventario")
         Button(
             onClick = {
+                sessionViewModel.loginAsAdmin()
                 navController.navigate(route = AppScreens.MenuScreen.route)
             }
         ) {
@@ -38,6 +41,7 @@ fun LoginBodyContent(navController: NavController, modifier: Modifier = Modifier
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(darkThemeState: MutableState<Boolean>, navController: NavController) {
+    val sessionViewModel = LocalSessionViewModel.current
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
@@ -49,6 +53,6 @@ fun LoginScreen(darkThemeState: MutableState<Boolean>, navController: NavControl
             )
         }
     ) { innerPadding ->
-        LoginBodyContent(navController, Modifier.padding(innerPadding))
+        LoginBodyContent(navController, Modifier.padding(innerPadding), sessionViewModel)
     }
 }

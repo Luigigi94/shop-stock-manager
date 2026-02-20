@@ -19,9 +19,10 @@ import com.example.inventarioapp.screens.PurchaseProductScreen
 import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.ReservesScreen
 import com.example.inventarioapp.screens.SalesByUserScreen
+import com.example.inventarioapp.viewmodel.SessionViewModel
 
 @Composable
-fun AppNavigation(darkThemeState: MutableState<Boolean>) {
+fun AppNavigation(darkThemeState: MutableState<Boolean>, sessionViewModel: SessionViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
