@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.inventarioapp.model.Cart
 import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.state.PurchaseItemList
@@ -18,7 +19,9 @@ import com.example.inventarioapp.state.PurchaseItemList
 @Composable
 fun CustomizedListedPurchaseItems(
     navController: NavController,
-    items: List<PurchaseItem>
+    cart: Cart,
+    onEditItem: (PurchaseItem) -> Unit,
+    onRemoveItem: (PurchaseItem) -> Unit
 ) {
     CustomizedElevatedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -29,17 +32,22 @@ fun CustomizedListedPurchaseItems(
 //        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer)
     ) {
         LazyColumn {
-            items(items) { item ->
+            items(cart.items) { item ->
                 CustomizedFilledCard(
-                    onClick = {
-                        navController.navigate(route = "${AppScreens.PurchaseProductScreen.route}")
-                    }, modifier = Modifier
+                    onClick = { onEditItem(item) },
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(12.dp)
                 ) {
                     Column {
                         Text(text = "${item.productName} x ${item.quantity}")
                         Text(text = "${item.subtotal}")
+
+                        CustomizedButton(
+                            onClick = { onRemoveItem(item) }
+                        ) {
+                            Text(text = "Eliminar")
+                        }
                     }
                 }
             }

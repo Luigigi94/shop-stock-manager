@@ -54,13 +54,10 @@ class PurchaseViewModel(
         quantity: Int
     ) {
         Log.d("PurchaseViewModel", "Revisando que no vengan obj null\nproducto: $product\nCantidad: $quantity")
-//        val current = _cart.value ?: Cart(id = userId?: "Admin", userId = userId?: "Admin")
         val current = _cart.value ?: return
 
-//        val existingItem = current.items.find { it.productId == product.idProduct }
         val existingItem = current.items.indexOfFirst { it.productId == product.idProduct }
         val updatedItems = if (existingItem != -1) {
-            // sumar cantidad al existente
             current.items.mapIndexed { i, item ->
                 if (i == existingItem) {
                     val newQuantity = item.quantity + quantity
@@ -71,7 +68,6 @@ class PurchaseViewModel(
                 } else item
             }
         } else {
-            // agregar nuevo producto
             current.items + PurchaseItem(
                 id = UUID.randomUUID().toString(),
                 productId = product.idProduct,
@@ -87,6 +83,39 @@ class PurchaseViewModel(
 
         Log.d("PurchaseViewModel", "antes de llamar al repository.saveCart")
         viewModelScope.launch { repository.saveCart(updatedCart) }
+    }
+
+    fun updateItemQuantity(itemId: String, quantity: Int){
+        val current = _cart.value ?: return
+
+        val updatedItems = current.items.map { item ->
+            if (item.id == itemId){
+                item.copy(
+                    quantity = quantity,
+                    subtotal = quantity * item.price
+                )
+            } else {
+                item
+            }
+        }
+
+        saveUpdatedCart(updatedItems)
+    }
+
+    private fun saveUpdatedCart(items: List<PurchaseItem>){
+        val current = _cart.value ?: return
+
+        val updatedCart = current.copy(
+            items = items,
+            total = items.sumOf { it.subtotal },
+            updatedAt = System.currentTimeMillis()
+        )
+
+        _cart.value = updatedCart
+
+        viewModelScope.launch {
+            repository.saveCart(updatedCart)
+        }
     }
 
     fun removeItem(itemId: String, userId: String?) {

@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -37,7 +38,12 @@ import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavController, idUser: String? = "Admin", purchaseViewModel: PurchaseViewModel = viewModel()){
+fun PurchaseScreen(
+    darkThemeState: MutableState<Boolean>,
+    navController: NavController,
+    idUser: String? = "Admin",
+    purchaseViewModel: PurchaseViewModel = viewModel()
+) {
 //    val cart by purchaseViewModel.cart.collectAsState()
     val cart by purchaseViewModel.cart.collectAsState()
     var expandedFAB by remember { mutableStateOf(false) }
@@ -46,78 +52,84 @@ fun PurchaseScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
         purchaseViewModel.observeCart(idUser.toString())
     }
 
-    Scaffold(
-        topBar = {
-            CustomizedTopAppBar(
-                title = "PurchaseScreen",
-                navController = navController,
-                darkThemeState = darkThemeState,
-                showBack = true,
-                showThemeSwitch = true
-            )
-        },
-        floatingActionButton = {
-            if (expandedFAB) {
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    FloatingActionButton(
-                        onClick = {
-                            val cartId = cart?.id ?: "new"
-                            navController.navigate("${AppScreens.PurchaseProductScreen.route}/${cart?.id}?itemId=${null}")
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.AddShoppingCart,
-                            contentDescription = "Confirmar Compra"
-                        )
-                    }
-                    FloatingActionButton(
-                        onClick = {
-                            cart?.let { currentCart ->
-                                navController.navigate("${AppScreens.PurchaseProductScreen.route}/${currentCart.id}/null")
-                            }
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ShoppingCartCheckout,
-                            contentDescription = "Confirmar Compra"
-                        )
-                    }
-                    FloatingActionButton(
-                        onClick = {expandedFAB = false}
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Confirmar Compra"
-                        )
-                    }
-                }
-            } else {
+    Scaffold(topBar = {
+        CustomizedTopAppBar(
+            title = "PurchaseScreen",
+            navController = navController,
+            darkThemeState = darkThemeState,
+            showBack = true,
+            showThemeSwitch = true
+        )
+    }, floatingActionButton = {
+        if (expandedFAB) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 FloatingActionButton(
-//                    onClick = { navController.navigate(route = AppScreens.InvoiceScreen.route+"/current_purchase" ) },
-                    onClick = { expandedFAB = true },
-                    containerColor = MaterialTheme.colorScheme.primary,
-
-                ) {
+                    onClick = {
+                        val cartId = cart?.id ?: "Admin"
+                        val routeParam = "${AppScreens.PurchaseProductScreen.route}/${cartId}?itemId="
+                        Log.d("FABAddProduct","Revisando el navParam $routeParam")
+                        navController.navigate(routeParam)
+                    }) {
                     Icon(
-                        imageVector = Icons.Filled.Add,
+                        imageVector = Icons.Filled.AddShoppingCart,
                         contentDescription = "Confirmar Compra"
                     )
                 }
+                FloatingActionButton(
+                    onClick = {
+                        cart?.let { currentCart ->
+                            navController.navigate("${AppScreens.PurchaseProductScreen.route}/${currentCart.id}/null")
+                        }
+                    }) {
+                    Icon(
+                        imageVector = Icons.Filled.ShoppingCartCheckout,
+                        contentDescription = "Confirmar Compra"
+                    )
+                }
+                FloatingActionButton(
+                    onClick = { expandedFAB = false }) {
+                    Icon(
+                        imageVector = Icons.Filled.Close, contentDescription = "Confirmar Compra"
+                    )
+                }
             }
-        },
-        bottomBar = {
-            Text(text = "Total: ${cart?.total ?: 0}")
+        } else {
+            FloatingActionButton(
+//                    onClick = { navController.navigate(route = AppScreens.InvoiceScreen.route+"/current_purchase" ) },
+                onClick = { expandedFAB = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+
+                ) {
+                Icon(
+                    imageVector = Icons.Filled.Add, contentDescription = "Confirmar Compra"
+                )
+            }
         }
-    ) { innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .hideKeyboardOnTap(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    }, bottomBar = {
+        Text(text = "Total: ${cart?.total ?: 0}")
+    }) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .hideKeyboardOnTap(),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             Text(text = stringResource(R.string.title_purchase))
-            CustomizedListedPurchaseItems(navController,cart?.items ?: emptyList())
+            CustomizedListedPurchaseItems(
+                navController,
+                cart = cart ?: return@Column,
+                onEditItem = { item ->
+                    val routeRedirect = "${AppScreens.PurchaseProductScreen.route}/Admin?itemId=${item.id}"
+                    Log.d("PurchaseScreen","Redirecto hacía $routeRedirect")
+                    navController.navigate(route = routeRedirect)
+                },
+                onRemoveItem = { item ->
+                    purchaseViewModel.removeItem(item.id, cart?.userId)
+                }
+            )
         }
     }
 }

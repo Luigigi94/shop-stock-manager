@@ -63,37 +63,24 @@ fun PurchaseProductScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val statePurchaseItem by purchaseViewModel.cart.collectAsState()
 
-    /*val selectedClient = clients.firstOrNull{
-        it.idClient == statePurchaseItem?.clientId
+
+    LaunchedEffect(itemId, statePurchaseItem, products, clients) {
+        Log.d("LaunchedEffect", "revisando que no vengan params null\n itemId: $itemId\n statePurchaseItem: $statePurchaseItem\n products: $products\n clients: $clients")
+        if (itemId == null) return@LaunchedEffect
+        val cart = statePurchaseItem ?: return@LaunchedEffect
+        val item = cart.items.firstOrNull{ it.id == itemId } ?: return@LaunchedEffect
+
+        selectedProduct = products.firstOrNull { it.idProduct == item.productId } ?: return@LaunchedEffect
+
+        quantityProduct = item.quantity.toString()
+
+        Log.d("EditMode",
+            """
+                itemId: $itemId
+                product: $selectedProduct
+                quantity: $quantityProduct
+            """.trimIndent())
     }
-    val selectedProduct = products.firstOrNull{
-        it.idProduct == statePurchaseItem.
-    }*/
-
-
-    /*LaunchedEffect(purchaseId) {
-        if (purchaseId == null){
-            purchaseViewModel.startCreate()
-        } else {
-            purchaseViewModel.loadPurchase(purchaseId)
-        }
-    }*/
-
-    /*LaunchedEffect(Unit) {
-        purchaseViewModel.startCreate()
-    }
-
-    if (statePurchaseItem.isLoading){
-        CircularProgressIndicator()
-        return
-    }
-
-    if (statePurchaseItem.success) {
-        val text = stringResource(R.string.menu_label_add_purchase)
-        LaunchedEffect(Unit) {
-            snackbarHostState.showSnackbar(text)
-        }
-    }*/
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -170,9 +157,13 @@ fun PurchaseProductScreen(
 
 //                            purchaseViewModel.addItem()
                             selectedProduct?.let {
-//                                purchaseViewModel.addItemAndSave(it, quantityProduct.toInt(), selectedClient)
-//                                purchaseViewModel.savePurchase(selectedClient)
-                                purchaseViewModel.addOrUpdateItem(it, quantityProduct.toInt()/*, "Admin"*/)
+                                val qty = quantityProduct.toInt()
+                                Log.d("selectedProduct","Revisando el itemId: $itemId")
+                                if (itemId == null){
+                                    purchaseViewModel.addOrUpdateItem(it, qty)
+                                } else {
+                                    purchaseViewModel.updateItemQuantity(itemId, qty)
+                                }
                                 onSave()
                             }
                         }
