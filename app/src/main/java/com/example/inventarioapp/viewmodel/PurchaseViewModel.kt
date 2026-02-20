@@ -20,6 +20,9 @@ class PurchaseViewModel(
 
     private val _cart = MutableStateFlow<Cart?>(null)
     val cart: StateFlow<Cart?> = _cart
+
+    private val _purchasesByUser = MutableStateFlow<List<Purchase>>(emptyList())
+    val purchasesByUser: StateFlow<List<Purchase>> = _purchasesByUser
     private val _purchase = MutableStateFlow<Purchase?>(null)
     val purchase: StateFlow<Purchase?> = _purchase
 
@@ -31,6 +34,7 @@ class PurchaseViewModel(
     init {
         val userId = "Admin"
         observeCart(userId)
+        observePurchasesByUser(userId)
     }
 
     fun loadCatalogs() = viewModelScope.launch {
@@ -42,6 +46,14 @@ class PurchaseViewModel(
         viewModelScope.launch {
             repository.observeCart(userId).collect { remoteCart ->
                 _cart.value = remoteCart ?: Cart(id = userId, userId = userId)
+            }
+        }
+    }
+
+    fun observePurchasesByUser(userId: String){
+        viewModelScope.launch {
+            repository.getPurchasesByUser(userId).collect { fetchedList ->
+                _purchasesByUser.value = fetchedList
             }
         }
     }
@@ -134,17 +146,18 @@ class PurchaseViewModel(
         viewModelScope.launch { repository.saveCart(updatedCart) }
     }
 
-    fun confirmCart (client: Clients?, userId: String?){
-        val current = _cart.value?: return
+    fun confirmCart (): String?{
+        val current = _cart.value?: return null
 
+        val purchaseId = UUID.randomUUID().toString()
         val purchase = Purchase(
-            id = UUID.randomUUID().toString(),
-            clientId = client?.idClient,
-            clientName = "${client?.nameClient} ${client?.apePClient} ${client?.apeMClient} " ?: "Anonimo",
+            id = purchaseId,
+            clientId = current.clientId,
+            clientName = "${current.clientName}" ?: "Anonimo",
             items = current.items,
             total = current.total,
             createdAt = System.currentTimeMillis(),
-            userId = userId?: "Admin"
+            userId = current.userId?: "Admin"
         )
 
         viewModelScope.launch {
@@ -152,14 +165,22 @@ class PurchaseViewModel(
             repository.clearCart(purchase.userId)
             _cart.value = null
         }
+
+        return purchaseId
     }
 
-    fun setClient(client: Clients){
+    fun setClient(client: Clients?){
         val current = _cart.value ?: return
 
-        _cart.value = current.copy(
-            clientId = client.idClient,
-            clientName = "${client.nameClient} ${client.apePClient} ${client.apeMClient ?: ""}"
+        val updated = current.copy(
+            clientId = client?.idClient,
+            clientName = "${client?.nameClient} ${client?.apePClient} ${client?.apeMClient ?: ""}"
         )
+
+        _cart.value = updated
+
+        viewModelScope.launch {
+            repository.saveCart(updated)
+        }
     }
 }

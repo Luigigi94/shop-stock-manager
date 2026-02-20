@@ -1,11 +1,11 @@
 package com.example.inventarioapp.screens
 
+//import com.example.inventarioapp.model.PurchaseItem
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -25,16 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
-import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.model.Products
-//import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
-import com.example.inventarioapp.viewmodel.ClientViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
 import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
@@ -48,15 +45,9 @@ fun PurchaseProductScreen(
     itemId: String?
 ){
     val productViewModel: ProductViewModel = viewModel()
-    val clientViewModel: ClientViewModel = viewModel()
-
-    val clients by clientViewModel.clients.collectAsState()
     val products by productViewModel.products.collectAsState()
 
-    val clientsWithAnonymous = remember(clients) {
-        listOf(null) + clients
-    }
-    var selectedClient by remember { mutableStateOf<Clients?>(null) }
+
     var selectedProduct by remember { mutableStateOf<Products?>(null) }
 
     var quantityProduct by remember { mutableStateOf("1") }
@@ -64,8 +55,8 @@ fun PurchaseProductScreen(
     val statePurchaseItem by purchaseViewModel.cart.collectAsState()
 
 
-    LaunchedEffect(itemId, statePurchaseItem, products, clients) {
-        Log.d("LaunchedEffect", "revisando que no vengan params null\n itemId: $itemId\n statePurchaseItem: $statePurchaseItem\n products: $products\n clients: $clients")
+    LaunchedEffect(itemId, statePurchaseItem, products) {
+        Log.d("LaunchedEffect", "revisando que no vengan params null\n itemId: $itemId\n statePurchaseItem: $statePurchaseItem\n products: $products")
         if (itemId == null) return@LaunchedEffect
         val cart = statePurchaseItem ?: return@LaunchedEffect
         val item = cart.items.firstOrNull{ it.id == itemId } ?: return@LaunchedEffect
@@ -111,14 +102,6 @@ fun PurchaseProductScreen(
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        CustomizedExposedDropdownMenu(
-                            items = clientsWithAnonymous,
-                            selectedItem = selectedClient,
-                            label = "Cliente (Opcional)",
-                            itemLabel = { (it?.nameClient+" "+it?.apePClient+" "+it?.apeMClient)?: "Anonimo" },
-                            onItemSelected = { selectedClient = it },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
                         CustomizedExposedDropdownMenu(
                             items = products,
                             selectedItem = selectedProduct,

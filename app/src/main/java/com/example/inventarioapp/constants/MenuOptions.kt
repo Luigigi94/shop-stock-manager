@@ -3,6 +3,7 @@ package com.example.inventarioapp.constants
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.AddBox
+import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.PointOfSale
@@ -50,6 +51,14 @@ object MenuOptions {
             role = null,
             state = true,
             contentDescription = "Icon Add Client"
+        ),
+        OptionsMenu(
+            label = R.string.menu_label_sales,
+            icon = Icons.Filled.Analytics,
+            route = "SalesByUserScreen",
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
         )
     )
 }

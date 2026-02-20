@@ -18,6 +18,7 @@ import com.example.inventarioapp.screens.MenuScreen
 import com.example.inventarioapp.screens.PurchaseProductScreen
 import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.ReservesScreen
+import com.example.inventarioapp.screens.SalesByUserScreen
 
 @Composable
 fun AppNavigation(darkThemeState: MutableState<Boolean>) {
@@ -188,6 +189,21 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 darkThemeState = darkThemeState,
                 navController = navController,
                 purchaseId = purchaseId
+            )
+        }
+        composable(
+            route = "${AppScreens.SalesByUserScreen.route}/{userId}",
+            arguments = listOf(
+                navArgument("userId"){
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: "Admin"
+            SalesByUserScreen(
+                darkThemeState = darkThemeState,
+                navController = navController,
+                userId = userId
             )
         }
     }

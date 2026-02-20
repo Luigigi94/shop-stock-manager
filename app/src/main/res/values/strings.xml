@@ -11,6 +11,7 @@
     <string name="menu_label_add_order">Apartados</string>
     <string name="menu_label_add_purchase">Registrar Compra</string>
     <string name="menu_label_add_client">Registrar Cliente</string>
+    <string name="menu_label_sales">Ventas Hechas</string>
 
     <!--  Forms  -->
     <string name="menu_button_back" translatable="false">Back</string>

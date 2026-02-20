@@ -3,6 +3,7 @@ package com.example.inventarioapp.screens
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -30,10 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
+import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.navigation.AppScreens
+import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedListedPurchaseItems
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
+import com.example.inventarioapp.viewmodel.ClientViewModel
 import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +51,15 @@ fun PurchaseScreen(
 //    val cart by purchaseViewModel.cart.collectAsState()
     val cart by purchaseViewModel.cart.collectAsState()
     var expandedFAB by remember { mutableStateOf(false) }
+
+    val clientViewModel: ClientViewModel = viewModel()
+
+    val clients by clientViewModel.clients.collectAsState()
+
+    val clientsWithAnonymous = remember(clients) {
+        listOf(null) + clients
+    }
+    var selectedClient by remember { mutableStateOf<Clients?>(null) }
 
 //    purchaseViewModel.setClient(clienteSeleccionado)
 
@@ -83,11 +96,9 @@ fun PurchaseScreen(
                 FloatingActionButton(
                     onClick = {
                         val cartConfirmed = purchaseViewModel.confirmCart()
-                        cart?.let { currentCart ->
-                            val routeRedir = "${AppScreens.InvoiceScreen.route}/${currentCart.id}"
-                            Log.d("FABConfirmPurchase", "Redirect to $routeRedir")
-                            navController.navigate(routeRedir)
-                        }
+                        val routeRedir = "${AppScreens.InvoiceScreen.route}/${cartConfirmed}"
+                        Log.d("FABConfirmPurchase", "Redirect to $routeRedir")
+                        navController.navigate(routeRedir)
                     }) {
                     Icon(
                         imageVector = Icons.Filled.ShoppingCartCheckout,
@@ -123,6 +134,20 @@ fun PurchaseScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(text = stringResource(R.string.title_purchase))
+
+            CustomizedExposedDropdownMenu(
+                items = clientsWithAnonymous,
+                selectedItem = selectedClient,
+                label = "Cliente (Opcional)",
+                itemLabel = { (it?.nameClient+" "+it?.apePClient+" "+it?.apeMClient)?: "Anonimo" },
+//                onItemSelected = { selectedClient = it },
+                onItemSelected = {
+                    selectedClient = it
+                    purchaseViewModel.setClient(it)
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+
             CustomizedListedPurchaseItems(
                 navController,
                 cart = cart ?: return@Column,

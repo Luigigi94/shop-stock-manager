@@ -1,6 +1,7 @@
 package com.example.inventarioapp.repository
 
 import android.util.Log
+import androidx.compose.animation.core.snap
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.Cart
 import com.example.inventarioapp.model.Clients
@@ -64,6 +65,20 @@ class PurchaseRepository(
         val sub = carts.document(userId)
             .addSnapshotListener { snap, _ ->
                 trySend(snap?.toObject(Cart::class.java))
+            }
+        awaitClose { sub.remove() }
+    }
+
+    fun getPurchasesByUser(userId: String): Flow<List<Purchase>> = callbackFlow{
+        val sub = purchases
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snap, _ ->
+                val list = snap?.documents
+                    ?.mapNotNull { doc ->
+                        doc.toObject(Purchase::class.java)?.copy(id = doc.id)
+                    }
+                    ?: emptyList()
+                trySend(list)
             }
         awaitClose { sub.remove() }
     }
