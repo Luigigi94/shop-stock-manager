@@ -48,6 +48,8 @@ fun PurchaseScreen(
     val cart by purchaseViewModel.cart.collectAsState()
     var expandedFAB by remember { mutableStateOf(false) }
 
+//    purchaseViewModel.setClient(clienteSeleccionado)
+
     LaunchedEffect(idUser) {
         purchaseViewModel.observeCart(idUser.toString())
     }
@@ -75,13 +77,16 @@ fun PurchaseScreen(
                     }) {
                     Icon(
                         imageVector = Icons.Filled.AddShoppingCart,
-                        contentDescription = "Confirmar Compra"
+                        contentDescription = "Agregar al carrito de compra"
                     )
                 }
                 FloatingActionButton(
                     onClick = {
+                        val cartConfirmed = purchaseViewModel.confirmCart()
                         cart?.let { currentCart ->
-                            navController.navigate("${AppScreens.PurchaseProductScreen.route}/${currentCart.id}/null")
+                            val routeRedir = "${AppScreens.InvoiceScreen.route}/${currentCart.id}"
+                            Log.d("FABConfirmPurchase", "Redirect to $routeRedir")
+                            navController.navigate(routeRedir)
                         }
                     }) {
                     Icon(
@@ -92,7 +97,7 @@ fun PurchaseScreen(
                 FloatingActionButton(
                     onClick = { expandedFAB = false }) {
                     Icon(
-                        imageVector = Icons.Filled.Close, contentDescription = "Confirmar Compra"
+                        imageVector = Icons.Filled.Close, contentDescription = "close expandedFAB"
                     )
                 }
             }
@@ -104,7 +109,7 @@ fun PurchaseScreen(
 
                 ) {
                 Icon(
-                    imageVector = Icons.Filled.Add, contentDescription = "Confirmar Compra"
+                    imageVector = Icons.Filled.Add, contentDescription = "open expandedFAB"
                 )
             }
         }

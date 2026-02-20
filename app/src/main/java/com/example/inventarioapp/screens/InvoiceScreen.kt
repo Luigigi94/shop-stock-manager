@@ -1,13 +1,10 @@
 package com.example.inventarioapp.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -19,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,14 +28,13 @@ import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedElevatedCard
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.viewmodel.PurchaseViewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Composable
 fun InvoiceScreen(
     darkThemeState: MutableState<Boolean>,
     navController: NavController,
-    viewModel: PurchaseViewModel = viewModel()
+    viewModel: PurchaseViewModel = viewModel(),
+    purchaseId: String?
 ) {
     /*val parentEntry = remember(navController) {
         navController.getBackStackEntry(AppScreens.PurchaseScreen.route)
@@ -65,8 +60,11 @@ fun InvoiceScreen(
         Log.d("InvoiceScreen", "PURCHASE -> $purchase")
         Log.d("InvoiceScreen", "CLIENT -> ${purchase?.client}")
     }*/
+    val purchase by viewModel.purchase.collectAsState()
 
-    val purchase by viewModel.cart.collectAsState()
+    LaunchedEffect(purchaseId) {
+        purchaseId?.let { viewModel.observePurchase(it) }
+    }
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
@@ -113,7 +111,7 @@ fun InvoiceScreen(
                             text = stringResource(R.string.label_client_invoice),
                             style = MaterialTheme.typography.labelMedium
                         )
-                        Text(text = "{purchase?.clientName}")
+                        Text(text = "${ purchase?.clientName } ")
                     }
                     Column {
                         Text(text = stringResource(R.string.label_timestamp_invoice), style = MaterialTheme.typography.labelMedium)

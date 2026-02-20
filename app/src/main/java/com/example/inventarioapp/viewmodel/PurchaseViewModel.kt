@@ -20,10 +20,9 @@ class PurchaseViewModel(
 
     private val _cart = MutableStateFlow<Cart?>(null)
     val cart: StateFlow<Cart?> = _cart
-    /*
     private val _purchase = MutableStateFlow<Purchase?>(null)
     val purchase: StateFlow<Purchase?> = _purchase
-    */
+
     val products = MutableStateFlow<List<Products>>(emptyList())
     val clients = MutableStateFlow<List<Clients>>(emptyList())
 
@@ -43,6 +42,14 @@ class PurchaseViewModel(
         viewModelScope.launch {
             repository.observeCart(userId).collect { remoteCart ->
                 _cart.value = remoteCart ?: Cart(id = userId, userId = userId)
+            }
+        }
+    }
+
+    fun observePurchase(purchaseId: String){
+        viewModelScope.launch {
+            repository.observePurchase(purchaseId).collect {
+                _purchase.value = it
             }
         }
     }
@@ -147,26 +154,12 @@ class PurchaseViewModel(
         }
     }
 
-    /*fun savePurchase(client: Clients?, userId: String?) = viewModelScope.launch {
-        val current = _cart.value ?: return@launch
+    fun setClient(client: Clients){
+        val current = _cart.value ?: return
 
-        val purchase = current.copy(
-            clientId = client?.idClient,
-            clientName = client?.nameClient ?: "Anónimo",
-            userId = userId ?: "Admin"
+        _cart.value = current.copy(
+            clientId = client.idClient,
+            clientName = "${client.nameClient} ${client.apePClient} ${client.apeMClient ?: ""}"
         )
-
-        repository.savePurchase(purchase)
     }
-
-    fun newPurchase() {
-        _cart.value = Purchase(id = UUID.randomUUID().toString())
-    }
-
-    fun addItemAndSave(product: Products, quantity: Int, client: Clients?, userId: String?) {
-        Log.d("PurchaseViewModel","revisanding valores de todos\n $product \n$quantity \n $client")
-        if (_purchase.value == null) newPurchase()
-        addOrUpdateItem(product, quantity)
-        savePurchase(client, userId?: "Admin")
-    }*/
 }
