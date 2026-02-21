@@ -5,6 +5,7 @@ import androidx.compose.animation.core.snap
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.Cart
 import com.example.inventarioapp.model.Clients
+import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.model.Purchase
 import com.example.inventarioapp.model.PurchaseItem
@@ -85,5 +86,15 @@ class PurchaseRepository(
 
     suspend fun clearCart(userId: String) {
         carts.document(userId).delete().await()
+    }
+
+    suspend fun saveInventoryMovements(movements: List<InventoryMovements>){
+        val batch = db.batch()
+        movements.forEach { movement ->
+            val doc = db.collection("InventoryMovements").document(movement.id)
+
+            batch.set(doc, movement)
+        }
+        batch.commit().await()
     }
 }

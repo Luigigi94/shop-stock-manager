@@ -3,12 +3,15 @@ package com.example.inventarioapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.inventarioapp.constants.MovementType
 import com.example.inventarioapp.model.Cart
 import com.example.inventarioapp.model.Clients
+import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.model.Purchase
 import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.repository.PurchaseRepository
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,7 +20,6 @@ import java.util.UUID
 class PurchaseViewModel(
     private val repository: PurchaseRepository = PurchaseRepository()
 ) : ViewModel() {
-
     private val _cart = MutableStateFlow<Cart?>(null)
     val cart: StateFlow<Cart?> = _cart
 
@@ -31,11 +33,11 @@ class PurchaseViewModel(
 
     /* ---------- init ---------- */
 
-    init {
+    /*init {
         val userId = "Admin"
         observeCart(userId)
         observePurchasesByUser(userId)
-    }
+    }*/
 
     fun loadCatalogs() = viewModelScope.launch {
         products.value = repository.getProducts()
@@ -162,6 +164,21 @@ class PurchaseViewModel(
 
         viewModelScope.launch {
             repository.savePurchase(purchase)
+
+            val movements = current.items.map {item ->
+                InventoryMovements(
+                    id = UUID.randomUUID().toString(),
+                    productId = item.productId,
+                    quantity = item.quantity,
+                    type = MovementType.SALE,
+                    reason = "Venta",
+                    referenceId = purchaseId,
+                    userId = purchase.userId,
+                    createdAt = Timestamp.now()
+                )
+            }
+
+            repository.saveInventoryMovements(movements)
             repository.clearCart(purchase.userId)
             _cart.value = null
         }

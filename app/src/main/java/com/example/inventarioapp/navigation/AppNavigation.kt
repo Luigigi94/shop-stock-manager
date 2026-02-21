@@ -2,6 +2,8 @@ package com.example.inventarioapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,7 +13,6 @@ import com.example.inventarioapp.screens.AddCategoryScreen
 import com.example.inventarioapp.screens.AddProductScreen
 import com.example.inventarioapp.screens.ClientScreen
 import com.example.inventarioapp.screens.EditCategoryScreen
-import com.example.inventarioapp.screens.EditProductScreen
 import com.example.inventarioapp.screens.InvoiceScreen
 import com.example.inventarioapp.screens.LoginScreen
 import com.example.inventarioapp.screens.MenuScreen
@@ -19,10 +20,11 @@ import com.example.inventarioapp.screens.PurchaseProductScreen
 import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.ReservesScreen
 import com.example.inventarioapp.screens.SalesByUserScreen
+import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.viewmodel.SessionViewModel
 
 @Composable
-fun AppNavigation(darkThemeState: MutableState<Boolean>, sessionViewModel: SessionViewModel) {
+fun AppNavigation(darkThemeState: MutableState<Boolean>) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -110,46 +112,6 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>, sessionViewModel: Sessi
                 it.arguments?.getString("categoryUUID")
             )
         }
-        composable(
-            route = AppScreens.EditProductScreen.route + "/{productUUID}",
-            arguments = listOf(navArgument(name = "productUUID") {
-                type = NavType.StringType
-            })
-        ) {
-            EditProductScreen(
-                darkThemeState,
-                navController,
-                productId = it.arguments?.getString("productUUID")
-            )
-        }
-        /*composable(
-            route = AppScreens.EditClientScreen.route+"/{clientUUID}",
-            arguments = listOf(navArgument(name = "clientUUID"){
-                type = NavType.StringType
-            })
-        ){
-            EditClientScreen(darkThemeState, navController, clientId = it.arguments?.getString("clientUUID"))
-        }*/
-        /*composable(route = AppScreens.PurchaseScreen.route) {
-            PurchaseScreen(
-                darkThemeState,
-                navController
-            )
-        }
-        composable(route = AppScreens.InvoiceScreen.route) {
-            InvoiceScreen(
-                darkThemeState,
-                navController
-            )
-        }*/
-        /*composable(
-            route = AppScreens.PurchaseProductScreen.route *//*+ "/{current_purchase}",
-            arguments = listOf(navArgument(name = "current_purchase") {
-                type = NavType.StringType
-            })*//*
-        ) {
-            PurchaseProductScreen(darkThemeState, navController)
-        }*/
 
         composable(AppScreens.PurchaseScreen.route) {
             PurchaseScreen(darkThemeState, navController)
@@ -192,19 +154,10 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>, sessionViewModel: Sessi
                 purchaseId = purchaseId
             )
         }
-        composable(
-            route = "${AppScreens.SalesByUserScreen.route}/{userId}",
-            arguments = listOf(
-                navArgument("userId"){
-                    type = NavType.StringType
-                }
-            )
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId") ?: "Admin"
+        composable(AppScreens.SalesByUserScreen.route) {
             SalesByUserScreen(
-                darkThemeState = darkThemeState,
-                navController = navController,
-                userId = userId
+                darkThemeState,
+                navController
             )
         }
     }

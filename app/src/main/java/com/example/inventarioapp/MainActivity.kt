@@ -39,8 +39,7 @@ class MainActivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.background
                     ) {
                         AppNavigation(
-                            darkThemeState = themeState,
-                            sessionViewModel = sessionViewModel
+                            darkThemeState = themeState
                         )
                     }
                 }

@@ -121,7 +121,6 @@ class ProductViewModel(
         val product = Products(
             idProduct = UUID.randomUUID().toString(),
             nameProduct = validateState.nameProduct,
-            quantityProduct = validateState.quantityProduct,
             descriptionProduct = validateState.descriptionProduct,
             priceProduct = validateState.priceProduct,
             idCategory = validateState.idCategory?: "",
@@ -154,7 +153,6 @@ class ProductViewModel(
                 _uiState.value = ProductUiState(
                     idProduct = product.idProduct,
                     nameProduct = product.nameProduct,
-                    quantityProduct = product.quantityProduct,
                     descriptionProduct = product.descriptionProduct,
                     priceProduct = product.priceProduct,
                     idCategory = product.idCategory,
@@ -178,7 +176,6 @@ class ProductViewModel(
         val product = Products(
             idProduct = state.idProduct,
             nameProduct = state.nameProduct,
-            quantityProduct = state.quantityProduct,
             descriptionProduct = state.descriptionProduct,
             priceProduct = state.priceProduct,
             idCategory = state.idCategory?: "",

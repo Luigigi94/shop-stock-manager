@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.model.Purchase
+import com.example.inventarioapp.ui.LocalSessionViewModel
+import com.example.inventarioapp.ui.components.CustomizedListOfEditables
+import com.example.inventarioapp.ui.components.CustomizedListOfSales
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.PurchaseViewModel
@@ -25,15 +29,21 @@ import com.example.inventarioapp.viewmodel.PurchaseViewModel
 fun SalesByUserScreen(
     darkThemeState: MutableState<Boolean>,
     navController: NavController,
-    userId: String? = "Admin",
     purchaseViewModel: PurchaseViewModel = viewModel()
 ){
-    val userName = "Administrador"
+    val sessionViewModel = LocalSessionViewModel.current
+    val session by sessionViewModel.session.collectAsState()
     val listSales by purchaseViewModel.purchasesByUser.collectAsState()
+
+    LaunchedEffect(session?.userName) {
+        session?.userName?.let {
+            purchaseViewModel.observePurchasesByUser(it)
+        }
+    }
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
-                title = "Ventas de $userName",
+                title = "Ventas de ${session?.userName}",
                 navController = navController,
                 darkThemeState = darkThemeState,
                 showBack = true,
@@ -47,18 +57,11 @@ fun SalesByUserScreen(
                 .fillMaxWidth()
                 .hideKeyboardOnTap()
         ) {
-            ListSalesByUser(listSales)
-        }
-    }
-}
-
-@Composable
-fun ListSalesByUser(sales: List<Purchase>){
-    Column {
-        LazyColumn {
-            items(sales) {edited ->
-                Text(text = edited.items.toString())
-            }
+            CustomizedListOfSales(
+                modifier = Modifier,
+                list = listSales,
+                onItemClick = {}
+            )
         }
     }
 }
