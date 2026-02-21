@@ -55,12 +55,6 @@ fun AddProductScreen(
     productId: String?,
     viewModel: ProductViewModel = viewModel()
 ) {
-//    var nameProduct by remember { mutableStateOf("") }
-//    val quantityProduct by viewModel.quantityProduct.collectAsState()
-
-//    var descriptionProduct by remember { mutableStateOf("") }
-//    var priceProduct by remember { mutableStateOf("") }
-
     var addProductForm by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -228,7 +222,7 @@ fun AddProductScreen(
                             CustomizedExposedDropdownMenu(
                                 items = categories,
                                 selectedItem = selectedCategory,
-                                label = "Categoria",
+                                label = stringResource(R.string.on_action_category),
                                 itemLabel = { it.nameCategory },
                                 onItemSelected = { viewModel.onIdCategory(it.idCategory) },
                                 modifier = Modifier.weight(1f),
@@ -263,32 +257,8 @@ fun AddProductScreen(
                             }
                         },
                         isEdit = stateProduct.isEdit,
-                        label = "Producto"
+                        label = stringResource(R.string.on_action_product)
                     )
-                    /*CustomizedButton(
-                    onClick = {
-                        if (nameProduct.isNotBlank() && priceProduct.isNotBlank() && quantityProduct.isNotBlank() && selectedCategory != null) {
-                            val newProduct = Products(
-                                idProduct = UUID.randomUUID().toString(),
-                                nameProduct = nameProduct,
-                                quantityProduct = quantityProduct.toInt(),
-                                descriptionProduct = descriptionProduct,
-                                priceProduct = priceProduct.toDouble(),
-                                statusProduct = true,
-                                idCategory = selectedCategory!!.idCategory,
-                                createdAt = Timestamp.now()
-                            )
-
-                            viewModel.addProduct(newProduct)
-
-                            nameProduct = ""
-                            quantityProduct = ""
-                            descriptionProduct = ""
-                            priceProduct = ""
-                        }
-                    }) {
-                    Text(text = stringResource(R.string.button_add_product))
-                }*/
                 }
             }
             if (!stateProduct.isEdit && !addProductForm) {

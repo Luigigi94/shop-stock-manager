@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.inventarioapp.R
 import com.example.inventarioapp.constants.MenuOptions
 import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
@@ -116,7 +117,7 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
     val session by sessionViewModel.session.collectAsState()
     Scaffold(topBar = {
         CustomizedTopAppBar(
-            title = "MenuScreen",
+            title = stringResource(R.string.menu_menu),
             darkThemeState = darkThemeState,
             showThemeSwitch = true
         )

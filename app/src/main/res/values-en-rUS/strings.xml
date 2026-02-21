@@ -49,4 +49,7 @@
     <string name="label_quantity_invoice">Quantity</string>
     <string name="label_end_purchase_invoice">End Purchase</string>
     <string name="menu_label_sales">Sales</string>
+    <string name="on_action_category">Category</string>
+    <string name="on_action_product">Product</string>
+    <string name="on_action_client">Client</string>
 </resources>

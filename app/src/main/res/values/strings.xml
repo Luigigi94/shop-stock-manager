@@ -6,12 +6,17 @@
     <string name="menu_edit_category" translatable="false">EditCategoryScreen</string>
     <string name="menu_add_product" translatable="false">AddProductScreen</string>
     <string name="menu_edit_product" translatable="false">EditProductScreen</string>
+    <string name="menu_menu" translatable="false">MenuScreen</string>
     <string name="menu_label_add_product">Agregar Producto</string>
     <string name="menu_label_add_category">Nueva Categoria</string>
     <string name="menu_label_add_order">Apartados</string>
     <string name="menu_label_add_purchase">Registrar Compra</string>
     <string name="menu_label_add_client">Registrar Cliente</string>
     <string name="menu_label_sales">Ventas Hechas</string>
+
+<!--    CustomizedEditRows-->
+    <string name="on_action_category">Categoria</string>
+    <string name="on_action_product">Producto</string>
 
     <!--  Forms  -->
     <string name="menu_button_back" translatable="false">Back</string>
@@ -70,8 +75,7 @@
     <string name="label_quantity_invoice">Cantidad</string>
     <string name="label_subtotal_invoice" translatable="false">Subtotal</string>
     <string name="label_end_purchase_invoice">Finalizar Venta</string>
-
-
+    <string name="on_action_client">Cliente</string>
 
 
 </resources>

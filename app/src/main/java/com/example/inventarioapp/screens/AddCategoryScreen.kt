@@ -176,7 +176,7 @@ fun AddCategoryScreen(
                         }
                     },
                     isEdit = stateCategory.isEdit,
-                    label = "Categoria"
+                    label = stringResource(R.string.on_action_category)
                 )
             }
             if (!stateCategory.isEdit && !addCategoryForm) {
