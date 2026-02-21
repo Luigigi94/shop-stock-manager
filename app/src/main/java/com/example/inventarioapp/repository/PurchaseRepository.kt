@@ -97,4 +97,17 @@ class PurchaseRepository(
         }
         batch.commit().await()
     }
+
+    fun observeStock(productId: String): Flow<Int> = callbackFlow {
+        val sub = db.collection("InventoryMovements")
+            .whereEqualTo("productId", productId)
+            .addSnapshotListener { snap, _ ->
+                val stock = snap?.documents
+                    ?.mapNotNull { it.getLong("quantity")?.toInt() }
+                    ?.sum() ?: 0
+                trySend(stock)
+            }
+        awaitClose { sub.remove() }
+    }
+
 }

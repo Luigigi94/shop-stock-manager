@@ -42,6 +42,8 @@ import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
+import com.example.inventarioapp.viewmodel.PurchaseViewModel
+import com.example.inventarioapp.viewmodel.StockViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,6 +60,8 @@ fun AddProductScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val stateProduct by viewModel.uiState.collectAsState()
+    val stockViewModel: StockViewModel = viewModel()
+    val stockMap by stockViewModel.stock.collectAsState()
 
     LaunchedEffect(productId) {
         if (productId == null){
@@ -154,7 +158,8 @@ fun AddProductScreen(
                             value = stateProduct.quantityProduct.toString(),
                             label = { Text(text = stringResource(R.string.label_quantity_product)) },
                             error = stateProduct.quantityError,
-                            onFocusLost = viewModel::onQuantityBlur)
+                            onFocusLost = viewModel::onQuantityBlur
+                        )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
 //                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { idCategory = it }, value = idCategory, label = { Text(text = stringResource(R.string.label_category_product)) })
