@@ -31,13 +31,17 @@ class PurchaseViewModel(
     val products = MutableStateFlow<List<Products>>(emptyList())
     val clients = MutableStateFlow<List<Clients>>(emptyList())
 
+    private var started = false
+
     /* ---------- init ---------- */
 
-    /*init {
-        val userId = "Admin"
+    fun start(userId: String) {
+        if (started) return
+        started = true
+
         observeCart(userId)
         observePurchasesByUser(userId)
-    }*/
+    }
 
     fun loadCatalogs() = viewModelScope.launch {
         products.value = repository.getProducts()
@@ -179,6 +183,7 @@ class PurchaseViewModel(
             }
 
             repository.saveInventoryMovements(movements)
+            repository.updateStock(movements)
             repository.clearCart(purchase.userId)
             _cart.value = null
         }

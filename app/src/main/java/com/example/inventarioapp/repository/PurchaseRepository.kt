@@ -3,6 +3,7 @@ package com.example.inventarioapp.repository
 import android.util.Log
 import androidx.compose.animation.core.snap
 import com.example.inventarioapp.constants.FirestorePaths
+import com.example.inventarioapp.constants.MovementType
 import com.example.inventarioapp.model.Cart
 import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.model.InventoryMovements
@@ -12,9 +13,11 @@ import com.example.inventarioapp.model.PurchaseItem
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class PurchaseRepository(
@@ -98,16 +101,50 @@ class PurchaseRepository(
         batch.commit().await()
     }
 
-    fun observeStock(productId: String): Flow<Int> = callbackFlow {
-        val sub = db.collection("InventoryMovements")
+    fun observeStock(productId: String): Flow<Int> =
+        /*val sub =*/ db.collection("InventoryMovements")
             .whereEqualTo("productId", productId)
-            .addSnapshotListener { snap, _ ->
-                val stock = snap?.documents
-                    ?.mapNotNull { it.getLong("quantity")?.toInt() }
-                    ?.sum() ?: 0
-                trySend(stock)
+            .snapshots()
+            .map { snapshots ->
+                snapshots.documents.sumOf {doc ->
+                    val qty = doc.getLong("quantity")?.toInt() ?: 0
+                    val type = doc.getString("type")
+
+                    when (type){
+                        MovementType.PURCHASE.toString() -> qty
+                        MovementType.SALE.toString() -> -qty
+                        else -> 0
+                    }
+                }
             }
-        awaitClose { sub.remove() }
+//            .addSnapshotListener { snap, _ ->
+//                val stock = snap?.documents
+//                    ?.mapNotNull { it.getLong("quantity")?.toInt() }
+//                    ?.sum() ?: 0
+//                trySend(stock)
+//            }
+//        awaitClose { sub.remove() }
+
+
+    suspend fun updateStock(movements: List<InventoryMovements>) {
+        movements.forEach { movement ->
+            val stockRef = db.collection("InventoryMovements").document(movement.productId)
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(stockRef)
+                val currentStock = snapshot.getLong("quantity") ?: 0L
+                Log.d("updateStock", "revisanding movimiento ${movement.type}")
+                val newStock = when (movement.type){
+                    MovementType.PURCHASE -> {
+                        currentStock + movement.quantity
+                    }
+                    MovementType.SALE -> {
+                        currentStock - movement.quantity
+                    }
+                    else -> {}
+                }
+                transaction.update(stockRef, "quantity", newStock)
+            }
+        }
     }
 
 }

@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Products
+import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
@@ -47,6 +48,8 @@ fun PurchaseProductScreen(
     val productViewModel: ProductViewModel = viewModel()
     val products by productViewModel.products.collectAsState()
 
+    val sessionViewModel = LocalSessionViewModel.current
+    val session by sessionViewModel.session.collectAsState()
 
     var selectedProduct by remember { mutableStateOf<Products?>(null) }
 
@@ -71,6 +74,10 @@ fun PurchaseProductScreen(
                 product: $selectedProduct
                 quantity: $quantityProduct
             """.trimIndent())
+    }
+
+    LaunchedEffect(Unit) {
+        purchaseViewModel.start(userId = session?.userName ?: "Unlogged")
     }
 
     Scaffold(

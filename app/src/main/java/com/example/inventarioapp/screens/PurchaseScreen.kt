@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.navigation.AppScreens
+import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedListedPurchaseItems
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
@@ -49,6 +50,9 @@ fun PurchaseScreen(
     purchaseViewModel: PurchaseViewModel = viewModel()
 ) {
 //    val cart by purchaseViewModel.cart.collectAsState()
+    val sessionViewModel = LocalSessionViewModel.current
+    val session by sessionViewModel.session.collectAsState()
+
     val cart by purchaseViewModel.cart.collectAsState()
     var expandedFAB by remember { mutableStateOf(false) }
 
@@ -65,6 +69,9 @@ fun PurchaseScreen(
 
     LaunchedEffect(idUser) {
         purchaseViewModel.observeCart(idUser.toString())
+    }
+    LaunchedEffect(Unit) {
+        purchaseViewModel.start(userId = session?.userName ?: "Unlogged")
     }
 
     Scaffold(topBar = {
