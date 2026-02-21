@@ -17,6 +17,7 @@ import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
@@ -117,6 +118,33 @@ class PurchaseRepository(
                     }
                 }
             }
+
+    fun observeStockBulk(productIds: List<String>): Flow<Map<String, Int>> {
+
+        if (productIds.isEmpty()) return flowOf(emptyMap())
+
+        return db.collection("InventoryMovements")
+            .whereIn("productId", productIds)
+            .snapshots()
+            .map { snapshots ->
+
+                snapshots.documents
+                    .groupBy { it.getString("productId")!! }
+                    .mapValues { (_, docs) ->
+
+                        docs.sumOf { doc ->
+                            val qty = doc.getLong("quantity")?.toInt() ?: 0
+                            val type = doc.getString("type")
+
+                            when (type) {
+                                MovementType.PURCHASE.name -> qty
+                                MovementType.SALE.name -> -qty
+                                else -> 0
+                            }
+                        }
+                    }
+            }
+    }
 //            .addSnapshotListener { snap, _ ->
 //                val stock = snap?.documents
 //                    ?.mapNotNull { it.getLong("quantity")?.toInt() }

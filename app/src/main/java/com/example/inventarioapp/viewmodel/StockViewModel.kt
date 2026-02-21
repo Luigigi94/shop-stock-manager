@@ -12,7 +12,7 @@ class StockViewModel (
 ): ViewModel() {
     val stock = MutableStateFlow<Map<String, Int>>(emptyMap())
 
-    fun observeStockForProducts(productIds: List<String>){
+    /*fun observeStockForProducts(productIds: List<String>){
         productIds.forEach { id ->
             viewModelScope.launch {
                 repository.observeStock(id).collect { quantity ->
@@ -21,6 +21,15 @@ class StockViewModel (
                     }
                 }
             }
+        }
+    }*/
+    fun observeStockForProducts(productIds: List<String>) {
+
+        viewModelScope.launch {
+            repository.observeStockBulk(productIds)
+                .collect { stockMap ->
+                    stock.value = stockMap
+                }
         }
     }
 }
