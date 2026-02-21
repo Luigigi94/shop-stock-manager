@@ -1,9 +1,13 @@
 package com.example.inventarioapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.inventarioapp.constants.MovementType
+import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.repository.ProductRepository
+import com.example.inventarioapp.repository.PurchaseRepository
 import com.example.inventarioapp.state.ProductUiState
 import com.example.inventarioapp.validators.ProductValidator
 import com.example.inventarioapp.validators.model.ValidationResult
@@ -17,11 +21,17 @@ import java.util.UUID
 class ProductViewModel(
     private val repository: ProductRepository = ProductRepository()
 ) : ViewModel() {
+
+    private val purchaseRepository: PurchaseRepository = PurchaseRepository()
     private val _products = MutableStateFlow<List<Products>>(emptyList())
     val products: StateFlow<List<Products>> get() = _products
 
-//    private val _uiMessage = MutableStateFlow<String?>(null)
-//    val uiMessage: MutableStateFlow<String?> get() = _uiMessage
+    /*private val _quantityProduct = MutableStateFlow("")
+    val quantityProduct: StateFlow<String> = _quantityProduct
+
+    fun onQuantityProduct(value: String) {
+        _quantityProduct.value = value
+    }*/
 
     private val _selectedProduct = MutableStateFlow<Products?>(null)
     val selectedProduct: MutableStateFlow<Products?> get() = _selectedProduct
@@ -59,9 +69,7 @@ class ProductViewModel(
     }
 
     fun onQuantityBlur() {
-        _uiState.value = validateForm(
-            _uiState.value.copy(quantityTouched = true)
-        )
+        _uiState.value = validateForm(_uiState.value.copy(quantityTouched = true))
     }
 
     fun onDescriptionProduct(value: String) {
@@ -72,7 +80,7 @@ class ProductViewModel(
         _uiState.value = validateForm(
             _uiState.value.copy(
                 priceProduct = value.toDouble(),
-                quantityTouched = true
+                priceTouched = true
             )
         )
     }
@@ -117,7 +125,7 @@ class ProductViewModel(
         _uiState.value = validateState
 
         if (!validateState.isValid) return
-
+        val quantity = validateState.quantityProduct
         val product = Products(
             idProduct = UUID.randomUUID().toString(),
             nameProduct = validateState.nameProduct,
@@ -130,7 +138,13 @@ class ProductViewModel(
             _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
             repository.addProduct(product)
                 .onSuccess {
-                    _uiState.value = ProductUiState(success = true)
+                    _uiState.value = ProductUiState(
+                        success = true,
+                        nameTouched = false,
+                        quantityTouched = false,
+                        priceTouched = false,
+                        idCategoryTouched = false
+                    )
                 }
                 .onFailure { exception ->
                     _uiState.update {
@@ -140,6 +154,22 @@ class ProductViewModel(
                         )
                     }
                 }
+
+            Log.d("ProductViewModel", "validando quantity: $quantity")
+//            val quantity = _uiState.value.quantityProduct.toIntOrNull() ?: 0
+
+            val movements = InventoryMovements(
+                id = UUID.randomUUID().toString(),
+                productId = product.idProduct,
+                quantity = quantity ,
+                type = MovementType.PURCHASE,
+                reason = "Inventario",
+//                referenceId =
+//                userId =
+                createdAt = Timestamp.now()
+            )
+
+            purchaseRepository.saveInventoryMovements(listOf(movements))
         }
     }
 
@@ -237,10 +267,11 @@ class ProductViewModel(
                     null,
 
             quantityError =
-                if (state.quantityTouched)
-                    (quantityResult as? ValidationResult.Invalid)?.message
+                if(state.quantityTouched)
+                        (quantityResult as? ValidationResult.Invalid)?.message
                 else
                     null,
+
 
             priceError =
                 if (state.priceTouched)
@@ -258,6 +289,4 @@ class ProductViewModel(
 
         )
     }
-
-
 }
