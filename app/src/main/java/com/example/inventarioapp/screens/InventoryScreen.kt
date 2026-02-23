@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -25,7 +26,7 @@ fun InventoryScreen(darkThemeState: MutableState<Boolean>, navController: NavCon
             )
         }
     ) {innerPadding ->
-        Row(
+        Column(
             modifier = Modifier.padding(innerPadding)
         ) {
             Text(text = "inventory")

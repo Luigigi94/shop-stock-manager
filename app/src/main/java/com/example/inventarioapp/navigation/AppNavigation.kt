@@ -161,7 +161,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 navController
             )
         }
-        composable(AppScreens.InvoiceScreen.route){
+        composable(AppScreens.InventoryScreen.route){
             InventoryScreen(
                 darkThemeState,
                 navController
