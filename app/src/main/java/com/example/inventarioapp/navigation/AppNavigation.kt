@@ -13,6 +13,7 @@ import com.example.inventarioapp.screens.AddCategoryScreen
 import com.example.inventarioapp.screens.AddProductScreen
 import com.example.inventarioapp.screens.ClientScreen
 import com.example.inventarioapp.screens.EditCategoryScreen
+import com.example.inventarioapp.screens.InventoryScreen
 import com.example.inventarioapp.screens.InvoiceScreen
 import com.example.inventarioapp.screens.LoginScreen
 import com.example.inventarioapp.screens.MenuScreen
@@ -156,6 +157,12 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         }
         composable(AppScreens.SalesByUserScreen.route) {
             SalesByUserScreen(
+                darkThemeState,
+                navController
+            )
+        }
+        composable(AppScreens.InvoiceScreen.route){
+            InventoryScreen(
                 darkThemeState,
                 navController
             )

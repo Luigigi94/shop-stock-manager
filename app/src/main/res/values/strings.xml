@@ -3,6 +3,7 @@
 
     <!--  Menu  -->
     <string name="menu_add_category" translatable="false">AddCategoryScreen</string>
+    <string name="menu_inventory" translatable="false">InventoryScreen</string>
     <string name="menu_edit_category" translatable="false">EditCategoryScreen</string>
     <string name="menu_add_product" translatable="false">AddProductScreen</string>
     <string name="menu_edit_product" translatable="false">EditProductScreen</string>

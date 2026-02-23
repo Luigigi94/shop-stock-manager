@@ -59,6 +59,14 @@ object MenuOptions {
             role = null,
             state = true,
             contentDescription = "Icon Sales by User"
+        ),
+        OptionsMenu(
+            label = R.string.menu_inventory,
+            icon = Icons.Filled.Analytics,
+            route = "InventoryScreen",
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
         )
     )
 }
