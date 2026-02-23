@@ -42,6 +42,7 @@ import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
+import com.example.inventarioapp.ui.forms.ProductForm
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
@@ -62,9 +63,6 @@ fun AddProductScreen(
     val stockViewModel: StockViewModel = viewModel()
     val stockMap by stockViewModel.stock.collectAsState()
     val currentStock = productId?.let { stockMap[it] } ?: 0
-
-//    var quantityProduct by remember(stateProduct.idProduct) { mutableStateOf(stateProduct.quantityProduct) }
-
 
     LaunchedEffect(productId) {
         if (productId == null){
@@ -159,88 +157,23 @@ fun AddProductScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 CustomizedFilledCard(
                     modifier = Modifier.fillMaxWidth(), onClick = {}) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start
-                    ) {
-                        CustomizedOutlinedTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            onValueChange = viewModel::onNameProduct,
-                            value = stateProduct.nameProduct,
-                            label = { Text(text = stringResource(R.string.label_name_product)) },
-                            error = stateProduct.nameError,
-                            onFocusLost = viewModel::onNameBlur
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        CustomizedOutlinedTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            onValueChange = viewModel::onDescriptionProduct,
-                            value = stateProduct.descriptionProduct,
-                            label = { Text(text = stringResource(R.string.label_description_product)) }
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Row {
-                            CustomizedOutlinedTextField(
-                                modifier = Modifier.weight(2f),
-                                onValueChange = viewModel::onPriceProduct,
-                                value = stateProduct.priceProduct.toString(),
-                                label = { Text(text = stringResource(R.string.label_price_product)) },
-                                error = stateProduct.priceError,
-                                onFocusLost = viewModel::onPriceBlur
-                            )
-                            if (stateProduct.isEdit) {
-                                CustomizedOutlinedTextField(
-                                    value = currentStock.toString(),
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    label = { Text(text = stringResource(R.string.label_quantity_product)) },
-                                    modifier = Modifier.weight(2f),
-                                    error = null
-//                                    label = { Text(text = stringResource(R.string.label_quantity_product)) }
-                                )
-                            } else {
-                                CustomizedOutlinedTextField(
-                                    modifier = Modifier.weight(2f),
-                                    onValueChange = { viewModel.onQuantityProduct(it) },
-                                    value = stateProduct.quantityProduct.toString(),
-                                    label = { Text(text = stringResource(R.string.label_quantity_product)) },
-                                    error = stateProduct.quantityError,
-                                    onFocusLost = viewModel::onQuantityBlur
-                                )
-                            }
-                            /*CustomizedOutlinedTextField(
-                                modifier = Modifier.weight(2f),
-                                onValueChange = viewModel::onQuantityProduct,
-                                label = { Text(text = stringResource(R.string.label_quantity_product)) },
-                                value = quantityProduct
-                            )*/
+                    ProductForm(
+                        state = stateProduct,
+                        currentStock = currentStock,
+                        categories = categories,
+                        selectedCategory = selectedCategory,
+                        onNameChange = viewModel::onNameProduct,
+                        onNameBlur = viewModel::onNameBlur,
+                        onDescriptionChange = viewModel::onDescriptionProduct,
+                        onPriceChange = viewModel::onPriceProduct,
+                        onPriceBlur = viewModel::onPriceBlur,
+                        onQuantityChange = viewModel::onQuantityProduct,
+                        onQuantityBlur = viewModel::onQuantityBlur,
+                        onCategorySelected = viewModel::onIdCategory,
+                        onAddCategoryClick = {
+                            navController.navigate(AppScreens.AddCategoryScreen.route)
                         }
-                        Spacer(modifier = Modifier.height(10.dp))
-//                    CustomizedOutlinedTextField(modifier = Modifier, onValueChange = { idCategory = it }, value = idCategory, label = { Text(text = stringResource(R.string.label_category_product)) })
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            CustomizedExposedDropdownMenu(
-                                items = categories,
-                                selectedItem = selectedCategory,
-                                label = stringResource(R.string.on_action_category),
-                                itemLabel = { it.nameCategory },
-                                onItemSelected = { viewModel.onIdCategory(it.idCategory) },
-                                modifier = Modifier.weight(1f),
-                                isError = stateProduct.idCategoryError != null,
-                                supportingText = stateProduct.idCategoryError
-                            )
-                            CustomizedButton(
-                                onClick = {
-                                    navController.navigate(route = AppScreens.AddCategoryScreen.route)
-                                }, modifier = Modifier.weight(0.3f)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Folder,
-                                    contentDescription = "Icon Add Category"
-                                )
-                            }
-                        }
-                    }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
