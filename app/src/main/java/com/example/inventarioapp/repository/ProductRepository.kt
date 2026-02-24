@@ -1,5 +1,6 @@
 package com.example.inventarioapp.repository
 
+import android.util.Log
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.model.PurchaseItem
@@ -56,6 +57,7 @@ class ProductRepository {
                 .await()
                 .toObjects(Products::class.java)
         } catch (e: Exception){
+            Log.e("Repository getInventoryProducts", "Error: $e")
             emptyList()
         }
     }

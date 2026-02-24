@@ -1,23 +1,17 @@
 package com.example.inventarioapp.repository
 
-import android.util.Log
-import com.example.inventarioapp.constants.MovementType
-import com.example.inventarioapp.model.Clients
-import com.example.inventarioapp.model.InventoryMovements
-import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.model.Purchase
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
-class PurchaseRepository(
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-) {
+class PurchaseRepository {
+
+    private val db by lazy {
+        FirebaseFirestore.getInstance()
+    }
 
     private val purchases = db.collection("Purchases")
 
@@ -33,11 +27,11 @@ class PurchaseRepository(
         awaitClose { sub.remove() }
     }
 
-    suspend fun createPurchase(purchase: Purchase): String {
+    /*suspend fun createPurchase(purchase: Purchase): String {
         val doc = purchases.document()
         doc.set(purchase.copy(id = doc.id)).await()
         return doc.id
-    }
+    }*/
 
     suspend fun savePurchase(purchase: Purchase) {
         purchases.document(purchase.id).set(purchase).await()

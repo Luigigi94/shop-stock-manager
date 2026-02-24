@@ -2,8 +2,6 @@ package com.example.inventarioapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,7 +10,6 @@ import androidx.navigation.navArgument
 import com.example.inventarioapp.screens.AddCategoryScreen
 import com.example.inventarioapp.screens.AddProductScreen
 import com.example.inventarioapp.screens.ClientScreen
-import com.example.inventarioapp.screens.EditCategoryScreen
 import com.example.inventarioapp.screens.InventoryScreen
 import com.example.inventarioapp.screens.InvoiceScreen
 import com.example.inventarioapp.screens.LoginScreen
@@ -21,8 +18,6 @@ import com.example.inventarioapp.screens.PurchaseProductScreen
 import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.ReservesScreen
 import com.example.inventarioapp.screens.SalesByUserScreen
-import com.example.inventarioapp.ui.LocalSessionViewModel
-import com.example.inventarioapp.viewmodel.SessionViewModel
 
 @Composable
 fun AppNavigation(darkThemeState: MutableState<Boolean>) {
@@ -101,18 +96,6 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 navController
             )
         }
-        composable(
-            route = AppScreens.EditCategoryScreen.route + "/{categoryUUID}",
-            arguments = listOf(navArgument(name = "categoryUUID") {
-                type = NavType.StringType
-            })
-        ) {
-            EditCategoryScreen(
-                darkThemeState,
-                navController,
-                it.arguments?.getString("categoryUUID")
-            )
-        }
 
         composable(AppScreens.PurchaseScreen.route) {
             PurchaseScreen(darkThemeState, navController)
@@ -180,7 +163,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             )
         }*/
         composable(
-            route = "${AppScreens.InventoryScreen.route}"
+            route = AppScreens.InventoryScreen.route
         ){
             InventoryScreen(
                 darkThemeState,

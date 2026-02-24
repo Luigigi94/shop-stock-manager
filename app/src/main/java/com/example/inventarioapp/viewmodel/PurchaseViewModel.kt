@@ -177,7 +177,7 @@ class PurchaseViewModel(
             clientName = "${current.clientName}" ?: "Anonimo",
             items = current.items,
             total = current.total,
-            createdAt = System.currentTimeMillis(),
+            createdAt = Timestamp.now(),
             userId = current.userId?: "Admin"
         )
 

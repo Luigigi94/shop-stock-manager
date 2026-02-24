@@ -36,30 +36,6 @@ fun InvoiceScreen(
     viewModel: PurchaseViewModel = viewModel(),
     purchaseId: String?
 ) {
-    /*val parentEntry = remember(navController) {
-        navController.getBackStackEntry(AppScreens.PurchaseScreen.route)
-    }
-
-    val purchaseViewModel: PurchaseViewModel = viewModel(parentEntry)
-
-    val purchase by purchaseViewModel.lastPurchase.collectAsState()
-
-    val client = purchase?.client
-//    val itemsPurch = purchase?.items ?: emptyList()
-    val itemsPurch by purchaseViewModel.invoiceList.collectAsState()
-    val total = purchase?.total ?: 0.0
-    val purchaseDate = purchase?.purchaseTimeStamp?.toDate()?.let {
-        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it)
-    }
-
-    val clientName = client?.nameClient ?: ""
-    val clientApP = client?.apePClient ?: ""
-    val clientApM = client?.apeMClient ?: ""
-
-    LaunchedEffect(purchase) {
-        Log.d("InvoiceScreen", "PURCHASE -> $purchase")
-        Log.d("InvoiceScreen", "CLIENT -> ${purchase?.client}")
-    }*/
     val purchase by viewModel.purchase.collectAsState()
 
     LaunchedEffect(purchaseId) {
@@ -129,33 +105,6 @@ fun InvoiceScreen(
                     Text("Subtotal", modifier = Modifier.weight(1f), textAlign = TextAlign.End)
                 }
                 HorizontalDivider()
-                /*
-                LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
-                    items(itemsPurch) { product ->
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                product.name,
-                                modifier = Modifier.weight(2f)
-                            )
-                            Text(
-                                "$${product.price}",
-                                modifier = Modifier.weight(1f),
-                                textAlign = TextAlign.End
-                            )
-                            Text(
-                                text = "${product.quantity}",
-                                modifier = Modifier.weight(1f),
-                                textAlign = TextAlign.End
-                            )
-                            Text(
-                                "$${product.subtotal}",
-                                modifier = Modifier.weight(1f),
-                                textAlign = TextAlign.End
-                            )
-                        }
-                    }
-                }
-                */
                 purchase?.items?.forEach {
                     Text("${it.productName} x${it.quantity} = $${it.subtotal}")
                 }

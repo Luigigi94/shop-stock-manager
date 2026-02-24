@@ -8,6 +8,6 @@ data class Purchase(
     val clientName: String = "Anónimo",
     val items: List<PurchaseItem> = emptyList(),
     val total: Double = 0.0,
-    val createdAt: Long = System.currentTimeMillis(),
+    val createdAt: Timestamp? = null,
     val userId: String = ""
 )

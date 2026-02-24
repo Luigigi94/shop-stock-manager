@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
-class CartRepository (
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-) {
+class CartRepository {
+
+    private val db by lazy {
+        FirebaseFirestore.getInstance()
+    }
     private val carts = db.collection("Carts")
 
     suspend fun saveCart(cart: Cart) {

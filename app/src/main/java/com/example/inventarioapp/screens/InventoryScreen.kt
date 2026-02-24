@@ -31,9 +31,7 @@ import com.example.inventarioapp.viewmodel.InventoryViewModel
 @Composable
 fun InventoryScreen(
     darkThemeState: MutableState<Boolean>,
-    navController: NavController,
-//    productId: String?,
-//    productViewModel: ProductViewModel = viewModel(),
+    navController: NavController
 ) {
     val sessionViewModel = LocalSessionViewModel.current
     val session by sessionViewModel.session.collectAsState()

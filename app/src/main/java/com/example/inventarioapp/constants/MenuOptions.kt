@@ -15,7 +15,7 @@ object MenuOptions {
         OptionsMenu(
             label = R.string.menu_label_add_product,
             icon = Icons.Default.AddBox,
-            route = "AddProductScreen",
+            route = AppNavigationUUIDs.ScreenUUID.PRODUCT,
             role = null,
             state = true,
             contentDescription = "Icon Add Product"
@@ -23,7 +23,7 @@ object MenuOptions {
         OptionsMenu(
             label = R.string.menu_label_add_category,
             icon = Icons.Filled.Folder,
-            route = "AddCategoryScreen",
+            route = AppNavigationUUIDs.ScreenUUID.CATEGORY,
             role = null,
             state = true,
             contentDescription = "Icon Add Category"
@@ -31,7 +31,7 @@ object MenuOptions {
         OptionsMenu(
             label = R.string.menu_label_add_order,
             icon = Icons.AutoMirrored.Filled.ReceiptLong,
-            route = "ReservesScreen",
+            route = AppNavigationUUIDs.ScreenUUID.RESERVES,
             role = null,
             state = true,
             contentDescription = "Icon New Order"
@@ -39,7 +39,7 @@ object MenuOptions {
         OptionsMenu(
             label = R.string.menu_label_add_purchase,
             icon = Icons.Filled.PointOfSale,
-            route = "PurchaseScreen",
+            route = AppNavigationUUIDs.ScreenUUID.PURCHASE,
             role = null,
             state = true,
             contentDescription = "Icon New Purchase"
@@ -47,7 +47,7 @@ object MenuOptions {
         OptionsMenu(
             label = R.string.menu_label_add_client,
             icon = Icons.Filled.PersonAdd,
-            route = "ClientScreen",
+            route = AppNavigationUUIDs.ScreenUUID.CLIENT,
             role = null,
             state = true,
             contentDescription = "Icon Add Client"
@@ -55,7 +55,7 @@ object MenuOptions {
         OptionsMenu(
             label = R.string.menu_label_sales,
             icon = Icons.Filled.Analytics,
-            route = "SalesByUserScreen",
+            route = AppNavigationUUIDs.ScreenUUID.SALESBYUSER,
             role = null,
             state = true,
             contentDescription = "Icon Sales by User"
@@ -63,7 +63,7 @@ object MenuOptions {
         OptionsMenu(
             label = R.string.menu_inventory,
             icon = Icons.Filled.Analytics,
-            route = "InventoryScreen",
+            route = AppNavigationUUIDs.ScreenUUID.INVENTORY,
             role = null,
             state = true,
             contentDescription = "Icon Sales by User"

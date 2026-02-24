@@ -46,7 +46,7 @@ import com.example.inventarioapp.viewmodel.PurchaseViewModel
 fun PurchaseScreen(
     darkThemeState: MutableState<Boolean>,
     navController: NavController,
-    idUser: String? = "Admin",
+    idUser: String? = "",
     purchaseViewModel: PurchaseViewModel = viewModel()
 ) {
 //    val cart by purchaseViewModel.cart.collectAsState()
@@ -68,7 +68,8 @@ fun PurchaseScreen(
 //    purchaseViewModel.setClient(clienteSeleccionado)
 
     LaunchedEffect(idUser) {
-        purchaseViewModel.observeCart(idUser.toString())
+        if (idUser.isNullOrBlank()) return@LaunchedEffect
+        purchaseViewModel.observeCart(idUser)
     }
     LaunchedEffect(Unit) {
         purchaseViewModel.start(userId = session?.userName ?: "Unlogged")
