@@ -60,16 +60,12 @@ fun AddProductScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val stateProduct by viewModel.uiState.collectAsState()
-    val stockViewModel: StockViewModel = viewModel()
-    val stockMap by stockViewModel.stock.collectAsState()
-    val currentStock = productId?.let { stockMap[it] } ?: 0
 
     LaunchedEffect(productId) {
         if (productId == null){
             viewModel.startCreate()
         } else {
             viewModel.loadProduct(productId)
-            stockViewModel.observeStockForProducts(listOf(productId))
         }
     }
 
@@ -159,7 +155,7 @@ fun AddProductScreen(
                     modifier = Modifier.fillMaxWidth(), onClick = {}) {
                     ProductForm(
                         state = stateProduct,
-                        currentStock = currentStock,
+//                        currentStock = currentStock,
                         categories = categories,
                         selectedCategory = selectedCategory,
                         onNameChange = viewModel::onNameProduct,

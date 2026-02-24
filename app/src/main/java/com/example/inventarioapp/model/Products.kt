@@ -12,4 +12,5 @@ data class Products(
     val idCategory: String = "",
     val createdAt: Timestamp? = null,
     val updatedAt: Timestamp? = null,
+    val stock: Int = 0
 )

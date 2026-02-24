@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.constants.MovementType
 import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Products
+import com.example.inventarioapp.repository.InventoryRepository
 import com.example.inventarioapp.repository.ProductRepository
 import com.example.inventarioapp.repository.PurchaseRepository
 import com.example.inventarioapp.state.ProductUiState
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class ProductViewModel(
-    private val repository: ProductRepository = ProductRepository()
+    private val productRepository: ProductRepository = ProductRepository(),
+    private val inventoryRepository: InventoryRepository = InventoryRepository()
 ) : ViewModel() {
 
     private val purchaseRepository: PurchaseRepository = PurchaseRepository()
@@ -62,7 +64,7 @@ class ProductViewModel(
     fun onQuantityProduct(value: String) {
         _uiState.value = validateForm(
             _uiState.value.copy(
-                quantityProduct = value.toInt(),
+                quantityProduct = value.toIntOrNull() ?: 0,
                 quantityTouched = true
             )
         )
@@ -106,7 +108,7 @@ class ProductViewModel(
 
     init {
         viewModelScope.launch {
-            repository.getProducts().collect { fetchedList ->
+            productRepository.getProducts().collect { fetchedList ->
                 _products.value = fetchedList
             }
         }
@@ -125,7 +127,6 @@ class ProductViewModel(
         _uiState.value = validateState
 
         if (!validateState.isValid) return
-        val quantity = validateState.quantityProduct
         val product = Products(
             idProduct = UUID.randomUUID().toString(),
             nameProduct = validateState.nameProduct,
@@ -133,10 +134,11 @@ class ProductViewModel(
             priceProduct = validateState.priceProduct,
             idCategory = validateState.idCategory?: "",
             createdAt = Timestamp.now(),
+            stock = validateState.quantityProduct
         )
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
-            repository.addProduct(product)
+            productRepository.addProduct(product)
                 .onSuccess {
                     _uiState.value = ProductUiState(
                         success = true,
@@ -154,14 +156,12 @@ class ProductViewModel(
                         )
                     }
                 }
-
-            Log.d("ProductViewModel", "validando quantity: $quantity")
 //            val quantity = _uiState.value.quantityProduct.toIntOrNull() ?: 0
 
             val movements = InventoryMovements(
                 id = UUID.randomUUID().toString(),
                 productId = product.idProduct,
-                quantity = quantity ,
+                quantity = product.stock ,
                 type = MovementType.PURCHASE,
                 reason = "Inventario",
 //                referenceId =
@@ -169,7 +169,7 @@ class ProductViewModel(
                 createdAt = Timestamp.now()
             )
 
-            purchaseRepository.saveInventoryMovements(listOf(movements))
+            inventoryRepository.saveInventoryMovements(listOf(movements))
         }
     }
 
@@ -177,7 +177,7 @@ class ProductViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val product = repository.getProductById(id)
+            val product = productRepository.getProductById(id)
 
             if (product != null) {
                 _uiState.value = ProductUiState(
@@ -187,7 +187,8 @@ class ProductViewModel(
                     priceProduct = product.priceProduct,
                     idCategory = product.idCategory,
                     isEdit = true,
-                    isLoading = false
+                    isLoading = false,
+                    quantityProduct = product.stock
                 )
             } else {
                 _uiState.update {
@@ -197,7 +198,7 @@ class ProductViewModel(
                     )
                 }
             }
-            _selectedProduct.value = repository.getProductById(id)
+            _selectedProduct.value = productRepository.getProductById(id)
         }
     }
 
@@ -210,9 +211,10 @@ class ProductViewModel(
             priceProduct = state.priceProduct,
             idCategory = state.idCategory?: "",
             updatedAt = Timestamp.now(),
+            stock = state.quantityProduct
         )
         viewModelScope.launch {
-            repository.updateProduct(product)
+            productRepository.updateProduct(product)
                 .onSuccess { _uiState.update { it.copy(success = true) } }
                 .onFailure { err ->
                     uiState.update {
@@ -230,7 +232,7 @@ class ProductViewModel(
 
         if (productId.isBlank()) return
         viewModelScope.launch {
-            repository.deleteProduct(productId)
+            productRepository.deleteProduct(productId)
                 .onSuccess { _uiState.value = ProductUiState(success = true) }
                 .onFailure { err ->
                     _uiState.update {

@@ -2,34 +2,19 @@ package com.example.inventarioapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.inventarioapp.repository.PurchaseRepository
+import com.example.inventarioapp.repository.InventoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class StockViewModel (
-    private val repository: PurchaseRepository = PurchaseRepository()
+    private val inventoryRepository: InventoryRepository = InventoryRepository()
 ): ViewModel() {
     val stock = MutableStateFlow<Map<String, Int>>(emptyMap())
-
-    /*fun observeStockForProducts(productIds: List<String>){
-        productIds.forEach { id ->
-            viewModelScope.launch {
-                repository.observeStock(id).collect { quantity ->
-                    stock.update { current ->
-                        current.toMutableMap().apply { put(id, quantity) }
-                    }
-                }
-            }
-        }
-    }*/
-    fun observeStockForProducts(productIds: List<String>) {
+   /* fun observeStockForProducts(productIds: List<String>) {
 
         viewModelScope.launch {
-            repository.observeStockBulk(productIds)
-                .collect { stockMap ->
-                    stock.value = stockMap
-                }
+            inventoryRepository.observeStockBulk(productIds)
+                .collect { stock.value = it }
         }
-    }
+    }*/
 }

@@ -10,6 +10,10 @@ import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.model.Purchase
 import com.example.inventarioapp.model.PurchaseItem
+import com.example.inventarioapp.repository.CartRepository
+import com.example.inventarioapp.repository.CatalogsRepository
+import com.example.inventarioapp.repository.InventoryRepository
+import com.example.inventarioapp.repository.ProductRepository
 import com.example.inventarioapp.repository.PurchaseRepository
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +22,11 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class PurchaseViewModel(
-    private val repository: PurchaseRepository = PurchaseRepository()
+    private val purchaseRepository: PurchaseRepository = PurchaseRepository(),
+    private val catalogsRepository: CatalogsRepository = CatalogsRepository(),
+    private val cartRepository: CartRepository = CartRepository(),
+    private val inventoryRepository: InventoryRepository = InventoryRepository(),
+    private val productRepository: ProductRepository = ProductRepository(),
 ) : ViewModel() {
     private val _cart = MutableStateFlow<Cart?>(null)
     val cart: StateFlow<Cart?> = _cart
@@ -44,13 +52,13 @@ class PurchaseViewModel(
     }
 
     fun loadCatalogs() = viewModelScope.launch {
-        products.value = repository.getProducts()
-        clients.value = repository.getClients()
+        products.value = catalogsRepository.getProducts()
+        clients.value = catalogsRepository.getClients()
     }
 
     fun observeCart(userId: String) {
         viewModelScope.launch {
-            repository.observeCart(userId).collect { remoteCart ->
+            cartRepository.observeCart(userId).collect { remoteCart ->
                 _cart.value = remoteCart ?: Cart(id = userId, userId = userId)
             }
         }
@@ -58,7 +66,7 @@ class PurchaseViewModel(
 
     fun observePurchasesByUser(userId: String){
         viewModelScope.launch {
-            repository.getPurchasesByUser(userId).collect { fetchedList ->
+            purchaseRepository.getPurchasesByUser(userId).collect { fetchedList ->
                 _purchasesByUser.value = fetchedList
             }
         }
@@ -66,7 +74,7 @@ class PurchaseViewModel(
 
     fun observePurchase(purchaseId: String){
         viewModelScope.launch {
-            repository.observePurchase(purchaseId).collect {
+            purchaseRepository.observePurchase(purchaseId).collect {
                 _purchase.value = it
             }
         }
@@ -107,7 +115,7 @@ class PurchaseViewModel(
         _cart.value = updatedCart
 
         Log.d("PurchaseViewModel", "antes de llamar al repository.saveCart")
-        viewModelScope.launch { repository.saveCart(updatedCart) }
+        viewModelScope.launch { cartRepository.saveCart(updatedCart) }
     }
 
     fun updateItemQuantity(itemId: String, quantity: Int){
@@ -139,7 +147,7 @@ class PurchaseViewModel(
         _cart.value = updatedCart
 
         viewModelScope.launch {
-            repository.saveCart(updatedCart)
+            cartRepository.saveCart(updatedCart)
         }
     }
 
@@ -149,13 +157,13 @@ class PurchaseViewModel(
         val updatedCart = current.copy(items = updatedItems, total = updatedItems.sumOf { it.price*it.quantity }, updatedAt = System.currentTimeMillis())
         _cart.value = updatedCart
 
-        viewModelScope.launch { repository.saveCart(updatedCart) }
+        viewModelScope.launch { cartRepository.saveCart(updatedCart) }
     }
 
     fun confirmCart (): String?{
         val current = _cart.value?: return null
-
         val purchaseId = UUID.randomUUID().toString()
+
         val purchase = Purchase(
             id = purchaseId,
             clientId = current.clientId,
@@ -167,28 +175,35 @@ class PurchaseViewModel(
         )
 
         viewModelScope.launch {
-            repository.savePurchase(purchase)
+            purchaseRepository.savePurchase(purchase)
 
-            val movements = current.items.map {item ->
-                InventoryMovements(
-                    id = UUID.randomUUID().toString(),
-                    productId = item.productId,
-                    quantity = item.quantity,
-                    type = MovementType.SALE,
-                    reason = "Venta",
-                    referenceId = purchaseId,
-                    userId = purchase.userId,
-                    createdAt = Timestamp.now()
-                )
-            }
+            val movements = buildMovements(current, purchaseId)
 
-            repository.saveInventoryMovements(movements)
-            repository.updateStock(movements)
-            repository.clearCart(purchase.userId)
+            inventoryRepository.saveInventoryMovements(movements)
+            productRepository.applySaleStockUpdates(current.items)
+            cartRepository.clearCart(current.userId)
             _cart.value = null
         }
 
         return purchaseId
+    }
+
+    private fun buildMovements (
+        cart: Cart,
+        purchaseId: String
+    ): List<InventoryMovements> {
+        return cart.items.map {item ->
+            InventoryMovements(
+                id = UUID.randomUUID().toString(),
+                productId = item.productId,
+                quantity = item.quantity,
+                type = MovementType.SALE,
+                reason = "Venta",
+                referenceId = purchaseId,
+                userId = cart.userId,
+                createdAt = Timestamp.now()
+            )
+        }
     }
 
     fun setClient(client: Clients?){
@@ -202,7 +217,7 @@ class PurchaseViewModel(
         _cart.value = updated
 
         viewModelScope.launch {
-            repository.saveCart(updated)
+            cartRepository.saveCart(updated)
         }
     }
 }

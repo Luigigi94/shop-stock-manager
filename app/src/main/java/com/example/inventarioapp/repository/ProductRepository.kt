@@ -2,6 +2,8 @@ package com.example.inventarioapp.repository
 
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.Products
+import com.example.inventarioapp.model.PurchaseItem
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -72,5 +74,16 @@ class ProductRepository {
         } catch (e: Exception){
             Result.failure(e)
         }
+    }
+
+    suspend fun applySaleStockUpdates(item: List<PurchaseItem>) {
+        val batch = db.batch()
+
+        item.forEach { item ->
+            val ref = db.collection("Products").document(item.productId)
+
+            batch.update(ref, "stock", FieldValue.increment(-item.quantity.toLong()))
+        }
+        batch.commit().await()
     }
 }
