@@ -8,6 +8,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,6 +42,14 @@ fun InventoryScreen(
     val inventoryItems by inventoryViewModel.items.collectAsState()
 
     var selectedProductId by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(session) {
+        val name = session?.userName
+
+        if (!name.isNullOrBlank()){
+            inventoryViewModel.loadInventory(name)
+        }
+    }
 
     Scaffold(
         topBar = {

@@ -3,6 +3,8 @@ package com.example.inventarioapp.repository
 import android.util.Log
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.constants.MovementType
+import com.example.inventarioapp.model.InventoryCountItem
+import com.example.inventarioapp.model.InventoryDraft
 import com.example.inventarioapp.model.InventoryMovements
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
@@ -86,5 +88,24 @@ class InventoryRepository(
                 transaction.update(productRef, "stock", newStock.toLong())
             }
         }.await()
+    }
+
+    suspend fun saveInventoryDraft(userId: String, items: List<InventoryCountItem>){
+        db.collection(FirestorePaths.Collections.INVENTORY_DRAFT)
+            .document(userId)
+            .set(mapOf("items" to items))
+            .await()
+    }
+
+    suspend fun deleteDraft(userId: String){
+        db.collection(FirestorePaths.Collections.INVENTORY_DRAFT).document(userId).delete().await()
+    }
+
+    suspend fun getInventoryDraft(userId: String): List<InventoryCountItem>?{
+        return db.collection(FirestorePaths.Collections.INVENTORY_DRAFT)
+            .document(userId)
+            .get()
+            .await()
+            .toObject(InventoryDraft::class.java)?.items
     }
 }

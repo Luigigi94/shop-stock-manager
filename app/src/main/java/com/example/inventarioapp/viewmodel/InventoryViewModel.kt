@@ -13,8 +13,6 @@ import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -30,12 +28,20 @@ class InventoryViewModel(
     private val _items = MutableStateFlow<List<InventoryCountItem>>(emptyList())
     val items: StateFlow<List<InventoryCountItem>> = _items.asStateFlow()
 
-    private var productsId: List<String> = emptyList()
+    private var currentUserId: String? = null
+    private var isInitialized = false
 
     private var isLoaded = false
 
     init {
         loadItems()
+    }
+
+    fun initViewModel(userId: String){
+        if (isInitialized) return
+        currentUserId = userId
+        loadInventory(userId)
+        isInitialized = true
     }
 
 
@@ -55,15 +61,38 @@ class InventoryViewModel(
         isLoaded = true
     }
 
-    fun updateCount(productId: String, qty: Int) {
-        Log.d("UpdateCount","Revisando UpdateCount $productId, $qty")
-        _items.update { list ->
-            list.map { item ->
-                if (item.idProduct == productId) item.copy(countedQuantity = qty)
-                else item
+    fun loadInventory(userId: String) = viewModelScope.launch {
+        val draft = inventoryRepository.getInventoryDraft(userId)
+
+        if (!draft.isNullOrEmpty()){
+            Log.d("InventoryVM", "Cargando borrador encontrado para $userId")
+            _items.value = draft
+        } else {
+            Log.d("InventoryVM", "No hay borrador, cargando productos base")
+            val products = productRepository.getInventoryProducts()
+            _items.value = products.map { prod ->
+                InventoryCountItem(
+                    idProduct = prod.idProduct,
+                    productName = prod.nameProduct,
+                    systemQuantity = prod.stock,
+                    countedQuantity = prod.stock
+                )
             }
         }
     }
+
+    fun updateCount(productId: String, qty: Int) {
+        _items.update { list ->
+            list.map { if (it.idProduct == productId) it.copy(countedQuantity = qty) else it }
+        }
+
+        currentUserId?.let { userId ->
+            viewModelScope.launch {
+                inventoryRepository.saveInventoryDraft(userId, _items.value)
+            }
+        }
+    }
+
 
     fun confirmInventory(userId: String = "Admin") = viewModelScope.launch {
         Log.d("confirmInventory", "Revisando que llegue usuario: $userId")
@@ -88,5 +117,6 @@ class InventoryViewModel(
 
         val finalStocks = diffItems.associate { it.idProduct to it.countedQuantity }
         inventoryRepository.applyMovements(movements, finalStocks)
+        inventoryRepository.deleteDraft(userId)
     }
 }
