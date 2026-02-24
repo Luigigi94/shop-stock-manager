@@ -49,6 +49,16 @@ class ProductRepository {
             .await()
             .toObject(Products::class.java)
     }
+    suspend fun getInventoryProducts(): List<Products> {
+        return try {
+            db.collection(FirestorePaths.Collections.PRODUCTS)
+                .get()
+                .await()
+                .toObjects(Products::class.java)
+        } catch (e: Exception){
+            emptyList()
+        }
+    }
 
     suspend fun updateProduct(product: Products): Result<Unit>{
         return try {

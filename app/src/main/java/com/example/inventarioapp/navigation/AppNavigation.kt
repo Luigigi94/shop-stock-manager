@@ -161,7 +161,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 navController
             )
         }
-        composable(
+        /*composable(
             route = "${AppScreens.InventoryScreen.route}?productId={productId}",
             arguments = listOf(
                 navArgument("productId"){
@@ -177,6 +177,14 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 darkThemeState,
                 navController,
                 productId
+            )
+        }*/
+        composable(
+            route = "${AppScreens.InventoryScreen.route}"
+        ){
+            InventoryScreen(
+                darkThemeState,
+                navController
             )
         }
     }

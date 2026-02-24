@@ -90,6 +90,13 @@ class PurchaseViewModel(
         val current = _cart.value ?: return
 
         val existingItem = current.items.indexOfFirst { it.productId == product.idProduct }
+        val currentQty = if (existingItem != -1) current.items[existingItem].quantity else 0
+        val newTotalQty = currentQty + quantity
+
+        if (newTotalQty > product.stock){
+            Log.d("addOrUpdateItem", "Stock insuficiente")
+            return
+        }
         val updatedItems = if (existingItem != -1) {
             current.items.mapIndexed { i, item ->
                 if (i == existingItem) {

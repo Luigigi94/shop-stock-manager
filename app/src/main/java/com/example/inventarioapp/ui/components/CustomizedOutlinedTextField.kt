@@ -1,6 +1,7 @@
 package com.example.inventarioapp.ui.components
 
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,17 +11,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.text.TextStyle
 
 @Composable
 fun CustomizedOutlinedTextField(
     value: String,
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     error: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     label: @Composable () -> Unit,
     readOnly: Boolean? = false,
-    onFocusLost: (() -> Unit)? = null
+    onFocusLost: (() -> Unit)? = null,
+    textStyle: TextStyle = LocalTextStyle.current
 ){
     var hasFocus by remember { mutableStateOf(false) }
     OutlinedTextField(
@@ -38,6 +41,7 @@ fun CustomizedOutlinedTextField(
         keyboardOptions = keyboardOptions,
         supportingText = {
             error?.let { Text(it) }
-        }
+        },
+        textStyle = textStyle
     )
 }

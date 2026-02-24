@@ -5,6 +5,7 @@ object FirestorePaths {
         const val CATEGORIES = "Categories"
         const val CLIENTS = "Clients"
         const val PRODUCTS = "Products"
+        const val INVENTORY = "InventoryMovements"
         const val PURCHASES = "Purchases"
     }
 

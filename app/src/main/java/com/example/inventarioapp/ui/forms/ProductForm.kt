@@ -35,8 +35,7 @@ fun ProductForm(
     onQuantityChange: (String) -> Unit,
     onQuantityBlur: () -> Unit,
     onCategorySelected: (String) -> Unit,
-    onAddCategoryClick: () -> Unit,
-    isInventory: Boolean = false
+    onAddCategoryClick: () -> Unit
 ) {
 
     Column {
@@ -51,38 +50,36 @@ fun ProductForm(
         )
 
         Spacer(Modifier.height(10.dp))
-        if (!isInventory) {
-            CustomizedOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.descriptionProduct,
-                onValueChange = onDescriptionChange,
-                label = { Text(stringResource(R.string.label_description_product)) }
-            )
-        }
+
+        CustomizedOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.descriptionProduct,
+            onValueChange = onDescriptionChange,
+            label = { Text(stringResource(R.string.label_description_product)) })
+
 
         Spacer(Modifier.height(10.dp))
 
         Row {
 
-            if (!isInventory) {
-                CustomizedOutlinedTextField(
-                    modifier = Modifier.weight(1f),
-                    value = state.priceProduct.toString(),
-                    onValueChange = onPriceChange,
-                    label = { Text(stringResource(R.string.label_price_product)) },
-                    error = state.priceError,
-                    onFocusLost = onPriceBlur
-                )
-            }
 
-            if (state.isEdit && !isInventory) {
+            CustomizedOutlinedTextField(
+                modifier = Modifier.weight(1f),
+                value = state.priceProduct.toString(),
+                onValueChange = onPriceChange,
+                label = { Text(stringResource(R.string.label_price_product)) },
+                error = state.priceError,
+                onFocusLost = onPriceBlur
+            )
+
+
+            if (state.isEdit) {
                 CustomizedOutlinedTextField(
                     modifier = Modifier.weight(1f),
                     value = state.quantityProduct.toString(),
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text(stringResource(R.string.label_quantity_product)) }
-                )
+                    label = { Text(stringResource(R.string.label_quantity_product)) })
             } else {
                 CustomizedOutlinedTextField(
                     modifier = Modifier.weight(1f),
@@ -96,27 +93,26 @@ fun ProductForm(
         }
 
         Spacer(Modifier.height(10.dp))
-        if (!isInventory) {
-            Row {
 
-                CustomizedExposedDropdownMenu(
-                    items = categories,
-                    selectedItem = selectedCategory,
-                    label = stringResource(R.string.on_action_category),
-                    itemLabel = { it.nameCategory },
-                    onItemSelected = { onCategorySelected(it.idCategory) },
-                    modifier = Modifier.weight(1f),
-                    isError = state.idCategoryError != null,
-                    supportingText = state.idCategoryError
-                )
+        Row {
 
-                CustomizedButton(
-                    onClick = onAddCategoryClick,
-                    modifier = Modifier.weight(0.3f)
-                ) {
-                    Icon(Icons.Filled.Folder, null)
-                }
+            CustomizedExposedDropdownMenu(
+                items = categories,
+                selectedItem = selectedCategory,
+                label = stringResource(R.string.on_action_category),
+                itemLabel = { it.nameCategory },
+                onItemSelected = { onCategorySelected(it.idCategory) },
+                modifier = Modifier.weight(1f),
+                isError = state.idCategoryError != null,
+                supportingText = state.idCategoryError
+            )
+
+            CustomizedButton(
+                onClick = onAddCategoryClick, modifier = Modifier.weight(0.3f)
+            ) {
+                Icon(Icons.Filled.Folder, null)
             }
         }
+
     }
 }

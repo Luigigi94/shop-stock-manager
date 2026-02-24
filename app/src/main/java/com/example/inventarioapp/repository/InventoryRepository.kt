@@ -70,29 +70,20 @@ class InventoryRepository(
         batch.commit().await()
     }
 
-    suspend fun applyMovements(movements: List<InventoryMovements>) {
-
+    suspend fun applyMovements(
+        movements: List<InventoryMovements>,
+        finalStocks: Map<String, Int>
+    ) {
         db.runTransaction { transaction ->
-
             movements.forEach { movement ->
-
-                // guardar movimiento
-                val movementRef = db.collection("InventoryMovements")
-                    .document(movement.id)
-
+                val movementRef = db.collection(FirestorePaths.Collections.INVENTORY).document(movement.id)
                 transaction.set(movementRef, movement)
 
-                // actualizar stock del producto
                 val productRef = db.collection(FirestorePaths.Collections.PRODUCTS)
                     .document(movement.productId)
 
-                val snapshot = transaction.get(productRef)
-                val currentStock = snapshot.getLong("stock") ?: 0L
-
-                // en inventario físico el nuevo stock es ABSOLUTO
-                val newStock = movement.quantity.toLong()
-
-                transaction.update(productRef, "stock", newStock)
+                val newStock = finalStocks[movement.productId] ?: 0
+                transaction.update(productRef, "stock", newStock.toLong())
             }
         }.await()
     }
