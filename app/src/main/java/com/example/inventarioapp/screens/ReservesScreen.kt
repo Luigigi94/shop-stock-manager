@@ -2,11 +2,16 @@ package com.example.inventarioapp.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
@@ -30,17 +34,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.inventarioapp.R
+import com.example.inventarioapp.navigation.AppScreens
+import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedDatePicker
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFAB
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
+import com.example.inventarioapp.ui.components.CustomizedOutlinedCard
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
+import com.example.inventarioapp.ui.components.ListOfReserves
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
-import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.example.inventarioapp.viewmodel.ClientViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +60,18 @@ fun ReservesScreen(
     reserveId: String?,
     reserveViewModel: ReserveViewModel = viewModel()
 ){
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
     var addReserveForm by remember { mutableStateOf(false) }
+
+    LaunchedEffect(navBackStackEntry) {
+        val result = navBackStackEntry?.savedStateHandle?.get<Boolean>("openCreateForm")
+        if (result == true){
+            addReserveForm = true
+            navBackStackEntry?.savedStateHandle?.remove<Boolean>("openCreateForm")
+        }
+    }
+
+    val today = reserveViewModel.currentDate()
 
     BackHandler(enabled = addReserveForm) {
         // Si el usuario pulsa atrás y el form está abierto, solo cerramos el form
@@ -83,11 +104,11 @@ fun ReservesScreen(
     }
 
     val clientViewModel: ClientViewModel = viewModel()
-    val categories by clientViewModel.clients.collectAsState()
+    val clients by clientViewModel.clients.collectAsState()
     val productViewModel: ProductViewModel = viewModel()
     val products by productViewModel.products.collectAsState()
 
-    val selectedClient = categories.firstOrNull{
+    val selectedClient = clients.firstOrNull{
         it.idClient == stateReserve.idClient
     }
     val selectedProduct = products.firstOrNull {
@@ -149,33 +170,110 @@ fun ReservesScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column {
-                        CustomizedExposedDropdownMenu(
-                            items = categories,
-                            selectedItem = selectedClient,
-                            label = stringResource(R.string.on_action_client),
-                            itemLabel = {it.nameClient},
-                            onItemSelected = { client ->
-                                reserveViewModel.onIdClient(client.idClient)
-                            },
-                            modifier = Modifier.weight(1f),
-                            isError = stateReserve.idClientError != null,
-                            supportingText = stateReserve.idClientError
-                        )
-                        CustomizedExposedDropdownMenu(
-                            items = products,
-                            selectedItem = selectedProduct,
-                            label = stringResource(R.string.on_action_product),
-                            itemLabel = {it.nameProduct},
-                            onItemSelected = { prod ->
-                                reserveViewModel.onIdProduct(prod.idProduct)
-                            },
-                            modifier = Modifier.weight(1f),
-                            isError = stateReserve.idProductError != null,
-                            supportingText = stateReserve.idProductError
-                        )
-                        CustomizedDatePicker(
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            CustomizedExposedDropdownMenu(
+                                items = clients,
+                                selectedItem = selectedClient,
+                                label = stringResource(R.string.on_action_client),
+                                itemLabel = { it.nameClient },
+                                onItemSelected = { client ->
+                                    reserveViewModel.onIdClient(client.idClient)
+                                },
+                                modifier = Modifier.weight(1f),
+                                isError = stateReserve.idClientError != null,
+                                supportingText = stateReserve.idClientError
+                            )
+                            CustomizedButton(
+                                modifier = Modifier.weight(2f),
+                                onClick = {
+                                    navController.navigate("${AppScreens.ClientScreen.route}?openCreateForm=true")
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Folder,
+                                    contentDescription = "Descriptión"
+                                )
+                            }
+                        }
+                        Row(
                             modifier = Modifier.fillMaxWidth()
-                        )
+                        ) {
+                            CustomizedExposedDropdownMenu(
+                                items = products,
+                                selectedItem = selectedProduct,
+                                label = stringResource(R.string.on_action_product),
+                                itemLabel = { it.nameProduct },
+                                onItemSelected = { prod ->
+                                    reserveViewModel.onIdProduct(prod.idProduct)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                isError = stateReserve.idProductError != null,
+                                supportingText = stateReserve.idProductError
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            CustomizedOutlinedTextField(
+                                modifier = Modifier.weight(1f),
+                                value = stateReserve.qtyReserve.toString(),
+                                onValueChange = { newVal -> reserveViewModel.onQtyReserve(newVal) },
+                                label = { Text(text = stringResource(R.string.label_quantity_product)) },
+                                error = stateReserve.qtyReserveError,
+                                onFocusLost = reserveViewModel::onQtyReserveBlur
+                            )
+                            CustomizedOutlinedTextField(
+                                modifier = Modifier.weight(1f),
+                                value = stateReserve.amount.toString(),
+                                onValueChange = { newAmount -> reserveViewModel.onAmount(newAmount) },
+                                label = { Text(text = stringResource(R.string.label_amount)) },
+                                error = stateReserve.amountError?.errorResId,
+                                errorArgs = stateReserve.amountError?.args,
+                                onFocusLost = reserveViewModel::onAmountBlur
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            CustomizedOutlinedTextField(
+                                modifier = Modifier.weight(1f),
+                                onValueChange = {},
+                                value = today,
+                                readOnly = true,
+                                label = { Text("Inicio de Apartado") }
+                            )
+                            CustomizedDatePicker(
+                                modifier = Modifier.weight(1f),
+                                selectedDayMillis = stateReserve.endReserve?.time,
+                                onDateSelected = { millis ->
+                                    millis?.let {
+                                        reserveViewModel.onEndReserve(Date(it))
+                                    }
+                                }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.size(10.dp))
+                        CustomizedOutlinedCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {}
+                        ) {
+                            CustomizedButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    if (!stateReserve.isEdit) {
+                                        reserveViewModel.addReserve()
+                                        addReserveForm = false
+                                    }
+                                }
+                            ) {
+                                Text(text = "Guardar Producto", Modifier)
+                                Icon(
+                                    imageVector = Icons.Filled.Save,
+                                    contentDescription = "Save Product"
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -184,10 +282,12 @@ fun ReservesScreen(
                 CustomizedFilledCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    CustomizedListOfEditables(
+                    ListOfReserves(
                         listReserves,
+                        client= reserveViewModel::getClientName(),
+                        product = products,
                         modifier = Modifier,
-                        label = { it.idClient },
+                        label = { if(it.idClient == clients.map { it.idClient }) },
                         onItemClick = {}
                     )
                 }

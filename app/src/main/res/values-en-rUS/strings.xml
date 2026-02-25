@@ -58,4 +58,5 @@
     <string name="error_date_past">The date cannot be earlier than today</string>
     <string name="error_min_amount_percentage">The amount must be at least the %1$s of the cost (%2$s)</string>
     <string name="error_long_phone">Must have 10 digits</string>
+    <string name="label_amount">Amount</string>
 </resources>

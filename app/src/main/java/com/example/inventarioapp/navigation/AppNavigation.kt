@@ -88,20 +88,27 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             )
         }
         composable(
-            route = "${AppScreens.ClientScreen.route}?clientId={clientId}",
+            route = "${AppScreens.ClientScreen.route}?clientId={clientId}&openCreateForm={isCreateMode}",
             arguments = listOf(
                 navArgument("clientId") {
                     type = NavType.StringType
                     nullable = true
                     defaultValue = null
+                },
+                navArgument("isCreateMode") {
+                    type = NavType.BoolType
+                    nullable = false
+                    defaultValue = false
                 }
             )
         ) { backStackEntry ->
             val clientId = backStackEntry.arguments?.getString("clientId")
+            val isCreateMode = backStackEntry.arguments?.getBoolean("isCreateMode")
             ClientScreen(
                 darkThemeState,
                 navController,
-                clientId = clientId
+                clientId = clientId,
+                isCreateMode = isCreateMode ?: false
             )
         }
         composable(

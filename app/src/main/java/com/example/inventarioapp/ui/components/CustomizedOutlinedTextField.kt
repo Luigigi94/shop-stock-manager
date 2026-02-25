@@ -20,6 +20,7 @@ fun CustomizedOutlinedTextField(
     onValueChange: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     error: Int? = null,
+    errorArgs: List<Any>? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     label: @Composable () -> Unit,
     readOnly: Boolean? = false,
@@ -41,7 +42,14 @@ fun CustomizedOutlinedTextField(
         isError = error != null,
         keyboardOptions = keyboardOptions,
         supportingText = {
-            error?.let { Text(stringResource(id = it)) }
+            error?.let { id ->
+                val errorMessage = if (errorArgs != null) {
+                    stringResource(id = id, *errorArgs.toTypedArray())
+                } else {
+                    stringResource(id = id)
+                }
+                Text(text = errorMessage)
+            }
         },
         textStyle = textStyle
     )

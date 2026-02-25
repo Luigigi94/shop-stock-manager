@@ -41,22 +41,37 @@ import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
+import com.example.inventarioapp.ui.utils.PrevBackStack
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.ClientViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavController, clientId: String?, viewModel: ClientViewModel = viewModel()){
+fun ClientScreen(
+    darkThemeState: MutableState<Boolean>,
+    navController: NavController,
+    clientId: String?,
+    isCreateMode: Boolean,
+    viewModel: ClientViewModel = viewModel()
+){
 
     val snackbarHostState = remember { SnackbarHostState() }
     
     var addClientForm by remember { mutableStateOf(false) }
+    var isRedirectedByReserve by remember { mutableStateOf(false) }
 
     LaunchedEffect(clientId) {
         if (clientId == null){
             viewModel.startCreate()
         } else {
             viewModel.loadClient(clientId)
+        }
+    }
+
+    LaunchedEffect(isCreateMode) {
+        if (isCreateMode){
+            addClientForm = true
+            isRedirectedByReserve = true
         }
     }
 
@@ -97,7 +112,14 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
             if (!stateClient.isEdit) {
                 if (addClientForm) {
                     CustomizedFAB(
-                        onClick = { addClientForm = false },
+                        onClick = {
+                            if (isRedirectedByReserve) {
+                                addClientForm = false
+                                PrevBackStack(navController)
+                            } else {
+                                addClientForm = false
+                            }
+                        },
                         containerColor = MaterialTheme.colorScheme.primary
                     ) {
                         Icon(
@@ -188,29 +210,6 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
                 ) {
-                    /*CustomizedButton(
-                    onClick = {
-                        if (stateClient.nameClient.isNotBlank() && stateClient.apePClient.isNotBlank()){
-                            val newClient = Clients(
-                                idClient = UUID.randomUUID().toString(),
-                                nameClient = stateClient.nameClient,
-                                apePClient = stateClient.apePClient,
-                                apeMClient = stateClient.apeMClient,
-                                telephone = stateClient.telephone
-                            )
-
-                            viewModel.addClient(newClient)
-                            viewModel.clearForm()
-
-                        }
-                    }
-                ) {
-                    if (stateClient.isEdit) {
-
-                    } else {
-                        Text(text = stringResource(R.string.button_add_client))
-                    }
-                }*/
                     CustomizedEditRows(
                         onCancel = { navController.popBackStack() },
                         onDelete = { viewModel.deleteClient() },
@@ -219,7 +218,11 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
                                 viewModel.updateClient()
                             } else {
                                 viewModel.addClient()
-                                addClientForm = false
+                                if (isRedirectedByReserve){
+                                    PrevBackStack(navController)
+                                } else {
+                                    addClientForm = false
+                                }
                             }
                         },
                         isEdit = stateClient.isEdit,

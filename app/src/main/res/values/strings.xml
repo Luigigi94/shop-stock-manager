@@ -86,6 +86,7 @@
     <string name="error_date_past">La fecha no puede ser anterior a hoy</string>
     <string name="error_min_amount_percentage">El monto debe ser al menos el %1$s del costo (%2$s)</string>
     <string name="error_long_phone">Debe tener 10 dígitos</string>
+    <string name="label_amount">Monto</string>
 
 
 </resources>

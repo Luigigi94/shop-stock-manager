@@ -12,7 +12,7 @@ fun CustomizedButton(
 ){
     Button(
         modifier = modifier,
-        onClick = onClick
+        onClick = onClick,
     ) {
         content()
     }

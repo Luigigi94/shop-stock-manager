@@ -31,11 +31,14 @@ import java.util.Locale
 @Composable
 fun CustomizedDatePicker(
     modifier: Modifier,
-    title: String? = ""
+    title: String? = "",
+    selectedDayMillis: Long?,
+    onDateSelected: (Long?) -> Unit,
+    label: String = "Fin del Apartado"
 ){
-    val datePickerState = rememberDatePickerState()
+//    val datePickerState = rememberDatePickerState()
     var showModal by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<Long?>(null) }
+//    var selectedDate by remember { mutableStateOf<Long?>(null) }
 
     Column(
         modifier = modifier,
@@ -48,16 +51,18 @@ fun CustomizedDatePicker(
         Text(text = "Selected ${datePickerState.selectedDateMillis}")*/
 
         OutlinedTextField(
-            value = selectedDate?.let { convertMillisToDate(it) } ?: "",
+            value = selectedDayMillis?.let { convertMillisToDate(it) } ?: "",
             onValueChange = {},
-            label = {Text("DOB")},
+            readOnly = true,
+            label = {Text(text = label)},
             placeholder = {Text("DD/MM/YYYY")},
+            enabled = true,
             trailingIcon = {
                 Icon(Icons.Default.DateRange, "Selected Date")
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .pointerInput(selectedDate){
+                .pointerInput(Unit){
                     awaitEachGesture {
                         awaitFirstDown(pass = PointerEventPass.Initial)
                         val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
@@ -70,7 +75,8 @@ fun CustomizedDatePicker(
 
         if (showModal) {
             DatePickerModal(
-                onDateSelected = { selectedDate = it },
+                initialSelectedDateMillis = selectedDayMillis,
+                onDateSelected = { onDateSelected(it) },
                 onDismiss = { showModal = false}
             )
         }
@@ -87,10 +93,13 @@ fun convertMillisToDate(millis: Long): String {
 }
 @Composable
 fun DatePickerModal(
+    initialSelectedDateMillis: Long?,
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit
 ){
-    val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialSelectedDateMillis
+    )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,

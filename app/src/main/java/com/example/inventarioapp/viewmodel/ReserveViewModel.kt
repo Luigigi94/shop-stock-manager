@@ -1,8 +1,10 @@
 package com.example.inventarioapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.constants.MovementType
+import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.model.Reserves
@@ -15,10 +17,11 @@ import com.example.inventarioapp.validators.model.ValidationResult
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 class ReserveViewModel(
@@ -30,6 +33,7 @@ class ReserveViewModel(
     val reserves: StateFlow<List<Reserves>> get() = _reserves
 
     val products = MutableStateFlow<List<Products>>(emptyList())
+    val clients = MutableStateFlow<List<Clients>>(emptyList())
 
     private val _selectedReserve =  MutableStateFlow<Reserves?>(null)
 
@@ -111,23 +115,42 @@ class ReserveViewModel(
         )
     }
 
+    fun onQtyReserve(value: String){
+        _uiState.value = validateForm(
+            _uiState.value.copy(
+                qtyReserve = value.toIntOrNull() ?: 0,
+                qtyReserveTouched = true
+            )
+        )
+    }
+
+    fun onQtyReserveBlur() {
+        _uiState.value = validateForm(
+            _uiState.value.copy(qtyReserveTouched = true)
+        )
+    }
+
     fun startCreate() {
         _uiState.value = ReserveUiState()
     }
 
     init {
         viewModelScope.launch {
+            loadCatalogs()
+
             repository.getReserves().collect { fetchedList ->
                 _reserves.value = fetchedList
             }
         }
     }
 
-    fun loadProductsCatalog() {
+    fun loadCatalogs() {
         viewModelScope.launch {
             try {
-                val result = catalogsRepository.getProducts()
-                products.value = result
+                val resultProds = catalogsRepository.getProducts()
+                val resultClients = catalogsRepository.getClients()
+                products.value = resultProds
+                clients.value = resultClients
             } catch (e: Exception) {
 
             }
@@ -148,7 +171,7 @@ class ReserveViewModel(
         _uiState.value = validateState
 
         if (!validateState.isValid) return
-        loadProductsCatalog()
+        loadCatalogs()
         val productReserved = products.value.find {
             it.idProduct == validateState.idProduct
         }
@@ -202,10 +225,13 @@ class ReserveViewModel(
     }
 
     private fun validateForm(state: ReserveUiState): ReserveUiState {
+        val productFind = products.value.find { state.idProduct == it.idProduct }
+
+        val productPrice = productFind?.priceProduct ?: "0.0"
         val idClientResult = ReserveValidator.idClient(state.idClient)
         val idProductResult = ReserveValidator.idProduct(state.idProduct)
         val endReserveResult = ReserveValidator.endReserve(state.endReserve)
-        val amountResult = ReserveValidator.amount(state.amount.toString(), "10000.00")
+        val amountResult = ReserveValidator.amount(state.amount.toString(), productPrice.toString())
         val qtyReserveResult = ReserveValidator.qty(state.qtyReserve.toString())
 
         val isValid =
@@ -214,6 +240,8 @@ class ReserveViewModel(
                     endReserveResult is ValidationResult.Valid &&
                     amountResult is ValidationResult.Valid &&
                     qtyReserveResult is ValidationResult.Valid
+
+        Log.d("ReserveVM ValidateForm", "Revisando validaciones: idClientResult: $idClientResult\n idProductResult: $idProductResult\n endReserveResult: $endReserveResult\n amountResult: $amountResult\n qtyReserveResult: $qtyReserveResult")
 
         return state.copy(
             idClientError =
@@ -236,13 +264,13 @@ class ReserveViewModel(
 
             amountError =
                 if (state.amountTouched)
-                    (amountResult as? ValidationResult.Invalid)?.errorResId
+                    amountResult as? ValidationResult.Invalid
                 else
                     null,
 
             qtyReserveError =
                 if (state.qtyReserveTouched)
-                    (amountResult as? ValidationResult.Invalid)?.errorResId
+                    (qtyReserveResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
 
@@ -284,5 +312,34 @@ class ReserveViewModel(
 
     fun clearForm(){
         _uiState.value = ReserveUiState()
+    }
+
+    fun currentDate(): String {
+        val firebaseTimestamp = Timestamp.now()
+        val firebaseDate = firebaseTimestamp.toDate()
+
+        val formatPattern = "dd/MM/yyyy HH:mm:ss"
+        val dateFormat = SimpleDateFormat(formatPattern, Locale.getDefault())
+
+// Format the Date object into a string
+        val dateString: String = dateFormat.format(firebaseDate)
+
+        return dateString
+    }
+
+    fun getClientName(idClient: String): String{
+        val client = clients.value.find { it.idClient == idClient }
+
+        return if (client != null){
+            "${client.nameClient} ${client.apePClient} ${client.apeMClient}"
+        } else {
+            "Desconocido"
+        }
+    }
+
+    fun getProductName(idProduct: String): String{
+        val product = products.value.find { it.idProduct == idProduct }
+
+        return product?.nameProduct ?: "Sin producto"
     }
 }

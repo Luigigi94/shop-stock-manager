@@ -39,6 +39,7 @@ import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
+import com.example.inventarioapp.ui.utils.PrevBackStack
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 
@@ -108,11 +109,7 @@ fun AddCategoryScreen(
                     CustomizedFAB(
                         onClick = {
                             if (isRedirectedByProduct){
-                                navController.previousBackStackEntry
-                                    ?.savedStateHandle
-                                    ?.set("openCreateForm", true)
-
-                                navController.popBackStack()
+                                PrevBackStack(navController)
                             } else {
                                 addCategoryForm = false
                             }
@@ -194,7 +191,7 @@ fun AddCategoryScreen(
                         } else {
                             viewModel.addCategory()
                             if (isRedirectedByProduct){
-                                navController.navigate("${AppScreens.AddProductScreen.route}?openCreateForm=true")
+                                PrevBackStack(navController)
                             } else {
                                 addCategoryForm = false
                             }

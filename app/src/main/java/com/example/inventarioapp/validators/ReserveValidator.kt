@@ -28,12 +28,13 @@ object ReserveValidator {
     fun amount(value: String?, priceProduct: String): ValidationResult{
         val amountDouble = value?.toDoubleOrNull() ?: 0.0
         val priceProductDouble= priceProduct.toDouble()
+        val minRequired = (priceProductDouble * 0.1)
 
         if (value == null)
             return ValidationResult.Invalid(R.string.error_required)
 
-        if (amountDouble < (priceProductDouble * 0.1)){
-            return ValidationResult.Invalid(R.string.error_min_amount_percentage)
+        if (amountDouble < minRequired){
+            return ValidationResult.Invalid(R.string.error_min_amount_percentage, args = listOf("10%", minRequired.toString()))
         }
         return ValidationResult.Valid
     }
