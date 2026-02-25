@@ -31,9 +31,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.example.inventarioapp.R
+import com.example.inventarioapp.ui.components.CustomizedDatePicker
+import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFAB
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
+import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.example.inventarioapp.viewmodel.ClientViewModel
@@ -60,9 +63,9 @@ fun ReservesScreen(
     LaunchedEffect(reserveId) {
         if (reserveId == null){
             reserveViewModel.startCreate()
-        } /*else {
+        } else {
             reserveViewModel.loadReserve(reserveId)
-        }*/
+        }
     }
 
     if (stateReserve.isLoading){
@@ -145,7 +148,35 @@ fun ReservesScreen(
                 CustomizedFilledCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Add form")
+                    Column {
+                        CustomizedExposedDropdownMenu(
+                            items = categories,
+                            selectedItem = selectedClient,
+                            label = stringResource(R.string.on_action_client),
+                            itemLabel = {it.nameClient},
+                            onItemSelected = { client ->
+                                reserveViewModel.onIdClient(client.idClient)
+                            },
+                            modifier = Modifier.weight(1f),
+                            isError = stateReserve.idClientError != null,
+                            supportingText = stateReserve.idClientError
+                        )
+                        CustomizedExposedDropdownMenu(
+                            items = products,
+                            selectedItem = selectedProduct,
+                            label = stringResource(R.string.on_action_product),
+                            itemLabel = {it.nameProduct},
+                            onItemSelected = { prod ->
+                                reserveViewModel.onIdProduct(prod.idProduct)
+                            },
+                            modifier = Modifier.weight(1f),
+                            isError = stateReserve.idProductError != null,
+                            supportingText = stateReserve.idProductError
+                        )
+                        CustomizedDatePicker(
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
 

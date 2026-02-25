@@ -22,14 +22,18 @@ import java.util.Date
 import java.util.UUID
 
 class ReserveViewModel(
-    private val repository: ReservesRepository,
-    private val catalogsRepository: CatalogsRepository,
-    private val inventoryRepository: InventoryRepository
+    private val repository: ReservesRepository = ReservesRepository(),
+    private val catalogsRepository: CatalogsRepository = CatalogsRepository(),
+    private val inventoryRepository: InventoryRepository = InventoryRepository()
 ) : ViewModel() {
     private val _reserves = MutableStateFlow<List<Reserves>>(emptyList())
     val reserves: StateFlow<List<Reserves>> get() = _reserves
 
     val products = MutableStateFlow<List<Products>>(emptyList())
+
+    private val _selectedReserve =  MutableStateFlow<Reserves?>(null)
+
+    val selectedReserve: MutableStateFlow<Reserves?> get() = _selectedReserve
 
 
     private val _uiState = MutableStateFlow(ReserveUiState())
@@ -245,6 +249,37 @@ class ReserveViewModel(
             isValid = isValid
 
         )
+    }
+
+    fun loadReserve(idReserve: String){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val reserve = repository.getReserveById(idReserve)
+
+            if (reserve != null) {
+                val reserveState = _uiState.value
+                _uiState.value = ReserveUiState(
+                    idReserve = reserveState.idReserve,
+                    idClient = reserveState.idClient,
+                    idProduct = reserveState.idProduct,
+                    reservedAt = reserveState.reservedAt,
+                    endReserve = reserveState.endReserve,
+                    qtyReserve = reserveState.qtyReserve,
+                    amount = reserveState.amount,
+                    isEdit = true,
+                    isLoading = false
+                )
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "No se encontró apartado"
+                    )
+                }
+            }
+            _selectedReserve.value = repository.getReserveById(idReserve)
+        }
     }
 
     fun clearForm(){

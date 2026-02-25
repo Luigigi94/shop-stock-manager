@@ -1,5 +1,6 @@
 package com.example.inventarioapp.state
 
+import com.google.firebase.Timestamp
 import java.util.Date
 
 data class ReserveUiState (
@@ -8,8 +9,10 @@ data class ReserveUiState (
     val errorMessage: String? = null,
     val success: Boolean = false,
 
+    val idReserve: String? = "",
     val idClient: String = "",
     val idProduct: String = "",
+    val reservedAt: Timestamp? = null,
     val endReserve: Date? = null,
     val qtyReserve: Int = 0,
     val amount: Double = 0.0,
