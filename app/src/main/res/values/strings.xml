@@ -78,5 +78,10 @@
     <string name="label_end_purchase_invoice">Finalizar Venta</string>
     <string name="on_action_client">Cliente</string>
 
+<!--    ValidatorsMessages-->
+    <string name="error_required">Campo Obligatorio</string>
+    <string name="error_invalid_number">Sólo números válidos</string>
+    <string name="error_min_quantity">La cantidad no puede ser menor a 1</string>
+
 
 </resources>

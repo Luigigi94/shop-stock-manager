@@ -51,4 +51,7 @@
     <string name="on_action_category">Category</string>
     <string name="on_action_product">Product</string>
     <string name="on_action_client">Client</string>
+    <string name="error_required">Required Field</string>
+    <string name="error_invalid_number">Only valid numbers</string>
+    <string name="error_min_quantity">The quantity cannot be less than 1</string>
 </resources>
