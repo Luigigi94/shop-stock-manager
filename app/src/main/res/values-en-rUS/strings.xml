@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">InventarioApp</string>
     <string name="title_category">New Category</string>
     <string name="label_description_category">Category Description</string>
     <string name="button_add_category">Create Category</string>

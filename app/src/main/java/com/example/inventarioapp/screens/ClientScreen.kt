@@ -54,10 +54,8 @@ fun ClientScreen(darkThemeState: MutableState<Boolean>, navController: NavContro
 
     LaunchedEffect(clientId) {
         if (clientId == null){
-//            Log.w("ClientScreen","onCreate")
             viewModel.startCreate()
         } else {
-//            Log.w("ClientScreen","onLoad ${clientId}")
             viewModel.loadClient(clientId)
         }
     }

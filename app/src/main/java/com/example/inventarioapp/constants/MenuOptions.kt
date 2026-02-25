@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.PointOfSale
 import com.example.inventarioapp.R
@@ -62,7 +63,7 @@ object MenuOptions {
         ),
         OptionsMenu(
             label = R.string.menu_inventory,
-            icon = Icons.Filled.Analytics,
+            icon = Icons.Filled.Inventory,
             route = AppNavigationUUIDs.ScreenUUID.INVENTORY,
             role = null,
             state = true,

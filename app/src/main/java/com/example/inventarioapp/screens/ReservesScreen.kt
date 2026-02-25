@@ -28,6 +28,5 @@ fun ReservesScreen(darkThemeState: MutableState<Boolean>, navController: NavCont
         Column(modifier = Modifier.padding(innerPadding)) {
             Text(text = "Cuerpo ReservesScreen")
         }
-
     }
 }

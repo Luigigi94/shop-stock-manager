@@ -118,7 +118,7 @@ class PurchaseViewModel(
             )
         }
 
-        val updatedCart = current.copy(items = updatedItems, total = updatedItems.sumOf { it.subtotal }, updatedAt = System.currentTimeMillis())
+        val updatedCart = current.copy(items = updatedItems, total = updatedItems.sumOf { it.subtotal }, updatedAt = Timestamp.now())
         _cart.value = updatedCart
 
         Log.d("PurchaseViewModel", "antes de llamar al repository.saveCart")
@@ -148,7 +148,7 @@ class PurchaseViewModel(
         val updatedCart = current.copy(
             items = items,
             total = items.sumOf { it.subtotal },
-            updatedAt = System.currentTimeMillis()
+            updatedAt = Timestamp.now()
         )
 
         _cart.value = updatedCart
@@ -161,7 +161,7 @@ class PurchaseViewModel(
     fun removeItem(itemId: String, userId: String?) {
         val current = _cart.value ?: return
         val updatedItems = current.items.filterNot { it.id == itemId }
-        val updatedCart = current.copy(items = updatedItems, total = updatedItems.sumOf { it.price*it.quantity }, updatedAt = System.currentTimeMillis())
+        val updatedCart = current.copy(items = updatedItems, total = updatedItems.sumOf { it.price*it.quantity }, updatedAt = Timestamp.now())
         _cart.value = updatedCart
 
         viewModelScope.launch { cartRepository.saveCart(updatedCart) }

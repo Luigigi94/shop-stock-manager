@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">InventarioApp</string>
+    <string name="app_name" translatable="false">Recuerdos e Imagenes Alondra</string>
 
     <!--  Menu  -->
     <string name="menu_add_category" translatable="false">AddCategoryScreen</string>

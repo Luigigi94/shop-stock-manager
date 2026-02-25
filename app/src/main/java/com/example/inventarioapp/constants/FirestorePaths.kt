@@ -6,8 +6,9 @@ object FirestorePaths {
         const val CLIENTS = "Clients"
         const val PRODUCTS = "Products"
         const val INVENTORY = "InventoryMovements"
-        const val INVENTORY_DRAFT = "Inventory_drafts"
+        const val INVENTORY_DRAFT = "InventoryDrafts"
         const val PURCHASES = "Purchases"
+        const val RESERVES = "Reserves"
     }
 
     object Documents {

@@ -2,6 +2,7 @@ package com.example.inventarioapp.repository
 
 import android.util.Log
 import com.example.inventarioapp.model.Cart
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,7 @@ class CartRepository {
     suspend fun saveCart(cart: Cart) {
         Log.d("PurchaseRepository","Revisando que cart no venga null $cart")
         val doc = carts.document(cart.userId) // usamos userId como ID del carrito
-        doc.set(cart.copy(updatedAt = System.currentTimeMillis())).await()
+        doc.set(cart.copy(updatedAt = Timestamp.now())).await()
     }
 
     fun observeCart(userId: String): Flow<Cart?> = callbackFlow {
