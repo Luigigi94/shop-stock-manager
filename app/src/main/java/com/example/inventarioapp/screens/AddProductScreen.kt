@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,14 +22,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedEditRows
@@ -47,9 +49,25 @@ fun AddProductScreen(
     darkThemeState: MutableState<Boolean>,
     navController: NavController,
     productId: String?,
+    isCreateMode: Boolean,
     viewModel: ProductViewModel = viewModel()
 ) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
     var addProductForm by remember { mutableStateOf(false) }
+
+    LaunchedEffect(navBackStackEntry) {
+        val result = navBackStackEntry?.savedStateHandle?.get<Boolean>("openCreateForm")
+        if (result == true){
+            addProductForm = true
+            navBackStackEntry?.savedStateHandle?.remove<Boolean>("openCreateForm")
+        }
+    }
+
+    BackHandler(enabled = addProductForm) {
+        // Si el usuario pulsa atrás y el form está abierto, solo cerramos el form
+        addProductForm = false
+    }
+
 
     val snackbarHostState = remember { SnackbarHostState() }
     val stateProduct by viewModel.uiState.collectAsState()
@@ -70,6 +88,12 @@ fun AddProductScreen(
     LaunchedEffect(stateProduct.success) {
         if (stateProduct.success && stateProduct.isEdit){
             navController.popBackStack()
+        }
+    }
+
+    LaunchedEffect(isCreateMode) {
+        if (isCreateMode){
+            addProductForm = true
         }
     }
 
@@ -160,7 +184,7 @@ fun AddProductScreen(
                         onQuantityBlur = viewModel::onQuantityBlur,
                         onCategorySelected = viewModel::onIdCategory,
                         onAddCategoryClick = {
-                            navController.navigate(AppScreens.AddCategoryScreen.route)
+                            navController.navigate("${AppScreens.AddCategoryScreen.route}?openCreateForm=true")
                         }
                     )
                 }

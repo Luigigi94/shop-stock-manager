@@ -242,18 +242,18 @@ class ClientViewModel(
         return state.copy(
             nameError =
                 if (state.nameTouched)
-                    (nameResult as? ValidationResult.Invalid)?.message
+                    (nameResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
 
             apePError =
                 if (state.apePTouched)
-                    (apePResult as? ValidationResult.Invalid)?.message
+                    (apePResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
             telephoneError =
                 if (state.telephoneTouched)
-                    (phoneResult as? ValidationResult.Invalid)?.message
+                    (phoneResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
             isValid = isValid

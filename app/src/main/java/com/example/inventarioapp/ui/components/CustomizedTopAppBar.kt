@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
+import com.example.inventarioapp.navigation.AppScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +35,10 @@ fun CustomizedTopAppBar(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.menu_button_back),
                     modifier = Modifier
-                        .clickable { navController.popBackStack() }
+                        .clickable {
+//                            navController.popBackStack()
+                            navController.navigate(route = AppScreens.MenuScreen.route)
+                        }
                         .padding(horizontal = 12.dp)
                 )
             }

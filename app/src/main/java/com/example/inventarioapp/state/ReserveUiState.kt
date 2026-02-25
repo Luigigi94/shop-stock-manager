@@ -9,18 +9,21 @@ data class ReserveUiState (
     val success: Boolean = false,
 
     val idClient: String = "",
-    val idProducts: String = "",
+    val idProduct: String = "",
     val endReserve: Date? = null,
+    val qtyReserve: Int = 0,
     val amount: Double = 0.0,
 
-    val idClientError: String? = null,
-    val idProductError: String? =  null,
-    val endReserveError: String? = null,
-    val amountError: String? = null,
-    val idClientTouched: String? = null,
-    val idProductTouched: String? =  null,
-    val endReserveTouched: String? = null,
-    val amountTouched: String? = null,
+    val idClientError: Int? = null,
+    val idProductError: Int? =  null,
+    val endReserveError: Int? = null,
+    val qtyReserveError: Int? = null,
+    val amountError: Int? = null,
+    val idClientTouched: Boolean = false,
+    val idProductTouched: Boolean = false,
+    val endReserveTouched: Boolean = false,
+    val amountTouched: Boolean = false,
+    val qtyReserveTouched: Boolean = false,
 
     val isValid: Boolean = false
 )

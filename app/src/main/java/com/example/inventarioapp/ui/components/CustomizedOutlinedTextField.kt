@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 
 @Composable
@@ -18,7 +19,7 @@ fun CustomizedOutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit = {},
     modifier: Modifier = Modifier,
-    error: String? = null,
+    error: Int? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     label: @Composable () -> Unit,
     readOnly: Boolean? = false,
@@ -40,7 +41,7 @@ fun CustomizedOutlinedTextField(
         isError = error != null,
         keyboardOptions = keyboardOptions,
         supportingText = {
-            error?.let { Text(it) }
+            error?.let { Text(stringResource(id = it)) }
         },
         textStyle = textStyle
     )

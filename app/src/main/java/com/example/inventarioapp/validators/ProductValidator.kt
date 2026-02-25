@@ -1,41 +1,42 @@
 package com.example.inventarioapp.validators
 
+import com.example.inventarioapp.R
 import com.example.inventarioapp.validators.model.ValidationResult
 
 object ProductValidator {
     fun name(value: String): ValidationResult =
         if (value.isBlank())
-            ValidationResult.Invalid("Campo obligatorio")
+            ValidationResult.Invalid(R.string.error_required)
         else
             ValidationResult.Valid
 
     fun quantity(value: String): ValidationResult {
         if (value.isBlank())
-            return ValidationResult.Invalid("Campo obligatorio")
+            return ValidationResult.Invalid(R.string.error_required)
 
         val quantityInt = value.toIntOrNull()
-            ?: return ValidationResult.Invalid("Solo números válidos")
+            ?: return ValidationResult.Invalid(R.string.error_invalid_number)
 
         if (quantityInt < 1)
-            return ValidationResult.Invalid("La cantidad no puede ser 0 o menor")
+            return ValidationResult.Invalid(R.string.error_min_quantity)
 
         return ValidationResult.Valid
     }
 
     fun price(value: String): ValidationResult{
         if (value.isBlank())
-            return ValidationResult.Invalid("Campo Obligatorio")
+            return ValidationResult.Invalid(R.string.error_required)
         val priceInt = value.toDoubleOrNull()
-            ?: return ValidationResult.Invalid("Solo números válidos")
+            ?: return ValidationResult.Invalid(R.string.error_invalid_number)
         if (priceInt == 0.0)
-            return ValidationResult.Invalid("La cantidad no puede ser 0 o menor")
+            return ValidationResult.Invalid(R.string.error_min_quantity)
 
         return ValidationResult.Valid
     }
 
     fun idCategory(value: String?): ValidationResult{
         if (value == null)
-            return ValidationResult.Invalid("Campo Obligatorio")
+            return ValidationResult.Invalid(R.string.error_required)
         return ValidationResult.Valid
     }
 }

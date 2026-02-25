@@ -101,7 +101,6 @@ class CategoryViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = exception.message
                         )
                     }
                 }
@@ -131,7 +130,6 @@ class CategoryViewModel(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "Categoria no encontrada"
                     )
                 }
             }
@@ -158,7 +156,6 @@ class CategoryViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = exception.message
                         )
                     }
                 }
@@ -181,7 +178,6 @@ class CategoryViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = e.message
                         )
                     }
                 }
@@ -201,7 +197,7 @@ class CategoryViewModel(
         return state.copy(
             nameError =
                 if (state.nameTouched)
-                    (nameResult as? ValidationResult.Invalid)?.message
+                    (nameResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
 

@@ -39,38 +39,52 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             )
         }
         composable(
-            route = "${AppScreens.AddProductScreen.route}?productId={productId}",
+            route = "${AppScreens.AddProductScreen.route}?productId={productId}&openCreateForm={isCreateMode}",
             arguments = listOf(
                 navArgument("productId") {
                     type = NavType.StringType
                     nullable = true
                     defaultValue = null
+                },
+                navArgument("isCreateMode") {
+                    type = NavType.BoolType
+                    nullable = false
+                    defaultValue = false
                 }
             )
         ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")
+            val isCreateMode = backStackEntry.arguments?.getBoolean("isCreateMode")
             AddProductScreen(
                 darkThemeState,
                 navController,
-                productId = productId
+                productId = productId,
+                isCreateMode = isCreateMode ?: false
             )
         }
         composable(
-            route = "${AppScreens.AddCategoryScreen.route}?categoryId={categoryId}",
+            route = "${AppScreens.AddCategoryScreen.route}?categoryId={categoryId}&openCreateForm={isCreateMode}",
             arguments = listOf(
                 navArgument("categoryId") {
                     type = NavType.StringType
                     nullable = true
                     defaultValue = null
+                },
+                navArgument("isCreateMode") {
+                    type = NavType.BoolType
+                    nullable = false
+                    defaultValue = false
                 }
             )
         ) {backStackEntry ->
 
             val categoryId = backStackEntry.arguments?.getString("categoryId")
+            val isCreateMode = backStackEntry.arguments?.getBoolean("isCreateMode")
             AddCategoryScreen(
                 darkThemeState,
                 navController,
-                categoryId = categoryId
+                categoryId = categoryId,
+                isCreateMode = isCreateMode ?: false
             )
         }
         composable(
@@ -90,10 +104,21 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 clientId = clientId
             )
         }
-        composable(route = AppScreens.ReservesScreen.route) {
+        composable(
+            route = "${AppScreens.ReservesScreen.route}?reserveId={reserveId}",
+            arguments = listOf(
+                navArgument("reserveId"){
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val reserveId = backStackEntry.arguments?.getString("reserveId")
             ReservesScreen(
                 darkThemeState,
-                navController
+                navController,
+                reserveId = reserveId
             )
         }
 

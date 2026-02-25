@@ -28,13 +28,6 @@ class ProductViewModel(
     private val _products = MutableStateFlow<List<Products>>(emptyList())
     val products: StateFlow<List<Products>> get() = _products
 
-    /*private val _quantityProduct = MutableStateFlow("")
-    val quantityProduct: StateFlow<String> = _quantityProduct
-
-    fun onQuantityProduct(value: String) {
-        _quantityProduct.value = value
-    }*/
-
     private val _selectedProduct = MutableStateFlow<Products?>(null)
     val selectedProduct: MutableStateFlow<Products?> get() = _selectedProduct
 
@@ -115,6 +108,7 @@ class ProductViewModel(
     }
 
     fun addProduct() {
+        Log.d("ProductVM_addProduct", "valida que entre al addProduct")
         val validateState = validateForm(
             _uiState.value.copy(
                 nameTouched = true,
@@ -124,6 +118,7 @@ class ProductViewModel(
             )
         )
 
+        Log.d("ProductVM_addProduct", "valida validateState: $validateState")
         _uiState.value = validateState
 
         if (!validateState.isValid) return
@@ -264,26 +259,26 @@ class ProductViewModel(
         return state.copy(
             nameError =
                 if (state.nameTouched)
-                    (nameResult as? ValidationResult.Invalid)?.message
+                    (nameResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
 
             quantityError =
                 if(state.quantityTouched)
-                        (quantityResult as? ValidationResult.Invalid)?.message
+                        (quantityResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
 
 
             priceError =
                 if (state.priceTouched)
-                    (priceResult as? ValidationResult.Invalid)?.message
+                    (priceResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
 
             idCategoryError =
                 if (state.idCategoryTouched)
-                    (idCategoryResult as? ValidationResult.Invalid)?.message
+                    (idCategoryResult as? ValidationResult.Invalid)?.errorResId
                 else
                     null,
 

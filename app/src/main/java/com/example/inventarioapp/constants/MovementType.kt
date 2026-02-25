@@ -4,6 +4,8 @@ enum class MovementType {
     SALE,
     PURCHASE,
     INVENTORY,
+    RESERVE,
     ADJUSTMENT,
-    RETURN
+    RETURN,
+
 }

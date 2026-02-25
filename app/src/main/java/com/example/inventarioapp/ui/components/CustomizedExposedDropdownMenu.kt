@@ -12,6 +12,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 
 /**
  * Dropdown genérico reutilizable estilo ComboBox.
@@ -28,7 +29,7 @@ fun <T> CustomizedExposedDropdownMenu(
     onItemSelected: (T) -> Unit,        // callback cuando seleccionan
     modifier: Modifier = Modifier,
     isError: Boolean = false,
-    supportingText: String? = null
+    supportingText: Int? = null
 ) {
 
     // Estado interno SOLO de UI (expandido/cerrado)
@@ -84,7 +85,7 @@ fun <T> CustomizedExposedDropdownMenu(
         }
         if (isError && supportingText != null) {
             Text(
-                text = supportingText,
+                text = stringResource(id = supportingText),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )

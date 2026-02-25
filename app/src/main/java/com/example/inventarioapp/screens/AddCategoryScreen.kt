@@ -48,17 +48,26 @@ fun AddCategoryScreen(
     darkThemeState: MutableState<Boolean>,
     navController: NavController,
     categoryId: String?,
+    isCreateMode: Boolean,
     viewModel: CategoryViewModel = viewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val stateCategory by viewModel.uiState.collectAsState()
     var addCategoryForm by remember { mutableStateOf(false) }
+    var isRedirectedByProduct by remember { mutableStateOf(false) }
 
     LaunchedEffect(categoryId) {
         if (categoryId == null) {
             viewModel.startCreate()
         } else {
             viewModel.loadCategory(id = categoryId)
+        }
+    }
+
+    LaunchedEffect(isCreateMode) {
+        if (isCreateMode){
+            addCategoryForm = true
+            isRedirectedByProduct = true
         }
     }
 
@@ -97,7 +106,17 @@ fun AddCategoryScreen(
             if (!stateCategory.isEdit) {
                 if (addCategoryForm) {
                     CustomizedFAB(
-                        onClick = { addCategoryForm = false },
+                        onClick = {
+                            if (isRedirectedByProduct){
+                                navController.previousBackStackEntry
+                                    ?.savedStateHandle
+                                    ?.set("openCreateForm", true)
+
+                                navController.popBackStack()
+                            } else {
+                                addCategoryForm = false
+                            }
+                        },
                         containerColor = MaterialTheme.colorScheme.primary
                     ) {
                         Icon(
@@ -146,6 +165,7 @@ fun AddCategoryScreen(
                         horizontalAlignment = Alignment.Start
                     ) {
                         CustomizedOutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
                             label = { Text(stringResource(R.string.label_name_category)) },
                             value = stateCategory.nameCategory,
                             onValueChange = viewModel::onNameCategory,
@@ -153,6 +173,7 @@ fun AddCategoryScreen(
                             error = stateCategory.nameError
                         )
                         CustomizedOutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
                             label = { Text(stringResource(R.string.label_description_category)) },
                             value = stateCategory.descriptionCategory ?: "",
                             onValueChange = viewModel::onDescriptionCategory
@@ -172,7 +193,11 @@ fun AddCategoryScreen(
                             viewModel.updateCategory()
                         } else {
                             viewModel.addCategory()
-                            addCategoryForm = false
+                            if (isRedirectedByProduct){
+                                navController.navigate("${AppScreens.AddProductScreen.route}?openCreateForm=true")
+                            } else {
+                                addCategoryForm = false
+                            }
                         }
                     },
                     isEdit = stateCategory.isEdit,

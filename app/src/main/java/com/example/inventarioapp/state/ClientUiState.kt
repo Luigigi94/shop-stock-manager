@@ -12,9 +12,9 @@ data class ClientUiState(
     val apeMClient: String = "",
     val telephone : String = "",
 
-    val nameError: String? = null,
-    val apePError: String? = null,
-    val telephoneError: String? = null,
+    val nameError: Int? = null,
+    val apePError: Int? = null,
+    val telephoneError: Int? = null,
 
     val nameTouched: Boolean = false,
     val apePTouched: Boolean = false,
