@@ -29,7 +29,8 @@ fun <T> CustomizedExposedDropdownMenu(
     onItemSelected: (T) -> Unit,        // callback cuando seleccionan
     modifier: Modifier = Modifier,
     isError: Boolean = false,
-    supportingText: Int? = null
+    supportingText: Int? = null,
+    isReadOnly: Boolean = false
 ) {
 
     // Estado interno SOLO de UI (expandido/cerrado)
@@ -39,8 +40,8 @@ fun <T> CustomizedExposedDropdownMenu(
     val selectedText = selectedItem?.let(itemLabel) ?: ""
 
     ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
+        expanded = if (isReadOnly) false else expanded,
+        onExpandedChange = { if (!isReadOnly) expanded = it },
         modifier = modifier.fillMaxWidth()
     ) {
 
@@ -53,34 +54,40 @@ fun <T> CustomizedExposedDropdownMenu(
             readOnly = true,
             label = { Text(label) },
             trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+                if (!isReadOnly)
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable).fillMaxWidth(),
+            modifier = Modifier
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
+                .fillMaxWidth(),
             singleLine = true,
-            isError = isError
+            isError = isError,
+            enabled = !isReadOnly
         )
 
         /**
          * Lista desplegable
          */
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
+        if (!isReadOnly) {
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
 
-            items.forEach { item ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = itemLabel(item),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    onClick = {
-                        onItemSelected(item)
-                        expanded = false
-                    }
-                )
+                items.forEach { item ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = itemLabel(item),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        onClick = {
+                            onItemSelected(item)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
         if (isError && supportingText != null) {

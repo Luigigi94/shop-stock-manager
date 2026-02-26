@@ -116,7 +116,7 @@ class InventoryViewModel(
         }
 
         val finalStocks = diffItems.associate { it.idProduct to it.countedQuantity }
-        inventoryRepository.applyMovements(movements, finalStocks)
+        inventoryRepository.applyInventoryMovements(movements, finalStocks)
         inventoryRepository.deleteDraft(userId)
     }
 }

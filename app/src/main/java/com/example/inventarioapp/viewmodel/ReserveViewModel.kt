@@ -217,10 +217,14 @@ class ReserveViewModel(
                 quantity = reserve.qtyReserve,
                 type = MovementType.RESERVE,
                 reason = "Apartado",
+                referenceId = reserve.idReserves,
                 createdAt = Timestamp.now()
             )
+            val diff = productReserved.stock - reserve.qtyReserve
 
             inventoryRepository.saveInventoryMovements(listOf(movements))
+            repository.applyReserveMovements(reserve, movements, diff)
+
         }
     }
 
@@ -286,15 +290,15 @@ class ReserveViewModel(
             val reserve = repository.getReserveById(idReserve)
 
             if (reserve != null) {
-                val reserveState = _uiState.value
+//                val reserveState = _uiState.value
                 _uiState.value = ReserveUiState(
-                    idReserve = reserveState.idReserve,
-                    idClient = reserveState.idClient,
-                    idProduct = reserveState.idProduct,
-                    reservedAt = reserveState.reservedAt,
-                    endReserve = reserveState.endReserve,
-                    qtyReserve = reserveState.qtyReserve,
-                    amount = reserveState.amount,
+                    idReserve = reserve.idReserves,
+                    idClient = reserve.idClient,
+                    idProduct = reserve.idProduct,
+                    reservedAt = reserve.reservedAt,
+                    endReserve = reserve.endReserve,
+                    qtyReserve = reserve.qtyReserve,
+                    amount = reserve.amount,
                     isEdit = true,
                     isLoading = false
                 )

@@ -139,8 +139,6 @@ class ClientViewModel(
 
     fun loadClient(idClient: String) {
         viewModelScope.launch {
-//            _selectedClient.value = repository.getClientById(idClient)
-
             _uiState.update { it.copy(isLoading = true) }
 
             val client = repository.getClientById(idClient)

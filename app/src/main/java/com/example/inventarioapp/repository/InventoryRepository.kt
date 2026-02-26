@@ -22,7 +22,7 @@ class InventoryRepository{
         batch.commit().await()
     }
 
-    suspend fun applyMovements(
+    suspend fun applyInventoryMovements(
         movements: List<InventoryMovements>,
         finalStocks: Map<String, Int>
     ) {
