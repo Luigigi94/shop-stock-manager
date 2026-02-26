@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.constants.MovementType
 import com.example.inventarioapp.model.InventoryCountItem
 import com.example.inventarioapp.model.InventoryMovements
-import com.example.inventarioapp.repository.CatalogsRepository
 import com.example.inventarioapp.repository.InventoryRepository
 import com.example.inventarioapp.repository.ProductRepository
 import com.google.firebase.Timestamp
@@ -19,8 +18,7 @@ import java.util.UUID
 
 class InventoryViewModel(
     private val inventoryRepository: InventoryRepository = InventoryRepository(),
-    private val productRepository: ProductRepository = ProductRepository(),
-    private val catalogsRepository: CatalogsRepository = CatalogsRepository()
+    private val productRepository: ProductRepository = ProductRepository()
 
 ): ViewModel() {
 

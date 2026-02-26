@@ -11,6 +11,7 @@ data class Reserves(
     val endReserve: Date? = null,
     val priceAtReserve: Double = 0.0,
     val qtyReserve: Int = 0,
+    val originalQty: Int = 0,
     val amount: Double = 0.0,
     val isFinalized: Boolean = false
 )

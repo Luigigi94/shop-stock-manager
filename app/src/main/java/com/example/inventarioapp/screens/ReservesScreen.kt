@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,6 +39,7 @@ import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedDatePicker
+import com.example.inventarioapp.ui.components.CustomizedEditRows
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFAB
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
@@ -114,6 +114,12 @@ fun ReservesScreen(
         it.idProduct == stateReserve.idProduct
     }
 
+    val reserveOriginal = reserveViewModel.reserves.collectAsState()
+    val pendingAmount = (reserveOriginal.value.find { it.idProduct == selectedProduct?.idProduct }?.priceAtReserve)?.minus(
+        stateReserve.amount
+    )
+
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -183,16 +189,18 @@ fun ReservesScreen(
                                 supportingText = stateReserve.idClientError,
                                 isReadOnly = stateReserve.isEdit
                             )
-                            CustomizedButton(
-                                modifier = Modifier.weight(0.3f),
-                                onClick = {
-                                    navController.navigate("${AppScreens.ClientScreen.route}?openCreateForm=true")
+                            if (!stateReserve.isEdit) {
+                                CustomizedButton(
+                                    modifier = Modifier.weight(0.3f),
+                                    onClick = {
+                                        navController.navigate("${AppScreens.ClientScreen.route}?openCreateForm=true")
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Folder,
+                                        contentDescription = "Descriptión"
+                                    )
                                 }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Folder,
-                                    contentDescription = "Descriptión"
-                                )
                             }
                         }
                         Row(
@@ -206,7 +214,7 @@ fun ReservesScreen(
                                 onItemSelected = { prod ->
                                     reserveViewModel.onIdProduct(prod.idProduct)
                                 },
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier,
                                 isError = stateReserve.idProductError != null,
                                 supportingText = stateReserve.idProductError,
                                 isReadOnly = stateReserve.isEdit
@@ -216,18 +224,33 @@ fun ReservesScreen(
                             Column(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                CustomizedOutlinedTextField(
-                                    modifier = Modifier.weight(1f),
-                                    value = stateReserve.qtyReserve.toString(),
-                                    onValueChange = { newVal ->
-                                        reserveViewModel.onQtyReserve(
-                                            newVal
-                                        )
-                                    },
-                                    label = { Text(text = stringResource(R.string.label_qty_reserved)) },
-                                    error = stateReserve.qtyReserveError,
-                                    onFocusLost = reserveViewModel::onQtyReserveBlur
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    CustomizedOutlinedTextField(
+                                        modifier = Modifier.weight(1f),
+                                        value = stateReserve.qtyReserve.toString(),
+                                        onValueChange = { newVal ->
+                                            reserveViewModel.onQtyReserve(
+                                                newVal
+                                            )
+                                        },
+                                        label = { Text(text = stringResource(R.string.label_qty_reserved)) },
+                                        error = stateReserve.qtyReserveError,
+                                        onFocusLost = reserveViewModel::onQtyReserveBlur,
+                                        readOnly = true
+
+                                    )
+                                    CustomizedOutlinedTextField(
+                                        modifier = Modifier.weight(1f),
+                                        value = selectedProduct?.priceProduct.toString(),
+                                        onValueChange = {},
+                                        label = { Text(text = stringResource(R.string.label_price_product)) },
+                                        error = stateReserve.qtyReserveError,
+                                        onFocusLost = reserveViewModel::onQtyReserveBlur,
+                                        readOnly = true
+                                    )
+                                }
                                 Row(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
@@ -242,11 +265,13 @@ fun ReservesScreen(
                                         label = { Text(text = stringResource(R.string.label_last_amount)) },
                                         error = stateReserve.amountError?.errorResId,
                                         errorArgs = stateReserve.amountError?.args,
-                                        onFocusLost = reserveViewModel::onAmountBlur
+
+                                        onFocusLost = reserveViewModel::onAmountBlur,
+                                        readOnly = true
                                     )
                                     CustomizedOutlinedTextField(
                                         modifier = Modifier.weight(1f),
-                                        value = stateReserve.amount.toString(),
+                                        value = pendingAmount.toString(),
                                         onValueChange = { newAmount ->
                                             reserveViewModel.onAmount(
                                                 newAmount
@@ -255,7 +280,8 @@ fun ReservesScreen(
                                         label = { Text(text = stringResource(R.string.label_pending_amount)) },
                                         error = stateReserve.amountError?.errorResId,
                                         errorArgs = stateReserve.amountError?.args,
-                                        onFocusLost = reserveViewModel::onAmountBlur
+                                        onFocusLost = reserveViewModel::onAmountBlur,
+                                        readOnly = true
                                     )
                                 }
                             }
@@ -307,19 +333,23 @@ fun ReservesScreen(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {}
                         ) {
-                            CustomizedButton(
+                            CustomizedFilledCard(
                                 modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    if (!stateReserve.isEdit) {
-                                        reserveViewModel.addReserve()
-                                        addReserveForm = false
-                                    }
-                                }
+                                onClick = {}
                             ) {
-                                Text(text = "Guardar Producto", Modifier)
-                                Icon(
-                                    imageVector = Icons.Filled.Save,
-                                    contentDescription = "Save Product"
+                                CustomizedEditRows(
+                                    onCancel = { navController.popBackStack() },
+                                    onDelete = {reserveViewModel.deleteReserve() },
+                                    onAction = {
+                                        if (stateReserve.isEdit){
+                                            reserveViewModel.updateReserve()
+                                        } else {
+                                            reserveViewModel.addReserve()
+                                            navController.popBackStack()
+                                        }
+                                    },
+                                    isEdit = stateReserve.isEdit,
+                                    label = stringResource(R.string.on_action_product)
                                 )
                             }
                         }

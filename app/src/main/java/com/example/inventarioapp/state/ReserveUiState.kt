@@ -19,6 +19,7 @@ data class ReserveUiState (
     val endReserve: Date? = null,
     var qtyReserve: Int = 0,
     val amount: Double = 0.0,
+    val priceAtReserve: String ="",
 
     val idClientError: Int? = null,
     val idProductError: Int? =  null,

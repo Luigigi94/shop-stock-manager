@@ -186,6 +186,7 @@ class ReserveViewModel(
             priceAtReserve = productReserved.priceProduct,
             amount = validateState.amount,
             qtyReserve = validateState.qtyReserve,
+            originalQty = validateState.qtyReserve,
             isFinalized = false,
         )
 
@@ -225,6 +226,80 @@ class ReserveViewModel(
             inventoryRepository.saveInventoryMovements(listOf(movements))
             repository.applyReserveMovements(reserve, movements, diff)
 
+        }
+    }
+
+    fun updateReserve(){
+        val state = _uiState.value
+        val actualData = _reserves.value.find { it.idReserves == state.idReserve }
+        val originalQty = actualData?.originalQty ?: 0
+        val totalDebt = (originalQty.toDouble() * state.priceAtReserve.toDouble())
+        val actualAmount = actualData?.amount ?: 0.0
+        val currentPaid = state.amount + actualAmount
+        val reserveFinalized =  totalDebt == currentPaid
+        val newDiff = state.qtyReserve - originalQty
+
+
+
+        val reserve = Reserves(
+            idReserves = state.idReserve ?: return,
+            idClient = state.idClient,
+            idProduct = state.idProduct,
+            reservedAt = state.reservedAt,
+            endReserve = state.endReserve,
+            priceAtReserve = state.priceAtReserve.toDoubleOrNull() ?: 0.0,
+            qtyReserve = state.qtyReserve,
+            amount = state.amount,
+            isFinalized = reserveFinalized
+        )
+
+        val movements = InventoryMovements(
+            id = UUID.randomUUID().toString(),
+            productId = state.idProduct,
+            quantity = reserve.qtyReserve,
+            type = MovementType.RESERVE,
+            reason = "Apartado",
+            referenceId = reserve.idReserves,
+            createdAt = Timestamp.now()
+        )
+
+        viewModelScope.launch {
+            repository.updateReserve(reserve)
+                .onSuccess {
+                    _uiState.value = ReserveUiState(success = true)
+                }
+                .onFailure { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = e.message
+                        )
+                    }
+                }
+            inventoryRepository.saveInventoryMovements(listOf(movements))
+            repository.applyReserveMovements(reserve, movements, newDiff)
+        }
+    }
+
+    fun deleteReserve(){
+        val reserveId = _uiState.value.idReserve
+
+        if (reserveId.isNullOrBlank()) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
+
+            val result = repository.deleteReserve(reserveId)
+
+            result
+                .onSuccess { _uiState.value = ReserveUiState(success = true) }
+                .onFailure { e->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = e.message
+                        )
+                    }
+                }
         }
     }
 
