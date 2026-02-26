@@ -34,12 +34,26 @@ class ReserveViewModel(
     private val catalogsRepository: CatalogsRepository = CatalogsRepository(),
     private val inventoryRepository: InventoryRepository = InventoryRepository()
 ) : ViewModel() {
+    private val _products = MutableStateFlow<List<Products>>(emptyList())
+    val products: StateFlow<List<Products>> = _products.asStateFlow()
+
+    private val _clients = MutableStateFlow<List<Clients>>(emptyList())
+    val clients: StateFlow<List<Clients>> = _clients.asStateFlow()
+
+
     private val _reserves = MutableStateFlow<List<Reserves>>(emptyList())
     val reserves: StateFlow<List<Reserves>> get() = _reserves
 
     private val _movements = MutableStateFlow<List<InventoryMovements>>(emptyList())
     val movements: StateFlow<List<InventoryMovements>> get() = _movements
 
+
+    private val _selectedReserve = MutableStateFlow<Reserves?>(null)
+    val selectedReserve: StateFlow<Reserves?> get() = _selectedReserve
+
+
+    private val _uiState = MutableStateFlow(ReserveUiState())
+    val uiState: StateFlow<ReserveUiState> get() = _uiState
     val totalPayments: StateFlow<Double> = combine(_movements, _reserves){ movement, reserve ->
         val currentReserve = reserve.find { it.idReserves == _uiState.value.idReserve }
         val priceAtReserve = currentReserve?.priceAtReserve ?: 0.0
@@ -52,80 +66,25 @@ class ReserveViewModel(
         initialValue = 0.0
     )
 
-    val products = MutableStateFlow<List<Products>>(emptyList())
-    val clients = MutableStateFlow<List<Clients>>(emptyList())
-
-    private val _selectedReserve =  MutableStateFlow<Reserves?>(null)
-
-    val selectedReserve: MutableStateFlow<Reserves?> get() = _selectedReserve
-
-
-    private val _uiState = MutableStateFlow(ReserveUiState())
-    val uiState: StateFlow<ReserveUiState> get() = _uiState
-
     /*
     * Setters para el support del state hoisting
     */
 
-    fun onIdClient(value: String) {
-        _uiState.value = validateForm(
-            _uiState.value.copy(
-                idClient = value,
-                idClientTouched = true
-            )
-        )
+    private inline fun updateUi(block: ReserveUiState.() -> ReserveUiState) {
+        _uiState.value = validateForm(_uiState.value.block())
     }
 
-    fun onIdClientBlur() {
-        _uiState.value = validateForm(
-            _uiState.value.copy(
-                idClientTouched = true
-            )
-        )
-    }
+    fun onIdClient(value: String) =
+        updateUi { copy(idClient = value, idClientTouched = true) }
 
-    fun onIdProduct(value: String) {
-        _uiState.value = validateForm(
-            _uiState.value.copy(
-                idProduct = value,
-                idProductTouched = true
-            )
-        )
-    }
+    fun onIdProduct(value: String) =
+    updateUi { copy(idProduct = value, idProductTouched = true) }
 
-    fun onIdProductBlur() {
-        _uiState.value = validateForm(
-            _uiState.value.copy(
-                idProductTouched = true
-            )
-        )
-    }
+    fun onEndReserve(value: Date) =
+        updateUi { copy(endReserve = value, endReserveTouched = true) }
 
-    fun onEndReserve(value: Date) {
-        _uiState.value = validateForm(
-            _uiState.value.copy(
-                endReserve = value,
-                endReserveTouched = true
-            )
-        )
-    }
-
-    fun onEndReserveBlur() {
-        _uiState.value = validateForm(
-            _uiState.value.copy(
-                endReserveTouched = true
-            )
-        )
-    }
-
-    fun onAmount(value: String) {
-        _uiState.value = validateForm(
-            _uiState.value.copy(
-                amount = value.toDoubleOrNull() ?: 0.0,
-                amountTouched = true
-            )
-        )
-    }
+    fun onAmount(value: String) =
+        updateUi { copy(amount = value.toDoubleOrNull() ?: 0.0, amountTouched = true) }
 
     fun onAmountBlur() {
         _uiState.value = validateForm(
@@ -135,14 +94,8 @@ class ReserveViewModel(
         )
     }
 
-    fun onQtyReserve(value: String){
-        _uiState.value = validateForm(
-            _uiState.value.copy(
-                qtyReserve = value.toIntOrNull() ?: 0,
-                qtyReserveTouched = true
-            )
-        )
-    }
+    fun onQtyReserve(value: String) =
+        updateUi { copy(qtyReserve = value.toIntOrNull() ?: 0, qtyReserveTouched = true) }
 
     fun onQtyReserveBlur() {
         _uiState.value = validateForm(
@@ -164,18 +117,32 @@ class ReserveViewModel(
         }
     }
 
-    fun loadCatalogs() {
-        viewModelScope.launch {
-            try {
-                val resultProds = catalogsRepository.getProducts()
-                val resultClients = catalogsRepository.getClients()
-                products.value = resultProds
-                clients.value = resultClients
-            } catch (e: Exception) {
-
-            }
-        }
+    private suspend fun loadCatalogs() {
+        try {
+            _products.value = catalogsRepository.getProducts()
+            _clients.value = catalogsRepository.getClients()
+        } catch (_: Exception) {}
     }
+
+    /*
+    * Helper para crear los movements
+    * */
+
+    private fun buildMovement(
+        productId: String,
+        qty: Int,
+        amount: Double,
+        referenceId: String
+    ) = InventoryMovements(
+        id = UUID.randomUUID().toString(),
+        productId = productId,
+        quantity = qty,
+        amount = amount,
+        type = MovementType.RESERVE,
+        reason = "Apartado",
+        referenceId = referenceId,
+        createdAt = Timestamp.now()
+    )
 
     fun addReserve() {
         val validateState = validateForm(
@@ -189,13 +156,11 @@ class ReserveViewModel(
         )
 
         _uiState.value = validateState
-
         if (!validateState.isValid) return
-        loadCatalogs()
-        val productReserved = products.value.find {
-            it.idProduct == validateState.idProduct
-        }
-        if (productReserved == null) return
+
+        val productReserved =
+            _products.value.find { it.idProduct == validateState.idProduct }
+                ?: return
 
         val reserve = Reserves(
             idReserves = UUID.randomUUID().toString(),
@@ -231,17 +196,7 @@ class ReserveViewModel(
                         )
                     }
                 }
-
-            val movements = InventoryMovements(
-                id = UUID.randomUUID().toString(),
-                productId = productReserved.idProduct,
-                quantity = reserve.qtyReserve,
-                amount = reserve.amount,
-                type = MovementType.RESERVE,
-                reason = "Apartado",
-                referenceId = reserve.idReserves,
-                createdAt = Timestamp.now()
-            )
+            val movements = buildMovement(productId = productReserved.idProduct, qty = reserve.qtyReserve, amount = reserve.amount, referenceId = reserve.idReserves,)
             val diff = productReserved.stock - reserve.qtyReserve
 
             inventoryRepository.saveInventoryMovements(listOf(movements))
@@ -252,7 +207,7 @@ class ReserveViewModel(
 
     fun updateReserve(){
         val state = _uiState.value
-        val actualData = _reserves.value.find { it.idReserves == state.idReserve }
+        val actualData = _selectedReserve.value
         val actualAmount = actualData?.amount ?: 0.0
         val originalQty = actualData?.originalQty ?: 0
         val totalDebt = (originalQty.toDouble() * state.priceAtReserve.toDouble())
@@ -274,16 +229,7 @@ class ReserveViewModel(
             isFinalized = reserveFinalized
         )
 
-        val movements = InventoryMovements(
-            id = UUID.randomUUID().toString(),
-            productId = state.idProduct,
-            quantity = reserve.qtyReserve,
-            amount = reserve.amount,
-            type = MovementType.RESERVE,
-            reason = "Apartado",
-            referenceId = reserve.idReserves,
-            createdAt = Timestamp.now()
-        )
+        val movements = buildMovement(productId = state.idProduct, qty = reserve.qtyReserve, amount = reserve.amount,referenceId = reserve.idReserves,)
 
         viewModelScope.launch {
             repository.updateReserve(reserve)
@@ -382,32 +328,21 @@ class ReserveViewModel(
 
     fun loadReserve(idReserve: String){
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
 
-            val reserve = repository.getReserveById(idReserve)
+            val reserve = repository.getReserveById(idReserve) ?: return@launch
 
-            if (reserve != null) {
-//                val reserveState = _uiState.value
-                _uiState.value = ReserveUiState(
-                    idReserve = reserve.idReserves,
-                    idClient = reserve.idClient,
-                    idProduct = reserve.idProduct,
-                    reservedAt = reserve.reservedAt,
-                    endReserve = reserve.endReserve,
-                    qtyReserve = reserve.qtyReserve,
-                    amount = reserve.amount,
-                    isEdit = true,
-                    isLoading = false
-                )
-            } else {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "No se encontró apartado"
-                    )
-                }
-            }
-            _selectedReserve.value = repository.getReserveById(idReserve)
+            _selectedReserve.value = reserve
+
+            _uiState.value = ReserveUiState(
+                idReserve = reserve.idReserves,
+                idClient = reserve.idClient,
+                idProduct = reserve.idProduct,
+                reservedAt = reserve.reservedAt,
+                endReserve = reserve.endReserve,
+                qtyReserve = reserve.qtyReserve,
+                amount = reserve.amount,
+                isEdit = true
+            )
         }
     }
 
