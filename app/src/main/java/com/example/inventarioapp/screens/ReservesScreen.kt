@@ -95,6 +95,7 @@ fun ReservesScreen(
 
     val listReserves by reserveViewModel.reserves.collectAsState()
 
+
     if (stateReserve.success){
         val text = stringResource(R.string.result_success_added_product)
         LaunchedEffect(Unit) {

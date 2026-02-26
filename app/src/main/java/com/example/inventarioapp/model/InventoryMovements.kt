@@ -7,6 +7,7 @@ data class InventoryMovements(
     val id: String = "",
     val productId: String = "",
     val quantity: Int = 0,
+    val amount: Double = 0.0,
     val type: MovementType = MovementType.SALE,
     val reason: String = "",
     val referenceId: String = "",

@@ -32,6 +32,9 @@ class ReserveViewModel(
     private val _reserves = MutableStateFlow<List<Reserves>>(emptyList())
     val reserves: StateFlow<List<Reserves>> get() = _reserves
 
+    private val _movements = MutableStateFlow<List<InventoryMovements>>(emptyList())
+    val movements: StateFlow<List<InventoryMovements>> get() = _movements
+
     val products = MutableStateFlow<List<Products>>(emptyList())
     val clients = MutableStateFlow<List<Clients>>(emptyList())
 
@@ -216,6 +219,7 @@ class ReserveViewModel(
                 id = UUID.randomUUID().toString(),
                 productId = productReserved.idProduct,
                 quantity = reserve.qtyReserve,
+                amount = reserve.amount,
                 type = MovementType.RESERVE,
                 reason = "Apartado",
                 referenceId = reserve.idReserves,
@@ -257,6 +261,7 @@ class ReserveViewModel(
             id = UUID.randomUUID().toString(),
             productId = state.idProduct,
             quantity = reserve.qtyReserve,
+            amount = reserve.amount,
             type = MovementType.RESERVE,
             reason = "Apartado",
             referenceId = reserve.idReserves,
@@ -278,6 +283,16 @@ class ReserveViewModel(
                 }
             inventoryRepository.saveInventoryMovements(listOf(movements))
             repository.applyReserveMovements(reserve, movements, newDiff)
+        }
+    }
+
+    fun calculateRemaining(referenceId: String){
+        viewModelScope.launch {
+            val listMovements = inventoryRepository.getMovementsByReference(referenceId)
+
+            val totalPaid = listMovements
+                .filter { it.type == MovementType.RESERVE }
+                .sumOf { it.amount }
         }
     }
 
@@ -420,5 +435,23 @@ class ReserveViewModel(
         val product = products.value.find { it.idProduct == idProduct }
 
         return product?.nameProduct ?: "Sin producto"
+    }
+
+    fun loadHistory(referenceId: String){
+        viewModelScope.launch {
+            val list = inventoryRepository.getMovementsByReference(referenceId)
+            _movements.value = list
+        }
+    }
+
+    fun getTotalPayments(): Double{
+        return _movements.value
+            .filter { it.type == MovementType.RESERVE }
+            .sumOf { it.amount }
+    }
+
+    fun getQtyHistory(): List<InventoryMovements>{
+        return _movements.value
+            .filter { it.type == MovementType.RESERVE }
     }
 }
