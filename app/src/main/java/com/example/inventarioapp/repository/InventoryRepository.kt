@@ -66,7 +66,7 @@ class InventoryRepository {
         return try {
             db.collection(FirestorePaths.Collections.INVENTORY)
                 .whereEqualTo("referenceId", idReference)
-                .orderBy("createdAt", Query.Direction.ASCENDING)
+//                .orderBy("createdAt", Query.Direction.ASCENDING)
                 .get()
                 .await()
                 .toObjects(InventoryMovements::class.java)

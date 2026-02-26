@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
@@ -79,14 +80,20 @@ fun ReservesScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val stateReserve by reserveViewModel.uiState.collectAsState()
+//    val totalPaid = reserveViewModel.totalPayments
+
 
     LaunchedEffect(reserveId) {
         if (reserveId == null){
             reserveViewModel.startCreate()
         } else {
             reserveViewModel.loadReserve(reserveId)
+            reserveViewModel.loadHistory(reserveId)
         }
     }
+
+
+    val totalPaid by reserveViewModel.totalPayments.collectAsStateWithLifecycle()
 
     if (stateReserve.isLoading){
         CircularProgressIndicator()
@@ -114,11 +121,6 @@ fun ReservesScreen(
     val selectedProduct = products.firstOrNull {
         it.idProduct == stateReserve.idProduct
     }
-
-    val reserveOriginal = reserveViewModel.reserves.collectAsState()
-    val pendingAmount = (reserveOriginal.value.find { it.idProduct == selectedProduct?.idProduct }?.priceAtReserve)?.minus(
-        stateReserve.amount
-    )
 
 
     Scaffold(
@@ -272,7 +274,8 @@ fun ReservesScreen(
                                     )
                                     CustomizedOutlinedTextField(
                                         modifier = Modifier.weight(1f),
-                                        value = pendingAmount.toString(),
+//                                        value = pendingAmount.toString(),
+                                        value = totalPaid.toString(),
                                         onValueChange = { newAmount ->
                                             reserveViewModel.onAmount(
                                                 newAmount

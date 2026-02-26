@@ -16,7 +16,12 @@ import com.example.inventarioapp.validators.ReserveValidator
 import com.example.inventarioapp.validators.model.ValidationResult
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -34,6 +39,18 @@ class ReserveViewModel(
 
     private val _movements = MutableStateFlow<List<InventoryMovements>>(emptyList())
     val movements: StateFlow<List<InventoryMovements>> get() = _movements
+
+    val totalPayments: StateFlow<Double> = combine(_movements, _reserves){ movement, reserve ->
+        val currentReserve = reserve.find { it.idReserves == _uiState.value.idReserve }
+        val priceAtReserve = currentReserve?.priceAtReserve ?: 0.0
+        val sumAmounts = movement.sumOf { it.amount ?: 0.0 }
+
+        priceAtReserve - sumAmounts
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = 0.0
+    )
 
     val products = MutableStateFlow<List<Products>>(emptyList())
     val clients = MutableStateFlow<List<Clients>>(emptyList())
@@ -236,9 +253,9 @@ class ReserveViewModel(
     fun updateReserve(){
         val state = _uiState.value
         val actualData = _reserves.value.find { it.idReserves == state.idReserve }
+        val actualAmount = actualData?.amount ?: 0.0
         val originalQty = actualData?.originalQty ?: 0
         val totalDebt = (originalQty.toDouble() * state.priceAtReserve.toDouble())
-        val actualAmount = actualData?.amount ?: 0.0
         val currentPaid = state.amount + actualAmount
         val reserveFinalized =  totalDebt == currentPaid
         val newDiff = state.qtyReserve - originalQty
@@ -283,16 +300,6 @@ class ReserveViewModel(
                 }
             inventoryRepository.saveInventoryMovements(listOf(movements))
             repository.applyReserveMovements(reserve, movements, newDiff)
-        }
-    }
-
-    fun calculateRemaining(referenceId: String){
-        viewModelScope.launch {
-            val listMovements = inventoryRepository.getMovementsByReference(referenceId)
-
-            val totalPaid = listMovements
-                .filter { it.type == MovementType.RESERVE }
-                .sumOf { it.amount }
         }
     }
 
@@ -442,12 +449,6 @@ class ReserveViewModel(
             val list = inventoryRepository.getMovementsByReference(referenceId)
             _movements.value = list
         }
-    }
-
-    fun getTotalPayments(): Double{
-        return _movements.value
-            .filter { it.type == MovementType.RESERVE }
-            .sumOf { it.amount }
     }
 
     fun getQtyHistory(): List<InventoryMovements>{
