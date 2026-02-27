@@ -3,15 +3,30 @@ package com.example.inventarioapp.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,8 +44,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
@@ -98,6 +115,7 @@ fun ClientScreen(
         }
     }
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = {SnackbarHost(snackbarHostState)},
         topBar = {
             CustomizedTopAppBar(
@@ -109,41 +127,147 @@ fun ClientScreen(
             )
         },
         floatingActionButton = {
-            if (!stateClient.isEdit) {
-                if (addClientForm) {
-                    CustomizedFAB(
-                        onClick = {
-                            if (isRedirectedByReserve) {
-                                addClientForm = false
-                                PrevBackStack(navController)
-                            } else {
-                                addClientForm = false
-                            }
-                        },
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Close Client Form"
-                        )
-                    }
-                } else {
-                    CustomizedFAB(
-                        onClick = {
-                            addClientForm = true
-                            viewModel.clearForm()
-                        },
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Add Client Form"
-                        )
-                    }
+            if (!stateClient.isEdit){
+                FloatingActionButton(
+                    onClick = { addClientForm = !addClientForm},
+                    containerColor = if (addClientForm) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        imageVector = if (addClientForm) Icons.Default.Close else Icons.Default.Add,
+                        contentDescription = null
+                    )
                 }
             }
         }
     ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = if (stateClient.isEdit) stringResource(R.string.button_edit_client) else stringResource(R.string.title_client),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            letterSpacing = 1.5.sp
+                        )
+                        Text(
+                            text = if (stateClient.isEdit) "Detalles Cliente" else "Clientes",
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Black
+                        )
+                    }
+                }
+            }
+            if (addClientForm || stateClient.isEdit) {
+                item {
+                    ElevatedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.elevatedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text(
+                                text = if (stateClient.isEdit) "Editar Detalles" else "Nuevo Cliente",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+
+                            CustomizedOutlinedTextField(
+                                value = stateClient.nameClient,
+                                label = { Text(stringResource(R.string.label_name_client)) },
+                                onValueChange = viewModel::onNameChange,
+                                modifier = Modifier.fillMaxWidth(),
+                                error = stateClient.nameError,
+                                onFocusLost = viewModel::onNameBlur
+
+                            )
+
+                            Row {
+                                CustomizedOutlinedTextField(
+                                    value = stateClient.apePClient,
+                                    label = { Text(stringResource(R.string.label_apep_client)) },
+                                    onValueChange = viewModel::onApePChange,
+                                    modifier = Modifier.weight(1f),
+                                    error = stateClient.apePError,
+                                    onFocusLost = viewModel::onApePBlur
+                                )
+                                CustomizedOutlinedTextField(
+                                    value = stateClient.apeMClient,
+                                    label = { Text(stringResource(R.string.label_apem_client)) },
+                                    onValueChange = viewModel::onApeMChange,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                            CustomizedOutlinedTextField(
+                                value = stateClient.telephone,
+                                label = { Text(stringResource(R.string.label_telephone_client)) },
+                                onValueChange = viewModel::onTelephone,
+                                modifier = Modifier.fillMaxWidth(),
+                                error = stateClient.telephoneError,
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Phone
+                                ),
+                                onFocusLost = viewModel::onTelephoneBlur
+                            )
+
+                            Button(
+                                onClick = {
+                                    if (stateClient.isEdit) {
+                                        viewModel.updateClient()
+                                    } else {
+                                        viewModel.addClient()
+                                        if (isRedirectedByReserve) {
+                                            navController.popBackStack()
+                                        } else {
+                                            addClientForm = false
+                                        }
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(52.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Icon(
+                                    Icons.Default.Save,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = if (stateClient.isEdit) "Actualizar Cliente" else "Crear Cliente",
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -156,78 +280,6 @@ fun ClientScreen(
             } else {
                 if (addClientForm) {
                     Text(text = stringResource(R.string.title_client))
-                }
-            }
-
-            if (addClientForm || stateClient.isEdit) {
-                CustomizedFilledCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {}
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        CustomizedOutlinedTextField(
-                            value = stateClient.nameClient,
-                            label = { Text(stringResource(R.string.label_name_client)) },
-                            onValueChange = viewModel::onNameChange,
-                            modifier = Modifier.fillMaxWidth(),
-                            error = stateClient.nameError,
-                            onFocusLost = viewModel::onNameBlur
-
-                        )
-                        Row {
-                            CustomizedOutlinedTextField(
-                                value = stateClient.apePClient,
-                                label = { Text(stringResource(R.string.label_apep_client)) },
-                                onValueChange = viewModel::onApePChange,
-                                modifier = Modifier.weight(2f),
-                                error = stateClient.apePError,
-                                onFocusLost = viewModel::onApePBlur
-                            )
-                            CustomizedOutlinedTextField(
-                                value = stateClient.apeMClient,
-                                label = { Text(stringResource(R.string.label_apem_client)) },
-                                onValueChange = viewModel::onApeMChange,
-                                modifier = Modifier.weight(2f)
-                            )
-                        }
-                        CustomizedOutlinedTextField(
-                            value = stateClient.telephone,
-                            label = { Text(stringResource(R.string.label_telephone_client)) },
-                            onValueChange = viewModel::onTelephone,
-                            modifier = Modifier.fillMaxWidth(),
-                            error = stateClient.telephoneError,
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Phone
-                            ),
-                            onFocusLost = viewModel::onTelephoneBlur
-                        )
-                    }
-                }
-                CustomizedFilledCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {}
-                ) {
-                    CustomizedEditRows(
-                        onCancel = { navController.popBackStack() },
-                        onDelete = { viewModel.deleteClient() },
-                        onAction = {
-                            if (stateClient.isEdit) {
-                                viewModel.updateClient()
-                            } else {
-                                viewModel.addClient()
-                                if (isRedirectedByReserve){
-                                    PrevBackStack(navController)
-                                } else {
-                                    addClientForm = false
-                                }
-                            }
-                        },
-                        isEdit = stateClient.isEdit,
-                        label = stringResource(R.string.on_action_client)
-                    )
                 }
             }
             if (!stateClient.isEdit && !addClientForm) {

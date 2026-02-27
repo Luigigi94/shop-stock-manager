@@ -103,147 +103,151 @@ fun AddCategoryScreen(
         }
     }
 
-        Scaffold(
-            containerColor = MaterialTheme.colorScheme.surface,
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
-                CustomizedTopAppBar(
-                    title = stringResource(R.string.menu_add_category),
-                    navController = navController,
-                    darkThemeState = darkThemeState,
-                    showBack = true,
-                    showThemeSwitch = true
-                )
-            },
-            floatingActionButton = {
-                if (!stateCategory.isEdit) {
-                    FloatingActionButton(
-                        onClick = { addCategoryForm = !addCategoryForm },
-                        containerColor = if (addCategoryForm) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
-                        shape = CircleShape // El círculo siempre se ve más "limpio"
-                    ) {
-                        Icon(imageVector = if (addCategoryForm) Icons.Default.Close else Icons.Default.Add, contentDescription = null)
-                    }
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            CustomizedTopAppBar(
+                title = stringResource(R.string.menu_add_category),
+                navController = navController,
+                darkThemeState = darkThemeState,
+                showBack = true,
+                showThemeSwitch = true
+            )
+        },
+        floatingActionButton = {
+            if (!stateCategory.isEdit) {
+                FloatingActionButton(
+                    onClick = { addCategoryForm = !addCategoryForm },
+                    containerColor = if (addCategoryForm) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        imageVector = if (addCategoryForm) Icons.Default.Close else Icons.Default.Add,
+                        contentDescription = null
+                    )
                 }
             }
-        ) { innerPadding ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentPadding = PaddingValues(24.dp), // Más aire a los lados
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                // CABECERA ESTILO "DASHBOARD"
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text(
-                                text = if (stateCategory.isEdit) "Edición" else "Inventario",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.primary,
-                                letterSpacing = 1.5.sp
-                            )
-                            Text(
-                                text = if (stateCategory.isEdit) "Detalles Categoría" else "Categorías",
-                                style = MaterialTheme.typography.headlineLarge, // Roboto de tu Type.kt
-                                fontWeight = FontWeight.Black
-                            )
-                        }
-                    }
-                }
-
-                // FORMULARIO: En lugar de campos sueltos, lo encerramos en una tarjeta suave
-                if (addCategoryForm || stateCategory.isEdit) {
-                    item {
-                        ElevatedCard(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp), // Un poco de espacio extra para que respire
-                            shape = RoundedCornerShape(20.dp),
-                            colors = CardDefaults.elevatedCardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                            )
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(20.dp) // Espaciado interno de la tarjeta
-                                    .fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                // Título interno del formulario para saber qué estamos haciendo
-                                Text(
-                                    text = if (stateCategory.isEdit) "Editar Detalles" else "Nueva Categoría",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-
-                                CustomizedOutlinedTextField(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    label = { Text("Nombre de la categoría") },
-                                    value = stateCategory.nameCategory,
-                                    onValueChange = viewModel::onNameCategory,
-                                    error = stateCategory.nameError
-                                )
-
-                                CustomizedOutlinedTextField(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    label = { Text("Descripción (opcional)") },
-                                    value = stateCategory.descriptionCategory ?: "",
-                                    onValueChange = viewModel::onDescriptionCategory
-                                )
-
-                                Button(
-                                    onClick = {
-                                        if (stateCategory.isEdit) {
-                                            viewModel.updateCategory()
-                                        } else {
-                                            viewModel.addCategory()
-                                            if (isRedirectedByProduct) {
-                                                navController.popBackStack()
-                                            } else {
-                                                addCategoryForm = false
-                                            }
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(52.dp),
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary
-                                    )
-                                ) {
-                                    Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(18.dp))
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        text = if (stateCategory.isEdit) "Actualizar Categoría" else "Crear Categoría",
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // LISTA: Cada ítem es una tarjeta independiente con su propia elevación
-                if (!stateCategory.isEdit && !addCategoryForm) {
-                    item {
-                        CustomizedListOfEditables(
-                            list = listCategories,
-                            label = { it.nameCategory },
-                            description = { it.descriptionCategory },
-                            onItemClick = { category ->
-                                navController.navigate("${AppScreens.AddCategoryScreen.route}?categoryId=${category.idCategory}")
-                            }
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = if (stateCategory.isEdit) stringResource(R.string.button_edit_category) else stringResource(R.string.menu_label_add_category),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            letterSpacing = 1.5.sp
+                        )
+                        Text(
+                            text = if (stateCategory.isEdit) "Detalles Categoría" else "Categorías",
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Black
                         )
                     }
                 }
             }
+
+            if (addCategoryForm || stateCategory.isEdit) {
+                item {
+                    ElevatedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.elevatedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text(
+                                text = if (stateCategory.isEdit) "Editar Detalles" else "Nueva Categoría",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+
+                            CustomizedOutlinedTextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = { Text("Nombre de la categoría") },
+                                value = stateCategory.nameCategory,
+                                onValueChange = viewModel::onNameCategory,
+                                error = stateCategory.nameError
+                            )
+
+                            CustomizedOutlinedTextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = { Text("Descripción (opcional)") },
+                                value = stateCategory.descriptionCategory ?: "",
+                                onValueChange = viewModel::onDescriptionCategory
+                            )
+
+                            Button(
+                                onClick = {
+                                    if (stateCategory.isEdit) {
+                                        viewModel.updateCategory()
+                                    } else {
+                                        viewModel.addCategory()
+                                        if (isRedirectedByProduct) {
+                                            navController.popBackStack()
+                                        } else {
+                                            addCategoryForm = false
+                                        }
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(52.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Icon(
+                                    Icons.Default.Save,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = if (stateCategory.isEdit) "Actualizar Categoría" else "Crear Categoría",
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // LISTA: Cada ítem es una tarjeta independiente con su propia elevación
+            if (!stateCategory.isEdit && !addCategoryForm) {
+                item {
+                    CustomizedListOfEditables(
+                        list = listCategories,
+                        label = { it.nameCategory },
+                        description = { it.descriptionCategory },
+                        onItemClick = { category ->
+                            navController.navigate("${AppScreens.AddCategoryScreen.route}?categoryId=${category.idCategory}")
+                        }
+                    )
+                }
+            }
         }
+    }
 }
