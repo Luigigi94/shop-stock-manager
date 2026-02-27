@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -207,9 +206,9 @@ class ReserveViewModel(
                 }
             val movements = buildMovement(productId = productReserved.idProduct, qty = reserve.qtyReserve, amount = reserve.amount, referenceId = reserve.idReserves,)
             val diff = productReserved.stock - reserve.qtyReserve
-            Log.d("ReserveVM.addReserve", "Revisa qtyReserve: ${reserve.qtyReserve}")
 
             inventoryRepository.saveInventoryMovements(listOf(movements))
+            Log.d("ReserveVM.addReserve", "Revisa params antes de enviar para validar el envio\n reserve: $reserve\nmovements: $movements\ndiff: $diff")
             repository.applyReserveMovements(reserve, movements, diff)
 
         }
@@ -218,14 +217,17 @@ class ReserveViewModel(
     fun updateReserve(){
         val state = _uiState.value
         val actualData = _selectedReserve.value
-        val actualAmount = actualData?.amount ?: 0.0
         val originalQty = actualData?.originalQty ?: 0
         val price = actualData?.priceAtReserve ?: 0.0
         val totalDebt = (originalQty.toDouble() * price)
-        val currentPaid = state.amount + actualAmount
+        val historyPaid = _movements.value.filter { it.referenceId == state.idReserve } .sumOf { it.amount }
+        val currentPaid = historyPaid + state.amount
         val reserveFinalized =  totalDebt <= currentPaid
-        val newDiff = state.qtyReserve - originalQty
-        Log.e("ReserveVM.update","revisando qtyActual: ${state.qtyReserve},\noriginalQty: $originalQty")
+        val diff = state.qtyReserve - originalQty
+        val prodStock = _products.value.find { it.idProduct == state.idProduct }?.stock
+        val newStock = (if (prodStock != null && diff != 0) prodStock - diff else prodStock) ?: 0
+
+        Log.e("ReserveVM.update","revisando price: $price,\noriginalQty: $originalQty,\n totalDebt: $totalDebt\n, currentPaid: $currentPaid\nreserveFinalized: $reserveFinalized")
 
 
 
@@ -260,8 +262,7 @@ class ReserveViewModel(
                     }
                 }
             inventoryRepository.saveInventoryMovements(listOf(movements))
-            if (newDiff != 0)
-                repository.applyReserveMovements(reserve, movements, newDiff)
+            repository.applyReserveMovements(reserve, movements, newStock)
         }
     }
 

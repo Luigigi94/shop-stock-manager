@@ -335,9 +335,10 @@ fun ReservesScreen(
                                     onAction = {
                                         if (stateReserve.isEdit){
                                             reserveViewModel.updateReserve()
+                                            navController.popBackStack()
                                         } else {
                                             reserveViewModel.addReserve()
-                                            navController.popBackStack()
+                                            addReserveForm = false
                                         }
                                     },
                                     isEdit = stateReserve.isEdit,

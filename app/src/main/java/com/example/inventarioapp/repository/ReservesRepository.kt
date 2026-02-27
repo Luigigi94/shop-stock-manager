@@ -1,5 +1,6 @@
 package com.example.inventarioapp.repository
 
+import android.util.Log
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Reserves
@@ -78,16 +79,23 @@ class ReservesRepository {
         movements: InventoryMovements,
         newStock: Int
     ){
-        db.runTransaction { transaction ->
-            val reserveRef = db.collection(FirestorePaths.Collections.RESERVES).document(reserve.idReserves)
-            transaction.set(reserveRef, reserve)
+        Log.d("Firestore", "Comienza applyReserveMovements reserve: $reserve\nmovements: $movements\nnewStock: $newStock")
+        try {
+            db.runTransaction { transaction ->
+                val reserveRef = db.collection(FirestorePaths.Collections.RESERVES).document(reserve.idReserves)
+                val movementRef = db.collection(FirestorePaths.Collections.INVENTORY).document(movements.id)
+                val productRef = db.collection(FirestorePaths.Collections.PRODUCTS).document(reserve.idProduct)
 
-            val movementRef = db.collection(FirestorePaths.Collections.INVENTORY).document(movements.id)
-            transaction.set(movementRef, movements)
+                transaction.set(reserveRef, reserve)
 
-            val productRef = db.collection(FirestorePaths.Collections.PRODUCTS).document(reserve.idProduct)
-            transaction.update(productRef, "stock", newStock.toLong())
-        }.await()
+                transaction.set(movementRef, movements)
+
+                transaction.update(productRef, "stock", newStock.toLong())
+            }.await()
+            Log.d("Firestore", "Transacción completada con éxito")
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error en la transacción: ${e.message}", e)
+        }
     }
 
 
