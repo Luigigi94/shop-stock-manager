@@ -8,12 +8,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomizedOutlinedCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    shape: Shape = CardDefaults.shape,
     content: @Composable () -> Unit
 ){
     OutlinedCard(

@@ -62,4 +62,9 @@
     <string name="label_qty_reserved">Reserved Quantity</string>
     <string name="label_last_amount">Last Amount</string>
     <string name="label_pending_amount">Pending Amount</string>
+    <string name="label_menu_rapid_actions">Rapid Actions</string>
+    <string name="label_welcome">Welcome back,</string>
+    <string name="label_todays_sale">Todays sale</string>
+    <string name="label_reserves_today">Reserves</string>
+    <string name="label_availables_categories">Availables Categories</string>
 </resources>

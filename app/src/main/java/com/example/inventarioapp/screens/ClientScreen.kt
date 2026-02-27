@@ -238,7 +238,7 @@ fun ClientScreen(
                     CustomizedListOfEditables(
                         listClients,
                         modifier = Modifier,
-                        label = { it.nameClient },
+                        label = { "${it.nameClient} ${it.apePClient}" },
                         onItemClick = {
                             navController.navigate(
                                 route = "${AppScreens.ClientScreen.route}?clientId=${it.idClient}"

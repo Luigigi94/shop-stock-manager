@@ -1,16 +1,30 @@
 package com.example.inventarioapp.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,19 +42,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
-import com.example.inventarioapp.ui.components.CustomizedEditRows
-import com.example.inventarioapp.ui.components.CustomizedFAB
-import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
-import com.example.inventarioapp.ui.utils.PrevBackStack
-import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,7 +77,7 @@ fun AddCategoryScreen(
     }
 
     LaunchedEffect(isCreateMode) {
-        if (isCreateMode){
+        if (isCreateMode) {
             addCategoryForm = true
             isRedirectedByProduct = true
         }
@@ -92,133 +103,147 @@ fun AddCategoryScreen(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            CustomizedTopAppBar(
-                title = stringResource(R.string.menu_add_category),
-                navController = navController,
-                darkThemeState = darkThemeState,
-                showBack = true,
-                showThemeSwitch = true
-            )
-        },
-        floatingActionButton = {
-            if (!stateCategory.isEdit) {
-                if (addCategoryForm) {
-                    CustomizedFAB(
-                        onClick = {
-                            if (isRedirectedByProduct){
-                                PrevBackStack(navController)
-                            } else {
-                                addCategoryForm = false
-                            }
-                        },
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Close Category Form"
-                        )
-                    }
-                } else {
-                    CustomizedFAB(
-                        onClick = {
-                            addCategoryForm = true
-                            viewModel.clearForm()
-                        },
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Add Category Form"
-                        )
-                    }
-                }
-            }
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .hideKeyboardOnTap()
-        ) {
-
-            if (stateCategory.isEdit) {
-                Text(text = stringResource(R.string.button_edit_category))
-            } else {
-                if (addCategoryForm) {
-                    Text(text = stringResource(R.string.title_category))
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-
-            if (addCategoryForm || stateCategory.isEdit) {
-                CustomizedFilledCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {}
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        CustomizedOutlinedTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text(stringResource(R.string.label_name_category)) },
-                            value = stateCategory.nameCategory,
-                            onValueChange = viewModel::onNameCategory,
-                            onFocusLost = viewModel::onNameBlur,
-                            error = stateCategory.nameError
-                        )
-                        CustomizedOutlinedTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text(stringResource(R.string.label_description_category)) },
-                            value = stateCategory.descriptionCategory ?: "",
-                            onValueChange = viewModel::onDescriptionCategory
-                        )
-                    }
-                }
-                Spacer(Modifier.size(10.dp))
-                CustomizedEditRows(
-                    onCancel = {
-                        navController.popBackStack()
-                    },
-                    onDelete = {
-                        viewModel.deleteCategory()
-                    },
-                    onAction = {
-                        if (stateCategory.isEdit) {
-                            viewModel.updateCategory()
-                        } else {
-                            viewModel.addCategory()
-                            if (isRedirectedByProduct){
-                                PrevBackStack(navController)
-                            } else {
-                                addCategoryForm = false
-                            }
-                        }
-                    },
-                    isEdit = stateCategory.isEdit,
-                    label = stringResource(R.string.on_action_category)
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.surface,
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                CustomizedTopAppBar(
+                    title = stringResource(R.string.menu_add_category),
+                    navController = navController,
+                    darkThemeState = darkThemeState,
+                    showBack = true,
+                    showThemeSwitch = true
                 )
+            },
+            floatingActionButton = {
+                if (!stateCategory.isEdit) {
+                    FloatingActionButton(
+                        onClick = { addCategoryForm = !addCategoryForm },
+                        containerColor = if (addCategoryForm) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
+                        shape = CircleShape // El círculo siempre se ve más "limpio"
+                    ) {
+                        Icon(imageVector = if (addCategoryForm) Icons.Default.Close else Icons.Default.Add, contentDescription = null)
+                    }
+                }
             }
-            if (!stateCategory.isEdit && !addCategoryForm) {
-                Spacer(Modifier.height(10.dp))
-                CustomizedFilledCard(
-                    modifier = Modifier.fillMaxWidth(1f),
-                    onClick = {}
-                ) {
-                    CustomizedListOfEditables(
-                        listCategories,
-                        modifier = Modifier,
-                        label = { it.nameCategory },
-                        onItemClick = {
-                            navController.navigate(
-                                route = "${AppScreens.AddCategoryScreen.route}?categoryId=${it.idCategory}"
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(24.dp), // Más aire a los lados
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                // CABECERA ESTILO "DASHBOARD"
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(
+                                text = if (stateCategory.isEdit) "Edición" else "Inventario",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                letterSpacing = 1.5.sp
+                            )
+                            Text(
+                                text = if (stateCategory.isEdit) "Detalles Categoría" else "Categorías",
+                                style = MaterialTheme.typography.headlineLarge, // Roboto de tu Type.kt
+                                fontWeight = FontWeight.Black
                             )
                         }
-                    )
+                    }
+                }
+
+                // FORMULARIO: En lugar de campos sueltos, lo encerramos en una tarjeta suave
+                if (addCategoryForm || stateCategory.isEdit) {
+                    item {
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp), // Un poco de espacio extra para que respire
+                            shape = RoundedCornerShape(20.dp),
+                            colors = CardDefaults.elevatedCardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(20.dp) // Espaciado interno de la tarjeta
+                                    .fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                // Título interno del formulario para saber qué estamos haciendo
+                                Text(
+                                    text = if (stateCategory.isEdit) "Editar Detalles" else "Nueva Categoría",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+
+                                CustomizedOutlinedTextField(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    label = { Text("Nombre de la categoría") },
+                                    value = stateCategory.nameCategory,
+                                    onValueChange = viewModel::onNameCategory,
+                                    error = stateCategory.nameError
+                                )
+
+                                CustomizedOutlinedTextField(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    label = { Text("Descripción (opcional)") },
+                                    value = stateCategory.descriptionCategory ?: "",
+                                    onValueChange = viewModel::onDescriptionCategory
+                                )
+
+                                Button(
+                                    onClick = {
+                                        if (stateCategory.isEdit) {
+                                            viewModel.updateCategory()
+                                        } else {
+                                            viewModel.addCategory()
+                                            if (isRedirectedByProduct) {
+                                                navController.popBackStack()
+                                            } else {
+                                                addCategoryForm = false
+                                            }
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(52.dp),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary
+                                    )
+                                ) {
+                                    Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(18.dp))
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = if (stateCategory.isEdit) "Actualizar Categoría" else "Crear Categoría",
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // LISTA: Cada ítem es una tarjeta independiente con su propia elevación
+                if (!stateCategory.isEdit && !addCategoryForm) {
+                    item {
+                        CustomizedListOfEditables(
+                            list = listCategories,
+                            label = { it.nameCategory },
+                            description = { it.descriptionCategory },
+                            onItemClick = { category ->
+                                navController.navigate("${AppScreens.AddCategoryScreen.route}?categoryId=${category.idCategory}")
+                            }
+                        )
+                    }
                 }
             }
         }
-    }
 }

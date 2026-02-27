@@ -7,7 +7,7 @@
     <string name="menu_edit_category" translatable="false">EditCategoryScreen</string>
     <string name="menu_add_product" translatable="false">AddProductScreen</string>
     <string name="menu_edit_product" translatable="false">EditProductScreen</string>
-    <string name="menu_menu" translatable="false">MenuScreen</string>
+    <string name="menu_menu" translatable="false">Dashboard</string>
     <string name="menu_label_add_product">Agregar Producto</string>
     <string name="menu_label_add_category">Nueva Categoria</string>
     <string name="menu_label_add_order">Apartados</string>
@@ -90,6 +90,11 @@
     <string name="label_qty_reserved">Cantidad Apartada</string>
     <string name="label_last_amount">Último monto</string>
     <string name="label_pending_amount">Pendiente por Pagar</string>
+    <string name="label_menu_rapid_actions">Acciones Rápidas</string>
+    <string name="label_welcome">Bienvenido de nuevo,</string>
+    <string name="label_todays_sale">Ventas hoy</string>
+    <string name="label_reserves_today">Apartados</string>
+    <string name="label_availables_categories">Categorias Disponibles</string>
 
 
 </resources>
