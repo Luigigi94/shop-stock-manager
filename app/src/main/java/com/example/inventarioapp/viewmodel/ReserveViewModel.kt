@@ -54,11 +54,20 @@ class ReserveViewModel(
 
     private val _uiState = MutableStateFlow(ReserveUiState())
     val uiState: StateFlow<ReserveUiState> get() = _uiState
-    val totalPayments: StateFlow<Double> = combine(_movements, _reserves){ movement, reserve ->
-        val currentReserve = reserve.find { it.idReserves == _uiState.value.idReserve }
-        val priceAtReserve = currentReserve?.priceAtReserve ?: 0.0
-        val sumAmounts = movement.sumOf { it.amount ?: 0.0 }
+    val totalPayments: StateFlow<Double> = combine(
+        _movements,
+        _selectedReserve // Cambiado de _reserves a _selectedReserve
+    ) { movements, selectedReserve ->
 
+        // Obtenemos el precio pactado al momento de la reserva
+        val priceAtReserve = selectedReserve?.priceAtReserve ?: 0.0
+
+        // Sumamos todos los movimientos (abonos) asociados
+        val sumAmounts = movements.sumOf { it.amount ?: 0.0 }
+
+        Log.d("ReserveVM.totalPayments", "Calculando para reserva: ${selectedReserve?.idReserves}. Restante: ${priceAtReserve - sumAmounts}")
+
+        // El resultado es el total pendiente
         priceAtReserve - sumAmounts
     }.stateIn(
         scope = viewModelScope,
@@ -198,6 +207,7 @@ class ReserveViewModel(
                 }
             val movements = buildMovement(productId = productReserved.idProduct, qty = reserve.qtyReserve, amount = reserve.amount, referenceId = reserve.idReserves,)
             val diff = productReserved.stock - reserve.qtyReserve
+            Log.d("ReserveVM.addReserve", "Revisa qtyReserve: ${reserve.qtyReserve}")
 
             inventoryRepository.saveInventoryMovements(listOf(movements))
             repository.applyReserveMovements(reserve, movements, diff)
@@ -210,10 +220,12 @@ class ReserveViewModel(
         val actualData = _selectedReserve.value
         val actualAmount = actualData?.amount ?: 0.0
         val originalQty = actualData?.originalQty ?: 0
-        val totalDebt = (originalQty.toDouble() * state.priceAtReserve.toDouble())
+        val price = actualData?.priceAtReserve ?: 0.0
+        val totalDebt = (originalQty.toDouble() * price)
         val currentPaid = state.amount + actualAmount
-        val reserveFinalized =  totalDebt == currentPaid
+        val reserveFinalized =  totalDebt <= currentPaid
         val newDiff = state.qtyReserve - originalQty
+        Log.e("ReserveVM.update","revisando qtyActual: ${state.qtyReserve},\noriginalQty: $originalQty")
 
 
 
@@ -223,11 +235,14 @@ class ReserveViewModel(
             idProduct = state.idProduct,
             reservedAt = state.reservedAt,
             endReserve = state.endReserve,
-            priceAtReserve = state.priceAtReserve.toDoubleOrNull() ?: 0.0,
+            priceAtReserve = price,
             qtyReserve = state.qtyReserve,
+            originalQty = originalQty,
             amount = state.amount,
             isFinalized = reserveFinalized
         )
+
+
 
         val movements = buildMovement(productId = state.idProduct, qty = reserve.qtyReserve, amount = reserve.amount,referenceId = reserve.idReserves,)
 
@@ -245,7 +260,8 @@ class ReserveViewModel(
                     }
                 }
             inventoryRepository.saveInventoryMovements(listOf(movements))
-            repository.applyReserveMovements(reserve, movements, newDiff)
+            if (newDiff != 0)
+                repository.applyReserveMovements(reserve, movements, newDiff)
         }
     }
 
@@ -341,6 +357,7 @@ class ReserveViewModel(
                 endReserve = reserve.endReserve,
                 qtyReserve = reserve.qtyReserve,
                 amount = reserve.amount,
+                lastAmount = reserve.amount,
                 isEdit = true
             )
         }

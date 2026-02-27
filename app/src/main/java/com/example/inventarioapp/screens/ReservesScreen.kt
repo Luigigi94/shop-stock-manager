@@ -74,14 +74,11 @@ fun ReservesScreen(
     val today = reserveViewModel.currentDate()
 
     BackHandler(enabled = addReserveForm) {
-        // Si el usuario pulsa atrás y el form está abierto, solo cerramos el form
         addReserveForm = false
     }
     val snackbarHostState = remember { SnackbarHostState() }
 
     val stateReserve by reserveViewModel.uiState.collectAsState()
-//    val totalPaid = reserveViewModel.totalPayments
-
 
     LaunchedEffect(reserveId) {
         if (reserveId == null){
@@ -259,22 +256,13 @@ fun ReservesScreen(
                                 ) {
                                     CustomizedOutlinedTextField(
                                         modifier = Modifier.weight(1f),
-                                        value = stateReserve.amount.toString(),
-                                        onValueChange = { newAmount ->
-                                            reserveViewModel.onAmount(
-                                                newAmount
-                                            )
-                                        },
+                                        value = stateReserve.lastAmount.toString(),
+                                        onValueChange = { },
                                         label = { Text(text = stringResource(R.string.label_last_amount)) },
-                                        error = stateReserve.amountError?.errorResId,
-                                        errorArgs = stateReserve.amountError?.args,
-
-                                        onFocusLost = reserveViewModel::onAmountBlur,
                                         readOnly = true
                                     )
                                     CustomizedOutlinedTextField(
                                         modifier = Modifier.weight(1f),
-//                                        value = pendingAmount.toString(),
                                         value = totalPaid.toString(),
                                         onValueChange = { newAmount ->
                                             reserveViewModel.onAmount(
