@@ -41,7 +41,7 @@
     <string name="clients_label_saved">Client Added</string>
     <string name="clients_label_add">Add Client</string>
     <string name="clients_label_edit">Edit Client</string>
-    <string name="clients_label_clients">Clients</string>
+    <string name="client_label_list_categories">Clients List</string>
     <string name="clients_label_new_client">New Client</string>
     <string name="clients_label_name_client">Name</string>
     <string name="clients_label_apep_client">Last Name</string>

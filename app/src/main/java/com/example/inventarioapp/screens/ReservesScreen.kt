@@ -366,28 +366,23 @@ fun ReservesScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     onClick = {}
                                 ) {
-                                    CustomizedFilledCard(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        onClick = {}
-                                    ) {
-                                        CustomizedEditRows(
-                                            onCancel = { navController.popBackStack() },
-                                            onDelete = { reserveViewModel.deleteReserve() },
-                                            onAction = {
-                                                if (stateReserve.isEdit) {
-                                                    reserveViewModel.updateReserve()
-                                                    navController.popBackStack()
-                                                } else {
-                                                    reserveViewModel.addReserve()
-                                                    addReserveForm = false
-                                                }
-                                            },
-                                            isEdit = stateReserve.isEdit,
-                                            label = if (stateReserve.isEdit) stringResource(R.string.reserve_label_update_reserve) else stringResource(
-                                                R.string.reserve_label_create_reserve
-                                            )
+                                    CustomizedEditRows(
+                                        onCancel = { navController.popBackStack() },
+                                        onDelete = { reserveViewModel.deleteReserve() },
+                                        onAction = {
+                                            if (stateReserve.isEdit) {
+                                                reserveViewModel.updateReserve()
+                                                navController.popBackStack()
+                                            } else {
+                                                reserveViewModel.addReserve()
+                                                addReserveForm = false
+                                            }
+                                        },
+                                        isEdit = stateReserve.isEdit,
+                                        label = if (stateReserve.isEdit) stringResource(R.string.reserve_label_update_reserve) else stringResource(
+                                            R.string.reserve_label_create_reserve
                                         )
-                                    }
+                                    )
                                 }
                             }
                         }

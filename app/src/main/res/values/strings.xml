@@ -51,7 +51,7 @@
     <string name="clients_label_saved">Cliente Añadido</string>
     <string name="clients_label_add">Agregar Cliente</string>
     <string name="clients_label_edit">Editar Cliente</string>
-    <string name="clients_label_clients">Clientes</string>
+    <string name="client_label_list_categories">Lista de Clientes</string>
     <string name="clients_label_new_client">Nuevo Cliente</string>
     <string name="clients_label_name_client">Nombre</string>
     <string name="clients_label_apep_client">Apellido Paterno</string>

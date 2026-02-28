@@ -57,6 +57,7 @@ import com.example.inventarioapp.ui.components.CustomizedFAB
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
+import com.example.inventarioapp.ui.components.CustomizedTitleScreens
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.PrevBackStack
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
@@ -119,7 +120,7 @@ fun ClientScreen(
         snackbarHost = {SnackbarHost(snackbarHostState)},
         topBar = {
             CustomizedTopAppBar(
-                title = "ClientScreen",
+                title = stringResource(R.string.topbar_clients),
                 navController = navController,
                 darkThemeState = darkThemeState,
                 showBack = true,
@@ -149,25 +150,7 @@ fun ClientScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        Text(
-                            text = if (stateClient.isEdit) stringResource(R.string.clients_label_edit) else stringResource(R.string.clients_label_add),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            letterSpacing = 1.5.sp
-                        )
-                        Text(
-                            text = if (stateClient.isEdit) "Detalles Cliente" else "Clientes",
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
-                }
+                CustomizedTitleScreens(if (stateClient.isEdit) stringResource(R.string.clients_label_edit) else stringResource(R.string.client_label_list_categories))
             }
             if (addClientForm || stateClient.isEdit) {
                 item {
@@ -187,7 +170,7 @@ fun ClientScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = if (stateClient.isEdit) "Editar Detalles" else "Nuevo Cliente",
+                                text = if (stateClient.isEdit) stringResource(R.string.generic_label_details) else stringResource(R.string.clients_label_new_client),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.primary
@@ -231,66 +214,33 @@ fun ClientScreen(
                                 onFocusLost = viewModel::onTelephoneBlur
                             )
 
-                            Button(
-                                onClick = {
-                                    if (stateClient.isEdit) {
+                            CustomizedEditRows(
+                                onCancel = {
+                                    if (addClientForm) addClientForm = false
+                                    else navController.popBackStack()
+                                },
+                                onDelete = { viewModel.deleteClient() },
+                                onAction = {
+                                    if (stateClient.isEdit){
                                         viewModel.updateClient()
                                     } else {
                                         viewModel.addClient()
-                                        if (isRedirectedByReserve) {
-                                            navController.popBackStack()
-                                        } else {
-                                            addClientForm = false
-                                        }
                                     }
                                 },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(52.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                Icon(
-                                    Icons.Default.Save,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    text = if (stateClient.isEdit) "Actualizar Cliente" else "Crear Cliente",
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                                isEdit = stateClient.isEdit,
+                                label = if (stateClient.isEdit) stringResource(R.string.clients_label_update_client) else stringResource(R.string.clients_label_create_client)
+                            )
                         }
                     }
                 }
             }
-        }
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .hideKeyboardOnTap()
-                .background(MaterialTheme.colorScheme.background),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            if (stateClient.isEdit) {
-                Text(text = stringResource(R.string.generic_label_button_edit))
-            } else {
-                if (addClientForm) {
-                    Text(text = stringResource(R.string.generic_label_button_edit))
-                }
-            }
             if (!stateClient.isEdit && !addClientForm) {
-                CustomizedFilledCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {}
-                ) {
+                item {
                     CustomizedListOfEditables(
                         listClients,
                         modifier = Modifier,
                         label = { "${it.nameClient} ${it.apePClient}" },
+                        description = { it.telephone },
                         onItemClick = {
                             navController.navigate(
                                 route = "${AppScreens.ClientScreen.route}?clientId=${it.idClient}"
