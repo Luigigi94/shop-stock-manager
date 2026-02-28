@@ -60,6 +60,7 @@
     <string name="reserve_label_select_client">Client</string>
     <string name="reserve_label_select_product">Product</string>
     <string name="reserve_label_reserved_quantity">Reserved Quantity</string>
+    <string name="reserve_label_new_reserve">New Reserve</string>
     <string name="reserve_label_price">Price</string>
     <string name="reserve_label_last_amount">Last Amount</string>
     <string name="reserve_label_debt">Debt</string>

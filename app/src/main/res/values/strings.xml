@@ -78,6 +78,7 @@
     <string name="reserve_label_select_client">Cliente</string>
     <string name="reserve_label_select_product">Producto</string>
     <string name="reserve_label_reserved_quantity">Cantidad Apartada</string>
+    <string name="reserve_label_new_reserve">Nuevo Apartado</string>
     <string name="reserve_label_price">Precio</string>
     <string name="reserve_label_last_amount">Último Monto</string>
     <string name="reserve_label_debt">Adeudo</string>

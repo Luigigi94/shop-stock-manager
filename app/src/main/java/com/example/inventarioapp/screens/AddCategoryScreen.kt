@@ -51,6 +51,7 @@ import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedEditRows
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
+import com.example.inventarioapp.ui.components.CustomizedTitleScreens
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 
@@ -138,19 +139,7 @@ fun AddCategoryScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        Text(
-                            text = if (stateCategory.isEdit) stringResource(R.string.categories_label_edit) else stringResource(R.string.categories_label_list_categories),
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
-                }
+                CustomizedTitleScreens(if (stateCategory.isEdit) stringResource(R.string.categories_label_edit) else stringResource(R.string.categories_label_list_categories))
             }
 
             if (addCategoryForm || stateCategory.isEdit) {
@@ -191,39 +180,6 @@ fun AddCategoryScreen(
                                 value = stateCategory.descriptionCategory ?: "",
                                 onValueChange = viewModel::onDescriptionCategory
                             )
-
-                            /*Button(
-                                onClick = {
-                                    if (stateCategory.isEdit) {
-                                        viewModel.updateCategory()
-                                    } else {
-                                        viewModel.addCategory()
-                                        if (isRedirectedByProduct) {
-                                            navController.popBackStack()
-                                        } else {
-                                            addCategoryForm = false
-                                        }
-                                    }
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(52.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                Icon(
-                                    Icons.Default.Save,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    text = if (stateCategory.isEdit) stringResource(R.string.categories_label_update_category) else stringResource(R.string.categories_label_create_category),
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }*/
                             CustomizedEditRows(
                                 onCancel = {
                                     if (addCategoryForm) addCategoryForm = false else
