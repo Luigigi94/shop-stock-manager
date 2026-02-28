@@ -1,16 +1,26 @@
 package com.example.inventarioapp.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,8 +35,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -34,12 +46,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedEditRows
-import com.example.inventarioapp.ui.components.CustomizedFAB
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.forms.ProductForm
-import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
 
@@ -57,14 +67,13 @@ fun AddProductScreen(
 
     LaunchedEffect(navBackStackEntry) {
         val result = navBackStackEntry?.savedStateHandle?.get<Boolean>("openCreateForm")
-        if (result == true){
+        if (result == true) {
             addProductForm = true
             navBackStackEntry?.savedStateHandle?.remove<Boolean>("openCreateForm")
         }
     }
 
     BackHandler(enabled = addProductForm) {
-        // Si el usuario pulsa atrás y el form está abierto, solo cerramos el form
         addProductForm = false
     }
 
@@ -73,34 +82,34 @@ fun AddProductScreen(
     val stateProduct by viewModel.uiState.collectAsState()
 
     LaunchedEffect(productId) {
-        if (productId == null){
+        if (productId == null) {
             viewModel.startCreate()
         } else {
             viewModel.loadProduct(productId)
         }
     }
 
-    if (stateProduct.isLoading){
+    if (stateProduct.isLoading) {
         CircularProgressIndicator()
         return
     }
 
     LaunchedEffect(stateProduct.success) {
-        if (stateProduct.success && stateProduct.isEdit){
+        if (stateProduct.success && stateProduct.isEdit) {
             navController.popBackStack()
         }
     }
 
     LaunchedEffect(isCreateMode) {
-        if (isCreateMode){
+        if (isCreateMode) {
             addProductForm = true
         }
     }
 
     val listProducts by viewModel.products.collectAsState()
 
-    if (stateProduct.success){
-        val text = stringResource(R.string.result_success_added_product)
+    if (stateProduct.success) {
+        val text = stringResource(R.string.products_label_saved)
         LaunchedEffect(Unit) {
             snackbarHostState.showSnackbar(text)
         }
@@ -111,14 +120,15 @@ fun AddProductScreen(
     val categories by categoryViewModel.categories.collectAsState()
 
 //    var selectedCategory by remember { mutableStateOf<Categories?>(null) }
-    val selectedCategory = categories.firstOrNull{
+    val selectedCategory = categories.firstOrNull {
         it.idCategory == stateProduct.idCategory
     }
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CustomizedTopAppBar(
-                title = stringResource(R.string.menu_add_product),
+                title = stringResource(R.string.topbar_products),
                 navController = navController,
                 darkThemeState = darkThemeState,
                 showBack = true,
@@ -126,91 +136,113 @@ fun AddProductScreen(
             )
         }, floatingActionButton = {
             if (!stateProduct.isEdit) {
-                if (addProductForm) {
-                    CustomizedFAB(
-                        onClick = { addProductForm = false },
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Close Product Form"
-                        )
-                    }
-                } else {
-                    CustomizedFAB(
-                        onClick = {
-                            addProductForm = true
-                            viewModel.clearForm()
-                        },
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Add Product Form"
-                        )
-                    }
+                FloatingActionButton(
+                    onClick = { addProductForm = !addProductForm },
+                    containerColor = if (addProductForm) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        imageVector = if (addProductForm) Icons.Default.Close else Icons.Default.Add,
+                        contentDescription = null
+                    )
                 }
             }
         }
     ) { innerPadding ->
-
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .padding(innerPadding)
-                .hideKeyboardOnTap()
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            if (stateProduct.isEdit){
-                Text(text = stringResource(R.string.button_edit_product))
-            } else{
-                if (addProductForm) {
-                    Text(text = stringResource(R.string.title_product))
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = if (stateProduct.isEdit) stringResource(R.string.products_label_edit) else stringResource(
+                                R.string.products_label_list_products
+                            ),
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Black
+                        )
+                    }
                 }
             }
             if (addProductForm || stateProduct.isEdit) {
-                Spacer(modifier = Modifier.height(10.dp))
-                CustomizedFilledCard(
-                    modifier = Modifier.fillMaxWidth(), onClick = {}) {
-                    ProductForm(
-                        state = stateProduct,
-//                        currentStock = currentStock,
-                        categories = categories,
-                        selectedCategory = selectedCategory,
-                        onNameChange = viewModel::onNameProduct,
-                        onNameBlur = viewModel::onNameBlur,
-                        onDescriptionChange = viewModel::onDescriptionProduct,
-                        onPriceChange = viewModel::onPriceProduct,
-                        onPriceBlur = viewModel::onPriceBlur,
-                        onQuantityChange = viewModel::onQuantityProduct,
-                        onQuantityBlur = viewModel::onQuantityBlur,
-                        onCategorySelected = viewModel::onIdCategory,
-                        onAddCategoryClick = {
-                            navController.navigate("${AppScreens.AddCategoryScreen.route}?openCreateForm=true")
-                        }
-                    )
-                }
+                item {
+                    ElevatedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.elevatedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text(
+                                text = if (stateProduct.isEdit) stringResource(R.string.generic_label_details) else stringResource(
+                                    R.string.products_label_new_product
+                                ),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
 
-                Spacer(modifier = Modifier.height(10.dp))
-                CustomizedFilledCard(onClick = {}) {
-                    CustomizedEditRows(
-                        onCancel = { if (addProductForm) addProductForm = false else navController.popBackStack() },
-                        onDelete = { viewModel.deleteProduct() },
-                        onAction = {
-                            if (stateProduct.isEdit) {
-                                viewModel.updateProduct()
-                            } else {
-                                viewModel.addProduct()
-                                addProductForm = false
-                            }
-                        },
-                        isEdit = stateProduct.isEdit,
-                        label = stringResource(R.string.on_action_product)
-                    )
+                            ProductForm(
+                                state = stateProduct,
+//                        currentStock = currentStock,
+                                categories = categories,
+                                selectedCategory = selectedCategory,
+                                onNameChange = viewModel::onNameProduct,
+                                onNameBlur = viewModel::onNameBlur,
+                                onDescriptionChange = viewModel::onDescriptionProduct,
+                                onPriceChange = viewModel::onPriceProduct,
+                                onPriceBlur = viewModel::onPriceBlur,
+                                onQuantityChange = viewModel::onQuantityProduct,
+                                onQuantityBlur = viewModel::onQuantityBlur,
+                                onCategorySelected = viewModel::onIdCategory,
+                                onAddCategoryClick = {
+                                    navController.navigate("${AppScreens.AddCategoryScreen.route}?openCreateForm=true")
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(18.dp))
+                            CustomizedEditRows(
+                                onCancel = {
+                                    if (addProductForm) addProductForm =
+                                        false else navController.popBackStack()
+                                },
+                                onDelete = { viewModel.deleteProduct() },
+                                onAction = {
+                                    if (stateProduct.isEdit) {
+                                        viewModel.updateProduct()
+                                    } else {
+                                        viewModel.addProduct()
+                                        addProductForm = false
+                                    }
+                                },
+                                isEdit = stateProduct.isEdit,
+                                label = if (stateProduct.isEdit) stringResource(R.string.products_label_update_product) else stringResource(
+                                    R.string.products_label_create_product
+                                )
+                            )
+                        }
+                    }
                 }
             }
+
             if (!stateProduct.isEdit && !addProductForm) {
-                Spacer(modifier = Modifier.height(10.dp))
-                CustomizedFilledCard(
-                    modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                item {
                     CustomizedListOfEditables(
                         listProducts,
                         modifier = Modifier,
@@ -222,6 +254,5 @@ fun AddProductScreen(
                 }
             }
         }
-
     }
 }

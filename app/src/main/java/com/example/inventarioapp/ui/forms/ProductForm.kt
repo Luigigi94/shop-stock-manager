@@ -44,7 +44,7 @@ fun ProductForm(
             modifier = Modifier.fillMaxWidth(),
             value = state.nameProduct,
             onValueChange = onNameChange,
-            label = { Text(stringResource(R.string.label_name_product)) },
+            label = { Text(stringResource(R.string.products_label_name_product)) },
             error = state.nameError,
             onFocusLost = onNameBlur
         )
@@ -55,7 +55,7 @@ fun ProductForm(
             modifier = Modifier.fillMaxWidth(),
             value = state.descriptionProduct,
             onValueChange = onDescriptionChange,
-            label = { Text(stringResource(R.string.label_description_product)) })
+            label = { Text(stringResource(R.string.products_label_description_product)) })
 
 
         Spacer(Modifier.height(10.dp))
@@ -67,7 +67,7 @@ fun ProductForm(
                 modifier = Modifier.weight(1f),
                 value = state.priceProduct.toString(),
                 onValueChange = onPriceChange,
-                label = { Text(stringResource(R.string.label_price_product)) },
+                label = { Text(stringResource(R.string.products_label_price_product)) },
                 error = state.priceError,
                 onFocusLost = onPriceBlur
             )
@@ -79,13 +79,13 @@ fun ProductForm(
                     value = state.quantityProduct.toString(),
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text(stringResource(R.string.label_quantity_product)) })
+                    label = { Text(stringResource(R.string.products_label_quantity_product)) })
             } else {
                 CustomizedOutlinedTextField(
                     modifier = Modifier.weight(1f),
                     value = state.quantityProduct.toString(),
                     onValueChange = onQuantityChange,
-                    label = { Text(stringResource(R.string.label_quantity_product)) },
+                    label = { Text(stringResource(R.string.products_label_quantity_product)) },
                     error = state.quantityError,
                     onFocusLost = onQuantityBlur
                 )
@@ -99,7 +99,7 @@ fun ProductForm(
             CustomizedExposedDropdownMenu(
                 items = categories,
                 selectedItem = selectedCategory,
-                label = stringResource(R.string.on_action_category),
+                label = stringResource(R.string.products_label_category_product),
                 itemLabel = { it.nameCategory },
                 onItemSelected = { onCategorySelected(it.idCategory) },
                 modifier = Modifier.weight(1f),

@@ -141,7 +141,7 @@ fun PurchaseScreen(
                 .hideKeyboardOnTap(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(text = stringResource(R.string.title_purchase))
+            Text(text = stringResource(R.string.purchase_label_listed_prods))
 
             CustomizedExposedDropdownMenu(
                 items = clientsWithAnonymous,

@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
@@ -45,7 +47,7 @@ fun LoginScreen(darkThemeState: MutableState<Boolean>, navController: NavControl
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
-                title = "LoginScreen",
+                title = stringResource(R.string.topbar_login),
                 navController = navController,
                 darkThemeState = darkThemeState,
                 showBack = false,

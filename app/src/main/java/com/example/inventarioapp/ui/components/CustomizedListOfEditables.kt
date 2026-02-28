@@ -60,7 +60,6 @@ fun <T> CustomizedListOfEditables(
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Círculo decorativo dinámico con la inicial del label
                     Box(
                         modifier = Modifier
                             .size(40.dp)

@@ -1,84 +1,102 @@
 <resources>
     <string name="app_name" translatable="false">Recuerdos e Imagenes Alondra</string>
 
-    <!--  Menu  -->
-    <string name="menu_add_category" translatable="false">AddCategoryScreen</string>
-    <string name="menu_inventory" translatable="false">InventoryScreen</string>
-    <string name="menu_edit_category" translatable="false">EditCategoryScreen</string>
-    <string name="menu_add_product" translatable="false">AddProductScreen</string>
-    <string name="menu_edit_product" translatable="false">EditProductScreen</string>
-    <string name="menu_menu" translatable="false">Dashboard</string>
-    <string name="menu_label_add_product">Agregar Producto</string>
-    <string name="menu_label_add_category">Nueva Categoria</string>
-    <string name="menu_label_add_order">Apartados</string>
-    <string name="menu_label_add_purchase">Registrar Compra</string>
-    <string name="menu_label_add_client">Registrar Cliente</string>
-    <string name="menu_label_sales">Ventas Hechas</string>
+<!--    Greetings -->
+    <string name="welcome_user">Bienvenido de nuevo,</string>
+<!--    Topbar Strings-->
+    <string name="topbar_dashboard" translatable="false">Dashboard</string>
+    <string name="topbar_categories">Categorias</string>
+    <string name="topbar_products">Productos</string>
+    <string name="topbar_Inventory">Inventario</string>
+    <string name="topbar_Invoice">Recibo Compra</string>
+    <string name="topbar_reserves">Apartados</string>
+    <string name="topbar_login" translatable="false">Login</string>
+    <string name="topbar_purchase_product">Carrito</string>
+    <string name="topbar_purchase">Vender</string>
+    <string name="topbar_clients">Clientes</string>
+    <string name="topbar_sales">Ventas</string>
 
-<!--    CustomizedEditRows-->
-    <string name="on_action_category">Categoria</string>
-    <string name="on_action_product">Producto</string>
+<!--    Menu labels-->
+    <string name="menu_label_quick_actions">Acciones Rápidas</string>
+    <string name="menu_label_sales_today">Ventas Hoy</string>
+    <string name="menu_label_reserves">Apartados</string>
 
-    <!--  Forms  -->
-    <string name="menu_button_back" translatable="false">Back</string>
-    <string name="button_cancel">Cancelar</string>
-    <string name="button_delete">Eliminar</string>
+<!--    Categories labels-->
+    <string name="categories_label_saved">Categoria Añadida</string>
+    <string name="categories_label_add">Agregar Categoria</string>
+    <string name="categories_label_edit">Editar Categoria</string>
+    <string name="categories_label_list_categories">Lista de Categorias</string>
+    <string name="categories_label_new_category">Nueva Categoria</string>
+    <string name="categories_label_name_category">Nombre de la categoria</string>
+    <string name="categories_label_description_category">Descripción (opcional)</string>
+    <string name="categories_label_update_category">Actualizar Categoria</string>
+    <string name="categories_label_create_category">Crear Categoria</string>
 
-    <!--  Categories-->
-    <string name="title_category">Nueva Categoria</string>
-    <string name="label_name_category">Nombre de la Categoria</string>
-    <string name="label_description_category">Descripción de la Categoria</string>
-    <string name="button_add_category">Crear Categoria</string>
-    <string name="button_edit_category">Editar Categoria</string>
-    <string name="result_success_added_category">Categoria Guardada Correctamente</string>
-    <string name="result_failure_added_category">Error al Guardar la Categoria:</string>
 
-    <!--  Products-->
-    <string name="title_product">Nuevo Producto</string>
-    <string name="label_name_product">Nombre del Producto</string>
-    <string name="label_description_product">Descripción del Producto</string>
-    <string name="label_quantity_product">Cantidad del Producto</string>
-    <string name="label_price_product">Precio del Producto</string>
-    <string name="label_category_product">Categoria del Producto</string>
-    <string name="button_add_product">Crear Producto</string>
-    <string name="button_edit_product">Editar Producto</string>
-    <string name="result_success_added_product">Producto Guardado Correctamente</string>
-    <string name="result_failure_added_product">Error al Guardar el Producto:</string>
+    <!--    Products labels-->
+    <string name="products_label_saved">Producto Añadido</string>
+    <string name="products_label_add">Agregar Producto</string>
+    <string name="products_label_edit">Editar Producto</string>
+    <string name="products_label_list_products">Lista de Productos</string>
+    <string name="products_label_new_product">Nuevo Producto</string>
+    <string name="products_label_name_product">Nombre del producto</string>
+    <string name="products_label_description_product">Descripción (opcional)</string>
+    <string name="products_label_price_product">Precio</string>
+    <string name="products_label_quantity_product">Cantidad</string>
+    <string name="products_label_category_product">Categoria</string>
+    <string name="products_label_update_product">Actualizar Producto</string>
+    <string name="products_label_create_product">Registrar Producto</string>
 
-<!--  PurchaseProducts  -->
-    <string name="title_purchase_product">Comprar Producto</string>
+    <!--    Categories labels-->
+    <string name="clients_label_saved">Cliente Añadido</string>
+    <string name="clients_label_add">Agregar Cliente</string>
+    <string name="clients_label_edit">Editar Cliente</string>
+    <string name="clients_label_clients">Clientes</string>
+    <string name="clients_label_new_client">Nuevo Cliente</string>
+    <string name="clients_label_name_client">Nombre</string>
+    <string name="clients_label_apep_client">Apellido Paterno</string>
+    <string name="clients_label_apem_client">Apellido Materno (Opc.)</string>
+    <string name="clients_label_phone_client">Telefono</string>
+    <string name="clients_label_update_client">Actualizar Cliente</string>
+    <string name="clients_label_create_client">Crear Categoria</string>
 
-    <!--  Clients-->
-    <string name="title_client">Nuevo Cliente</string>
-    <string name="label_name_client">Nombre</string>
-    <string name="label_apep_client">Apellido Paterno</string>
-    <string name="label_apem_client">Apellido Materno</string>
-    <string name="label_telephone_client">Telefono</string>
-    <string name="button_add_client">Crear Cliente</string>
-    <string name="button_edit_client">Editar Cliente</string>
-    <string name="result_success_added_client">Cliente Guardado Correctamente</string>
-    <string name="result_failure_added_client">Error al Guardar el Cliente:</string>
+<!--    Invoice labels-->
+    <string name="invoice_label_end_purchase">Finalizar Compra</string>
+    <string name="invoice_label_client">Cliente</string>
+    <string name="invoice_label_timestamp">Fecha</string>
+    <string name="invoice_label_products">Productos</string>
 
-    <!--  Purchase-->
-    <string name="title_purchase">Nueva Compra</string>
-    <string name="title_edit_purchase">Nueva Compra</string>
-    <string name="label_client_purchase">Cliente</string>
-    <string name="label_product_purchase">Producto</string>
-    <string name="label_quantity_purchase">Cantidad</string>
+<!--    Product Purchase labels-->
+    <string name="purchase_product_label_add">Agregar al Carrito</string>
+    <string name="purchase_product_label_quantity">Cantidad</string>
 
-<!--    Invoice-->
-    <string name="title_invoice">Recibo de Compra</string>
-    <string name="label_client_invoice">Cliente</string>
-    <string name="label_timestamp_invoice">Fecha de compra</string>
-    <string name="label_products_invoice">Producto(s)</string>
-    <string name="label_product_invoice">Producto</string>
-    <string name="label_price_invoice">Precio</string>
-    <string name="label_quantity_invoice">Cantidad</string>
-    <string name="label_subtotal_invoice" translatable="false">Subtotal</string>
-    <string name="label_end_purchase_invoice">Finalizar Venta</string>
-    <string name="on_action_client">Cliente</string>
+<!--    Purchase labels-->
+    <string name="purchase_label_listed_prods">Lista de compra</string>
 
-<!--    ValidatorsMessages-->
+<!--    Reserve labels-->
+    <string name="reserve_label_saved">Producto Apartado</string>
+    <string name="reserve_label_select_client">Cliente</string>
+    <string name="reserve_label_select_product">Producto</string>
+    <string name="reserve_label_reserved_quantity">Cantidad Apartada</string>
+    <string name="reserve_label_price">Precio</string>
+    <string name="reserve_label_last_amount">Último Monto</string>
+    <string name="reserve_label_debt">Adeudo</string>
+    <string name="reserve_label_quantity">Cantidad</string>
+    <string name="reserve_label_amount">Abono</string>
+    <string name="reserve_label_update_reserve">Abonar</string>
+    <string name="reserve_label_create_reserve">Apartar</string>
+
+<!--    Inventory labels-->
+    <string name="inventory_label_product_name">Nombre</string>
+    <string name="inventory_label_product_quantity">Cantidad</string>
+
+<!--    Generic labels-->
+    <string name="generic_label_details">Editar Detalles</string>
+    <string name="generic_label_button_back">Regresar</string>
+    <string name="generic_label_button_delete">Eliminar</string>
+    <string name="generic_label_button_edit">Editar</string>
+
+<!--    Error labels-->
     <string name="error_required">Campo Obligatorio</string>
     <string name="error_invalid_number">Sólo números válidos</string>
     <string name="error_min_quantity">La cantidad no puede ser menor a 1</string>
@@ -86,15 +104,4 @@
     <string name="error_date_past">La fecha no puede ser anterior a hoy</string>
     <string name="error_min_amount_percentage">El monto debe ser al menos el %1$s del costo (%2$s)</string>
     <string name="error_long_phone">Debe tener 10 dígitos</string>
-    <string name="label_amount">Monto</string>
-    <string name="label_qty_reserved">Cantidad Apartada</string>
-    <string name="label_last_amount">Último monto</string>
-    <string name="label_pending_amount">Pendiente por Pagar</string>
-    <string name="label_menu_rapid_actions">Acciones Rápidas</string>
-    <string name="label_welcome">Bienvenido de nuevo,</string>
-    <string name="label_todays_sale">Ventas hoy</string>
-    <string name="label_reserves_today">Apartados</string>
-    <string name="label_availables_categories">Categorias Disponibles</string>
-
-
 </resources>

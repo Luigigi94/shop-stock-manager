@@ -44,7 +44,7 @@ fun InvoiceScreen(
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
-                title = stringResource(R.string.title_invoice),
+                title = stringResource(R.string.topbar_Invoice),
                 darkThemeState = darkThemeState,
                 showThemeSwitch = true,
                 showBack = false
@@ -60,7 +60,7 @@ fun InvoiceScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = stringResource(R.string.label_end_purchase_invoice))
+                    Text(text = stringResource(R.string.invoice_label_end_purchase))
                 }
             }
         }
@@ -84,19 +84,19 @@ fun InvoiceScreen(
                 ) {
                     Column {
                         Text(
-                            text = stringResource(R.string.label_client_invoice),
+                            text = stringResource(R.string.invoice_label_client),
                             style = MaterialTheme.typography.labelMedium
                         )
                         Text(text = "${ purchase?.clientName } ")
                     }
                     Column {
-                        Text(text = stringResource(R.string.label_timestamp_invoice), style = MaterialTheme.typography.labelMedium)
+                        Text(text = stringResource(R.string.invoice_label_timestamp), style = MaterialTheme.typography.labelMedium)
                         Text(text = "purchaseDate")
                     }
                 }
                 HorizontalDivider()
 
-                Text(stringResource(R.string.label_products_invoice), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.invoice_label_products), style = MaterialTheme.typography.titleMedium)
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text("Product", modifier = Modifier.weight(2f))

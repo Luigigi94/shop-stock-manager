@@ -84,7 +84,7 @@ fun ListedOptions(navController: NavController) {
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
-            text = stringResource(R.string.label_menu_rapid_actions),
+            text = stringResource(R.string.menu_label_quick_actions),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(vertical = 12.dp)
@@ -145,7 +145,7 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
     val session by sessionViewModel.session.collectAsState()
     Scaffold(topBar = {
         CustomizedTopAppBar(
-            title = stringResource(R.string.menu_menu),
+            title = stringResource(R.string.topbar_dashboard),
             darkThemeState = darkThemeState,
             showThemeSwitch = true
         )
@@ -161,7 +161,7 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.label_welcome),
+                        text = stringResource(R.string.welcome_user),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
@@ -174,10 +174,10 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
             item {
                 Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
-                        CustomizedElevatedCard(stringResource(R.string.label_todays_sale), "$1,250", Icons.Default.PointOfSale, Color(0xFF4CAF50))
+                        CustomizedElevatedCard(stringResource(R.string.menu_label_sales_today), "$1,250", Icons.Default.PointOfSale, Color(0xFF4CAF50))
                     }
                     Box(modifier = Modifier.weight(1f)) {
-                        CustomizedElevatedCard(stringResource(R.string.label_reserves_today), "12", Icons.Default.Inventory, Color(0xFF2196F3))
+                        CustomizedElevatedCard(stringResource(R.string.menu_label_reserves), "12", Icons.Default.Inventory, Color(0xFF2196F3))
                     }
                 }
             }

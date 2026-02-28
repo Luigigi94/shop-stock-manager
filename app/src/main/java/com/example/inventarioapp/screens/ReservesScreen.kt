@@ -101,7 +101,7 @@ fun ReservesScreen(
 
 
     if (stateReserve.success){
-        val text = stringResource(R.string.result_success_added_product)
+        val text = stringResource(R.string.reserve_label_saved)
         LaunchedEffect(Unit) {
             snackbarHostState.showSnackbar(text)
         }
@@ -179,7 +179,7 @@ fun ReservesScreen(
                             CustomizedExposedDropdownMenu(
                                 items = clients,
                                 selectedItem = selectedClient,
-                                label = stringResource(R.string.on_action_client),
+                                label = stringResource(R.string.reserve_label_select_client),
                                 itemLabel = { it.nameClient },
                                 onItemSelected = { client ->
                                     reserveViewModel.onIdClient(client.idClient)
@@ -209,7 +209,7 @@ fun ReservesScreen(
                             CustomizedExposedDropdownMenu(
                                 items = products,
                                 selectedItem = selectedProduct,
-                                label = stringResource(R.string.on_action_product),
+                                label = stringResource(R.string.reserve_label_select_product),
                                 itemLabel = { it.nameProduct },
                                 onItemSelected = { prod ->
                                     reserveViewModel.onIdProduct(prod.idProduct)
@@ -235,7 +235,7 @@ fun ReservesScreen(
                                                 newVal
                                             )
                                         },
-                                        label = { Text(text = stringResource(R.string.label_qty_reserved)) },
+                                        label = { Text(text = stringResource(R.string.reserve_label_reserved_quantity)) },
                                         error = stateReserve.qtyReserveError,
                                         onFocusLost = reserveViewModel::onQtyReserveBlur,
                                         readOnly = true
@@ -245,7 +245,7 @@ fun ReservesScreen(
                                         modifier = Modifier.weight(1f),
                                         value = selectedProduct?.priceProduct.toString(),
                                         onValueChange = {},
-                                        label = { Text(text = stringResource(R.string.label_price_product)) },
+                                        label = { Text(text = stringResource(R.string.reserve_label_price)) },
                                         error = stateReserve.qtyReserveError,
                                         onFocusLost = reserveViewModel::onQtyReserveBlur,
                                         readOnly = true
@@ -258,7 +258,7 @@ fun ReservesScreen(
                                         modifier = Modifier.weight(1f),
                                         value = stateReserve.lastAmount.toString(),
                                         onValueChange = { },
-                                        label = { Text(text = stringResource(R.string.label_last_amount)) },
+                                        label = { Text(text = stringResource(R.string.reserve_label_last_amount)) },
                                         readOnly = true
                                     )
                                     CustomizedOutlinedTextField(
@@ -269,7 +269,7 @@ fun ReservesScreen(
                                                 newAmount
                                             )
                                         },
-                                        label = { Text(text = stringResource(R.string.label_pending_amount)) },
+                                        label = { Text(text = stringResource(R.string.reserve_label_debt)) },
                                         error = stateReserve.amountError?.errorResId,
                                         errorArgs = stateReserve.amountError?.args,
                                         onFocusLost = reserveViewModel::onAmountBlur,
@@ -285,7 +285,7 @@ fun ReservesScreen(
                                 modifier = Modifier.weight(1f),
                                 value = stateReserve.qtyReserve.toString(),
                                 onValueChange = { newVal -> reserveViewModel.onQtyReserve(newVal) },
-                                label = { Text(text = stringResource(R.string.label_quantity_product)) },
+                                label = { Text(text = stringResource(R.string.reserve_label_quantity)) },
                                 error = stateReserve.qtyReserveError,
                                 onFocusLost = reserveViewModel::onQtyReserveBlur
                             )
@@ -293,7 +293,7 @@ fun ReservesScreen(
                                 modifier = Modifier.weight(1f),
                                 value = stateReserve.amount.toString(),
                                 onValueChange = { newAmount -> reserveViewModel.onAmount(newAmount) },
-                                label = { Text(text = stringResource(R.string.label_amount)) },
+                                label = { Text(text = stringResource(R.string.reserve_label_amount)) },
                                 error = stateReserve.amountError?.errorResId,
                                 errorArgs = stateReserve.amountError?.args,
                                 onFocusLost = reserveViewModel::onAmountBlur
@@ -342,7 +342,7 @@ fun ReservesScreen(
                                         }
                                     },
                                     isEdit = stateReserve.isEdit,
-                                    label = stringResource(R.string.on_action_product)
+                                    label = if (stateReserve.isEdit) stringResource(R.string.reserve_label_update_reserve) else stringResource(R.string.reserve_label_create_reserve)
                                 )
                             }
                         }

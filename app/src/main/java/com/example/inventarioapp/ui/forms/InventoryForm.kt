@@ -25,14 +25,14 @@ fun InventoryForm(
         CustomizedOutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = item.productName,
-            label = { Text(stringResource(R.string.label_name_product)) },
+            label = { Text(stringResource(R.string.inventory_label_product_name)) },
             readOnly = true
         )
         CustomizedOutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = item.countedQuantity.toString(),
             onValueChange = onQtyChange,
-            label = { Text(stringResource(R.string.label_quantity_product)) }
+            label = { Text(stringResource(R.string.inventory_label_product_quantity)) }
         )
         CustomizedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
             Text("Regresar a la lista")

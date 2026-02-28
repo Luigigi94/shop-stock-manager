@@ -109,7 +109,7 @@ fun ClientScreen(
     val listClients by viewModel.clients.collectAsState()
 
     if(stateClient.success){
-        val text = stringResource(R.string.result_success_added_client)
+        val text = stringResource(R.string.clients_label_saved)
         LaunchedEffect(Unit) {
             snackbarHostState.showSnackbar(text)
         }
@@ -156,7 +156,7 @@ fun ClientScreen(
                 ) {
                     Column {
                         Text(
-                            text = if (stateClient.isEdit) stringResource(R.string.button_edit_client) else stringResource(R.string.title_client),
+                            text = if (stateClient.isEdit) stringResource(R.string.clients_label_edit) else stringResource(R.string.clients_label_add),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
                             letterSpacing = 1.5.sp
@@ -195,7 +195,7 @@ fun ClientScreen(
 
                             CustomizedOutlinedTextField(
                                 value = stateClient.nameClient,
-                                label = { Text(stringResource(R.string.label_name_client)) },
+                                label = { Text(stringResource(R.string.clients_label_name_client)) },
                                 onValueChange = viewModel::onNameChange,
                                 modifier = Modifier.fillMaxWidth(),
                                 error = stateClient.nameError,
@@ -206,7 +206,7 @@ fun ClientScreen(
                             Row {
                                 CustomizedOutlinedTextField(
                                     value = stateClient.apePClient,
-                                    label = { Text(stringResource(R.string.label_apep_client)) },
+                                    label = { Text(stringResource(R.string.clients_label_apep_client)) },
                                     onValueChange = viewModel::onApePChange,
                                     modifier = Modifier.weight(1f),
                                     error = stateClient.apePError,
@@ -214,14 +214,14 @@ fun ClientScreen(
                                 )
                                 CustomizedOutlinedTextField(
                                     value = stateClient.apeMClient,
-                                    label = { Text(stringResource(R.string.label_apem_client)) },
+                                    label = { Text(stringResource(R.string.clients_label_apem_client)) },
                                     onValueChange = viewModel::onApeMChange,
                                     modifier = Modifier.weight(1f)
                                 )
                             }
                             CustomizedOutlinedTextField(
                                 value = stateClient.telephone,
-                                label = { Text(stringResource(R.string.label_telephone_client)) },
+                                label = { Text(stringResource(R.string.clients_label_phone_client)) },
                                 onValueChange = viewModel::onTelephone,
                                 modifier = Modifier.fillMaxWidth(),
                                 error = stateClient.telephoneError,
@@ -276,10 +276,10 @@ fun ClientScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             if (stateClient.isEdit) {
-                Text(text = stringResource(R.string.button_edit_client))
+                Text(text = stringResource(R.string.generic_label_button_edit))
             } else {
                 if (addClientForm) {
-                    Text(text = stringResource(R.string.title_client))
+                    Text(text = stringResource(R.string.generic_label_button_edit))
                 }
             }
             if (!stateClient.isEdit && !addClientForm) {

@@ -84,7 +84,7 @@ fun PurchaseProductScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CustomizedTopAppBar(
-                title = stringResource(R.string.title_purchase_product),
+                title = stringResource(R.string.topbar_purchase_product),
                 navController = navController,
                 darkThemeState = darkTheme,
                 showBack = true,
@@ -95,10 +95,7 @@ fun PurchaseProductScreen(
         Column(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(innerPadding).hideKeyboardOnTap(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                /*if (statePurchaseItem.isEdit) {
-                    Text(text = stringResource(R.string.title_edit_purchase))
-                } else {*/
-                    Text(text = stringResource(R.string.title_purchase))
+                    Text(text = stringResource(R.string.purchase_product_label_add))
 //                }
                 CustomizedFilledCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -124,7 +121,7 @@ fun PurchaseProductScreen(
                             onValueChange = { quantityProduct = it},
 //                            onValueChange = purchaseViewModel::onQuantity,
                             value = quantityProduct,
-                            label = { Text(text = stringResource(R.string.label_quantity_purchase)) },
+                            label = { Text(text = stringResource(R.string.purchase_product_label_quantity)) },
 //                            onFocusLost = purchaseViewModel::onQuantityBlur
                         )
                     }
