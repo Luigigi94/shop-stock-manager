@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ShoppingCartCheckout
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -23,9 +24,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,6 +43,7 @@ import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.ClientViewModel
 import com.example.inventarioapp.viewmodel.PurchaseViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +53,8 @@ fun PurchaseScreen(
     idUser: String? = "",
     purchaseViewModel: PurchaseViewModel = viewModel()
 ) {
+    val scope = rememberCoroutineScope()
+    var isProcessing by remember { mutableStateOf(false) }
 //    val cart by purchaseViewModel.cart.collectAsState()
     val sessionViewModel = LocalSessionViewModel.current
     val session by sessionViewModel.session.collectAsState()
@@ -103,15 +109,35 @@ fun PurchaseScreen(
                 }
                 FloatingActionButton(
                     onClick = {
-                        val cartConfirmed = purchaseViewModel.confirmCart()
-                        val routeRedir = "${AppScreens.InvoiceScreen.route}/${cartConfirmed}"
-                        Log.d("FABConfirmPurchase", "Redirect to $routeRedir")
-                        navController.navigate(routeRedir)
+                        if (!isProcessing) {
+                            isProcessing = true
+
+                            scope.launch {
+                                try {
+                                    val cartConfirmed = purchaseViewModel.confirmCart()
+                                    val routeRedir = "${AppScreens.InvoiceScreen.route}/${cartConfirmed}"
+                                    Log.d("FABConfirmPurchase", "Redirect to $routeRedir")
+
+                                    if (cartConfirmed != null){
+                                        navController.navigate(routeRedir)
+                                    } else {
+                                        Log.e("PurchaseScreen@onClick","value cart: $cartConfirmed")
+                                        isProcessing = false
+                                    }
+                                } catch (e: Exception){
+                                    isProcessing = false
+                                }
+                            }
+                        }
                     }) {
-                    Icon(
-                        imageVector = Icons.Filled.ShoppingCartCheckout,
-                        contentDescription = "Confirmar Compra"
-                    )
+                    if (isProcessing) {
+                        CircularProgressIndicator(color = Color.White)
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.ShoppingCartCheckout,
+                            contentDescription = "Confirmar Compra"
+                        )
+                    }
                 }
                 FloatingActionButton(
                     onClick = { expandedFAB = false }) {

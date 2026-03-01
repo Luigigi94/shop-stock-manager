@@ -170,6 +170,7 @@ class PurchaseViewModel(
     fun confirmCart (): String?{
         val current = _cart.value?: return null
         val purchaseId = UUID.randomUUID().toString()
+        var transaction: String? = null
 
         val purchase = Purchase(
             id = purchaseId,
@@ -182,17 +183,15 @@ class PurchaseViewModel(
         )
 
         viewModelScope.launch {
-            purchaseRepository.savePurchase(purchase)
 
             val movements = buildMovements(current, purchaseId)
 
-            inventoryRepository.saveInventoryMovements(movements)
-            productRepository.applySaleStockUpdates(current.items)
-            cartRepository.clearCart(current.userId)
-            _cart.value = null
+            transaction = purchaseRepository.confirmPurchase(purchase, movements, current, purchase.userId)
+            if (transaction != null) {
+                _cart.value = null
+            }
         }
-
-        return purchaseId
+        return if (transaction != null) purchaseId else null
     }
 
     private fun buildMovements (
