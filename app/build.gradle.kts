@@ -21,6 +21,27 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    flavorDimensions += "env"
+
+    productFlavors{
+        create("dev") {
+            dimension = "env"
+            applicationId = "com.example.inventarioapp"
+            versionNameSuffix = "-dev"
+        }
+
+        create("qa") {
+            dimension = "env"
+            applicationId = "com.example.inventarioapp.qa"
+            versionNameSuffix = "-qa"
+        }
+
+//        create("prod") {
+//            dimension = "env"
+//            applicationId = "com.recimalo.app"   // Play Store
+//        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

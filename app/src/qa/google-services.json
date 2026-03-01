@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "644154603341",
+    "project_id": "db-store-test",
+    "storage_bucket": "db-store-test.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644154603341:android:6904fde790be1709416904",
+        "android_client_info": {
+          "package_name": "com.example.inventarioapp.qa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZnE6G4qt16gZp8ugSSS1LWsDmgpKVhno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
