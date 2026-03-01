@@ -5,7 +5,6 @@ import com.example.inventarioapp.model.InventoryCountItem
 import com.example.inventarioapp.model.InventoryDraft
 import com.example.inventarioapp.model.InventoryMovements
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 class InventoryRepository {
@@ -31,7 +30,7 @@ class InventoryRepository {
         db.runTransaction { transaction ->
             movements.forEach { movement ->
                 val movementRef =
-                    db.collection(FirestorePaths.Collections.INVENTORY).document(movement.id)
+                    db.collection(FirestorePaths.Collections.INVENTORYMOVEMENTS).document(movement.id)
                 transaction.set(movementRef, movement)
 
                 val productRef = db.collection(FirestorePaths.Collections.PRODUCTS)
@@ -64,7 +63,7 @@ class InventoryRepository {
 
     suspend fun getMovementsByReference(idReference: String): List<InventoryMovements> {
         return try {
-            db.collection(FirestorePaths.Collections.INVENTORY)
+            db.collection(FirestorePaths.Collections.INVENTORYMOVEMENTS)
                 .whereEqualTo("referenceId", idReference)
 //                .orderBy("createdAt", Query.Direction.ASCENDING)
                 .get()

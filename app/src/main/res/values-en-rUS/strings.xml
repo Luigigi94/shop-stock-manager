@@ -12,9 +12,11 @@
     <string name="categories_label_description_category">Description (option)</string>
     <string name="reserve_label_create_reserve">Reserve</string>
     <string name="inventory_label_product_quantity">Quantity</string>
+    <string name="suppliers_label_create_supplier">Create Supplier</string>
     <string name="generic_label_details">Edit Details</string>
     <string name="topbar_categories">Categories</string>
     <string name="topbar_sales">Sales</string>
+    <string name="topbar_suppliers">Suppliers</string>
     <string name="menu_label_quick_actions">Quick Actions</string>
     <string name="welcome_user">Welcome back,</string>
     <string name="topbar_products">Products</string>
@@ -78,4 +80,15 @@
     <string name="error_date_past">The date cannot be earlier than today</string>
     <string name="error_min_amount_percentage">The amount at least be the %1$s of the price (%2$s)</string>
     <string name="error_long_phone">Must have 10 digits</string>
+    <string name="error_long_identifier_account">the card number/ CLABE account is wrong</string>
+    <string name="suppliers_label_saved">Supplier Added</string>
+    <string name="suppliers_label_add">Add Supplier</string>
+    <string name="suppliers_label_edit">Edit Supplier</string>
+    <string name="suppliers_label_list_suppliers">Supplier\'s List</string>
+    <string name="suppliers_label_new_supplier">New Supplier</string>
+    <string name="suppliers_label_name_supplier">Supplier Name</string>
+    <string name="suppliers_label_phone_supplier">Phone</string>
+    <string name="suppliers_label_identifier_account_supplier">Card Num/CLABE</string>
+    <string name="suppliers_label_bank_supplier">Bank</string>
+    <string name="suppliers_label_update_supplier">Update Supplier</string>
 </resources>

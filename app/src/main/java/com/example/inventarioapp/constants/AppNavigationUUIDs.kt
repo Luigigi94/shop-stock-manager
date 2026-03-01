@@ -9,5 +9,6 @@ object AppNavigationUUIDs {
         const val CLIENT = "ClientScreen"
         const val SALESBYUSER = "SalesByUserScreen"
         const val INVENTORY = "InventoryScreen"
+        const val SUPPLIER = "SupplierScreen"
     }
 }

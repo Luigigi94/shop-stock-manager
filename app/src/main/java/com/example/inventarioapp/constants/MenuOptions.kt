@@ -2,6 +2,7 @@ package com.example.inventarioapp.constants
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Folder
@@ -65,6 +66,14 @@ object MenuOptions {
             label = R.string.topbar_Inventory,
             icon = Icons.Filled.Inventory,
             route = AppNavigationUUIDs.ScreenUUID.INVENTORY,
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
+        ),
+        OptionsMenu(
+            label = R.string.topbar_suppliers,
+            icon = Icons.Filled.AccountCircle,
+            route = AppNavigationUUIDs.ScreenUUID.SUPPLIER,
             role = null,
             state = true,
             contentDescription = "Icon Sales by User"

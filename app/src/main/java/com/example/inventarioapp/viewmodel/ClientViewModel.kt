@@ -197,11 +197,6 @@ class ClientViewModel(
 
         if (clientId.isBlank()) return
         viewModelScope.launch {
-//            val result = repository.deleteClient(clientId)
-//
-//            result
-//                .onSuccess { _uiMessage.value = "SUCCEEDED_DELETE_CLIENT" }
-//                .onFailure { e -> _uiMessage.value = "ERROR_DELETE_CLIENT: ${e.message}" }
 
             _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
 

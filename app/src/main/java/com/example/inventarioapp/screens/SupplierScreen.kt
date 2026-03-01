@@ -1,17 +1,11 @@
 package com.example.inventarioapp.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,9 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -41,86 +32,71 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedEditRows
-import com.example.inventarioapp.ui.components.CustomizedFAB
-import com.example.inventarioapp.ui.components.CustomizedFilledCard
+import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTitleScreens
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
-import com.example.inventarioapp.ui.utils.PrevBackStack
-import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
-import com.example.inventarioapp.viewmodel.ClientViewModel
+import com.example.inventarioapp.viewmodel.SupplierViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientScreen(
+fun SupplierScreen(
     darkThemeState: MutableState<Boolean>,
     navController: NavController,
-    clientId: String?,
-    isCreateMode: Boolean,
-    viewModel: ClientViewModel = viewModel()
+    supplierId: String?,
+    viewModel: SupplierViewModel = viewModel()
 ){
-
     val snackbarHostState = remember { SnackbarHostState() }
-    
-    var addClientForm by remember { mutableStateOf(false) }
-    var isRedirectedByReserve by remember { mutableStateOf(false) }
 
-    LaunchedEffect(clientId) {
-        if (clientId == null){
+    var addSupplierForm by remember { mutableStateOf(false) }
+
+    LaunchedEffect(supplierId) {
+        if (supplierId == null){
             viewModel.startCreate()
         } else {
-            viewModel.loadClient(clientId)
+            viewModel.loadSupplier(supplierId)
         }
     }
-
-    LaunchedEffect(isCreateMode) {
-        if (isCreateMode){
-            addClientForm = true
-            isRedirectedByReserve = true
-        }
-    }
-
-    val stateClient by viewModel.uiState.collectAsState()
-
-    if (stateClient.isLoading){
+    
+    val stateSupplier by viewModel.uiState.collectAsState()
+    
+    if (stateSupplier.isLoading){
         CircularProgressIndicator()
         return
     }
-
-    LaunchedEffect(stateClient.success) {
-        if (stateClient.isEdit) {
+    
+    LaunchedEffect(stateSupplier.success) {
+        if (stateSupplier.isEdit) {
             navController.popBackStack()
         }
     }
-
-
-    val listClients by viewModel.clients.collectAsState()
-
-    if(stateClient.success){
-        val text = stringResource(R.string.clients_label_saved)
+    
+    val listSuppliers by viewModel.suppliers.collectAsState()
+    
+    if (stateSupplier.success){
+        val text = stringResource(R.string.suppliers_label_saved)
         LaunchedEffect(Unit) {
             snackbarHostState.showSnackbar(text)
         }
     }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = {SnackbarHost(snackbarHostState)},
         topBar = {
             CustomizedTopAppBar(
-                title = stringResource(R.string.topbar_clients),
+                title = stringResource(R.string.topbar_suppliers),
                 navController = navController,
                 darkThemeState = darkThemeState,
                 showBack = true,
@@ -128,14 +104,14 @@ fun ClientScreen(
             )
         },
         floatingActionButton = {
-            if (!stateClient.isEdit){
+            if (!stateSupplier.isEdit){
                 FloatingActionButton(
-                    onClick = { addClientForm = !addClientForm},
-                    containerColor = if (addClientForm) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
+                    onClick = { addSupplierForm = !addSupplierForm},
+                    containerColor = if (addSupplierForm) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
                     shape = CircleShape
                 ) {
                     Icon(
-                        imageVector = if (addClientForm) Icons.Default.Close else Icons.Default.Add,
+                        imageVector = if (addSupplierForm) Icons.Default.Close else Icons.Default.Add,
                         contentDescription = null
                     )
                 }
@@ -150,9 +126,10 @@ fun ClientScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-                CustomizedTitleScreens(if (stateClient.isEdit) stringResource(R.string.clients_label_edit) else stringResource(R.string.client_label_list_categories))
+                CustomizedTitleScreens(if (stateSupplier.isEdit) stringResource(R.string.suppliers_label_edit) else stringResource(R.string.suppliers_label_list_suppliers))
             }
-            if (addClientForm || stateClient.isEdit) {
+
+            if (addSupplierForm || stateSupplier.isEdit){
                 item {
                     ElevatedCard(
                         modifier = Modifier
@@ -170,82 +147,73 @@ fun ClientScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = if (stateClient.isEdit) stringResource(R.string.generic_label_details)
-                                else stringResource(R.string.clients_label_new_client),
+                                text = if (stateSupplier.isEdit) stringResource(R.string.generic_label_details)
+                                else stringResource(R.string.suppliers_label_new_supplier),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.primary
                             )
 
                             CustomizedOutlinedTextField(
-                                value = stateClient.nameClient,
-                                label = { Text(stringResource(R.string.clients_label_name_client)) },
-                                onValueChange = viewModel::onNameChange,
+                                value = stateSupplier.name,
+                                label = { Text(stringResource(R.string.suppliers_label_name_supplier)) },
+                                onValueChange = viewModel::onNameSupplier,
                                 modifier = Modifier.fillMaxWidth(),
-                                error = stateClient.nameError,
+                                error = stateSupplier.nameError,
                                 onFocusLost = viewModel::onNameBlur
-
                             )
-
-                            Row {
-                                CustomizedOutlinedTextField(
-                                    value = stateClient.apePClient,
-                                    label = { Text(stringResource(R.string.clients_label_apep_client)) },
-                                    onValueChange = viewModel::onApePChange,
-                                    modifier = Modifier.weight(1f),
-                                    error = stateClient.apePError,
-                                    onFocusLost = viewModel::onApePBlur
-                                )
-                                CustomizedOutlinedTextField(
-                                    value = stateClient.apeMClient,
-                                    label = { Text(stringResource(R.string.clients_label_apem_client)) },
-                                    onValueChange = viewModel::onApeMChange,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
                             CustomizedOutlinedTextField(
-                                value = stateClient.telephone,
-                                label = { Text(stringResource(R.string.clients_label_phone_client)) },
-                                onValueChange = viewModel::onTelephone,
+                                value = stateSupplier.phone,
+                                label = { Text(stringResource(R.string.suppliers_label_phone_supplier)) },
+                                onValueChange = viewModel::onTelephoneSupplier,
                                 modifier = Modifier.fillMaxWidth(),
-                                error = stateClient.telephoneError,
+                                error = stateSupplier.phoneError,
+                                onFocusLost = viewModel::onPhoneBlur
+                            )
+                            CustomizedOutlinedTextField(
+                                value = stateSupplier.identifierAccount,
+                                label = { Text(stringResource(R.string.suppliers_label_identifier_account_supplier)) },
+                                onValueChange = viewModel::onIdentifierAccountSupplier,
+                                modifier = Modifier.fillMaxWidth(),
+                                error = stateSupplier.nameError,
                                 keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Phone
+                                    keyboardType = KeyboardType.Number
                                 ),
-                                onFocusLost = viewModel::onTelephoneBlur
+                                onFocusLost = viewModel::onIdentifierAccountBlur
+                            )
+                            CustomizedOutlinedTextField(
+                                value = stateSupplier.banco,
+                                label = { Text(stringResource(R.string.suppliers_label_bank_supplier)) },
+                                onValueChange = viewModel::onIdBankSupplier,
+                                modifier = Modifier.fillMaxWidth(),
+                                error = stateSupplier.bancoError,
+                                onFocusLost = viewModel::onBankBlur
                             )
 
                             CustomizedEditRows(
                                 onCancel = {
-                                    if (addClientForm) addClientForm = false
+                                    if (addSupplierForm) addSupplierForm = false
                                     else navController.popBackStack()
                                 },
-                                onDelete = { viewModel.deleteClient() },
-                                onAction = {
-                                    if (stateClient.isEdit){
-                                        viewModel.updateClient()
-                                    } else {
-                                        viewModel.addClient()
-                                    }
-                                },
-                                isEdit = stateClient.isEdit,
-                                label = if (stateClient.isEdit) stringResource(R.string.clients_label_update_client)
-                                else stringResource(R.string.clients_label_create_client)
+                                onDelete = { viewModel.deleteSupplier() },
+                                onAction = { if (stateSupplier.isEdit) viewModel.updateSupplier() else viewModel.addSupplier() },
+                                isEdit = stateSupplier.isEdit,
+                                label = if (stateSupplier.isEdit) stringResource(R.string.suppliers_label_update_supplier) else stringResource(R.string.suppliers_label_create_supplier)
                             )
                         }
                     }
                 }
             }
-            if (!stateClient.isEdit && !addClientForm) {
+            if (!stateSupplier.isEdit && !addSupplierForm){
                 item {
                     CustomizedListOfEditables(
-                        listClients,
+                        listSuppliers,
                         modifier = Modifier,
-                        label = { "${it.nameClient} ${it.apePClient}" },
-                        description = { it.telephone },
+                        label = { it.name },
+                        description = { it.phone },
                         onItemClick = {
                             navController.navigate(
-                                route = "${AppScreens.ClientScreen.route}?clientId=${it.idClient}"
+                                route = "${AppScreens.SupplierScreen.route}?supplierId=${it.id}"
                             )
                         }
                     )

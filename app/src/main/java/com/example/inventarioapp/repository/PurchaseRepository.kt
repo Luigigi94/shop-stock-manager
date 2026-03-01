@@ -7,7 +7,6 @@ import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Purchase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.pipeline.Field
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -31,16 +30,6 @@ class PurchaseRepository {
             }
 
         awaitClose { sub.remove() }
-    }
-
-    /*suspend fun createPurchase(purchase: Purchase): String {
-        val doc = purchases.document()
-        doc.set(purchase.copy(id = doc.id)).await()
-        return doc.id
-    }*/
-
-    suspend fun savePurchase(purchase: Purchase) {
-        purchases.document(purchase.id).set(purchase).await()
     }
 
     fun getPurchasesByUser(userId: String): Flow<List<Purchase>> = callbackFlow{
@@ -68,7 +57,7 @@ class PurchaseRepository {
             val purchaseRef = db.collection(FirestorePaths.Collections.PURCHASES).document(purchase.id)
             batch.set(purchaseRef, purchase)
             movements.forEach { movement ->
-                val movRef = db.collection(FirestorePaths.Collections.INVENTORY).document()
+                val movRef = db.collection(FirestorePaths.Collections.INVENTORYMOVEMENTS).document()
                 batch.set(movRef, movement)
             }
 
