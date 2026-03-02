@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,7 +43,6 @@ import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedEditRows
-import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTitleScreens
@@ -58,18 +58,18 @@ fun SupplierScreen(
     viewModel: SupplierViewModel = viewModel()
 ){
     val snackbarHostState = remember { SnackbarHostState() }
-
     var addSupplierForm by remember { mutableStateOf(false) }
+    val stateSupplier by viewModel.uiState.collectAsState()
 
     LaunchedEffect(supplierId) {
         if (supplierId == null){
+            Log.e("LaunchedEffect supplierId if","supplierId: $supplierId")
             viewModel.startCreate()
         } else {
-            viewModel.loadSupplier(supplierId)
+            Log.e("LaunchedEffect supplierId else","supplierId: $supplierId")
+            viewModel.loadSupplier(idSupplier = supplierId)
         }
     }
-    
-    val stateSupplier by viewModel.uiState.collectAsState()
     
     if (stateSupplier.isLoading){
         CircularProgressIndicator()
@@ -77,11 +77,11 @@ fun SupplierScreen(
     }
     
     LaunchedEffect(stateSupplier.success) {
-        if (stateSupplier.isEdit) {
+        if (stateSupplier.success && stateSupplier.isEdit) {
             navController.popBackStack()
         }
     }
-    
+
     val listSuppliers by viewModel.suppliers.collectAsState()
     
     if (stateSupplier.success){
@@ -175,18 +175,18 @@ fun SupplierScreen(
                                 label = { Text(stringResource(R.string.suppliers_label_identifier_account_supplier)) },
                                 onValueChange = viewModel::onIdentifierAccountSupplier,
                                 modifier = Modifier.fillMaxWidth(),
-                                error = stateSupplier.nameError,
+                                error = stateSupplier.identifierAccountError,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
                                 ),
                                 onFocusLost = viewModel::onIdentifierAccountBlur
                             )
                             CustomizedOutlinedTextField(
-                                value = stateSupplier.banco,
+                                value = stateSupplier.idBank,
                                 label = { Text(stringResource(R.string.suppliers_label_bank_supplier)) },
                                 onValueChange = viewModel::onIdBankSupplier,
                                 modifier = Modifier.fillMaxWidth(),
-                                error = stateSupplier.bancoError,
+                                error = stateSupplier.idBankError,
                                 onFocusLost = viewModel::onBankBlur
                             )
 
@@ -196,7 +196,15 @@ fun SupplierScreen(
                                     else navController.popBackStack()
                                 },
                                 onDelete = { viewModel.deleteSupplier() },
-                                onAction = { if (stateSupplier.isEdit) viewModel.updateSupplier() else viewModel.addSupplier() },
+                                onAction = {
+                                    if (stateSupplier.isEdit) {
+                                        viewModel.updateSupplier()
+//                                        navController.popBackStack()
+                                    } else {
+                                        viewModel.addSupplier()
+                                        addSupplierForm = false
+                                    }
+                                },
                                 isEdit = stateSupplier.isEdit,
                                 label = if (stateSupplier.isEdit) stringResource(R.string.suppliers_label_update_supplier) else stringResource(R.string.suppliers_label_create_supplier)
                             )
@@ -211,10 +219,8 @@ fun SupplierScreen(
                         modifier = Modifier,
                         label = { it.name },
                         description = { it.phone },
-                        onItemClick = {
-                            navController.navigate(
-                                route = "${AppScreens.SupplierScreen.route}?supplierId=${it.id}"
-                            )
+                        onItemClick = { supplier ->
+                            navController.navigate("${AppScreens.SupplierScreen.route}?supplierId=${supplier.idSupplier}")
                         }
                     )
                 }

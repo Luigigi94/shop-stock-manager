@@ -186,7 +186,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             )
         }
         composable(
-            route = "${AppScreens.SupplierScreen.route}/{supplierId}",
+            route = "${AppScreens.SupplierScreen.route}?supplierId={supplierId}",
             arguments = listOf(
                 navArgument("supplierId"){
                     type = NavType.StringType
@@ -203,6 +203,5 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             )
         }
     }
-
 }
 

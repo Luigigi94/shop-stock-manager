@@ -1,5 +1,6 @@
 package com.example.inventarioapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.model.Supplier
@@ -7,6 +8,7 @@ import com.example.inventarioapp.repository.SupplierRepository
 import com.example.inventarioapp.state.SupplierUiState
 import com.example.inventarioapp.validators.SupplierValidator
 import com.example.inventarioapp.validators.model.ValidationResult
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -41,7 +43,7 @@ class SupplierViewModel (
         updateUI { copy(identifierAccount = value, identifierAccountTouched = true) }
 
     fun onIdBankSupplier(value: String) =
-        updateUI { copy(banco = value, bancoTouched = true) }
+        updateUI { copy(idBank = value, idBankTouched = true) }
 
     fun onNameBlur(){
         _uiState.value = validateForm(
@@ -69,7 +71,7 @@ class SupplierViewModel (
     fun onBankBlur(){
         _uiState.value = validateForm(
             _uiState.value.copy(
-                bancoTouched = true
+                idBankTouched = true
             )
         )
     }
@@ -96,18 +98,24 @@ class SupplierViewModel (
         if (!validatedState.isValid) return
 
         val newSupplier = Supplier(
-            id = UUID.randomUUID().toString(),
+            idSupplier = UUID.randomUUID().toString(),
             name = validatedState.name,
             phone = validatedState.phone,
             identifierAccount = validatedState.identifierAccount,
-            idBank = validatedState.banco
+            idBank = validatedState.idBank,
+            createdAt = Timestamp.now()
         )
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
 
             repository.addSupplier(newSupplier)
-                .onSuccess { _uiState.value = SupplierUiState(success = true) }
+                .onSuccess {
+                    _uiState.value = SupplierUiState(
+                            success = true,
+                            isLoading = false
+                        )
+                    }
                 .onFailure { error ->
                     _uiState.update {
                         it.copy(
@@ -124,16 +132,18 @@ class SupplierViewModel (
             _uiState.update { it.copy(isLoading = true) }
 
             val supplier = repository.getSupplierById(idSupplier)
+            Log.d("SupplierVM","Revisando values of idSupplier: $idSupplier\n suplier $supplier")
 
             if (supplier != null){
                 _uiState.value = SupplierUiState(
                     isLoading = false,
                     isEdit = true,
-                    idSupplier = supplier.id,
+                    success = false,
+                    idSupplier = supplier.idSupplier,
                     name = supplier.name,
                     phone = supplier.phone,
                     identifierAccount = supplier.identifierAccount,
-                    banco = supplier.idBank
+                    idBank = supplier.idBank,
                 )
             } else {
                 _uiState.update {
@@ -149,15 +159,15 @@ class SupplierViewModel (
     fun updateSupplier(){
         val state = _uiState.value
         val supplier = Supplier(
-            id = state.idSupplier,
+            idSupplier = state.idSupplier,
             name = state.name,
             phone = state.phone,
             identifierAccount = state.identifierAccount,
-            idBank = state.banco
+            idBank = state.idBank
         )
         viewModelScope.launch {
             repository.updateSupplier(supplier)
-                .onSuccess { _uiState.value = SupplierUiState(success = true) }
+                .onSuccess { _uiState.update {  it.copy(success = true, isLoading = false) } }
                 .onFailure { e ->
                     _uiState.update {
                         it.copy(
@@ -202,7 +212,7 @@ class SupplierViewModel (
         val nameResult = SupplierValidator.name(state.name)
         val telephoneResult = SupplierValidator.telephone(state.phone)
         val identifierAccountResult = SupplierValidator.identifierAccount(state.identifierAccount)
-        val idBankResult = SupplierValidator.idBank(state.banco)
+        val idBankResult = SupplierValidator.idBank(state.idBank)
 
         val isValid =
             nameResult is ValidationResult.Valid &&
@@ -226,8 +236,8 @@ class SupplierViewModel (
                     (identifierAccountResult as? ValidationResult.Invalid)?.errorResId
             else
             null,
-            bancoError =
-                if (state.bancoTouched)
+            idBankError =
+                if (state.idBankTouched)
                     (idBankResult as? ValidationResult.Invalid)?.errorResId
             else
             null,

@@ -32,7 +32,7 @@ class SupplierRepository {
     suspend fun addSupplier(supplier: Supplier): Result<Unit>{
         return try {
             supplierCollection
-                .document()
+                .document(supplier.idSupplier)
                 .set(supplier)
                 .await()
 
@@ -53,7 +53,7 @@ class SupplierRepository {
     suspend fun updateSupplier(supplier: Supplier): Result<Unit>{
         return try {
             supplierCollection
-                .document(supplier.id)
+                .document(supplier.idSupplier)
                 .set(supplier)
                 .await()
 
