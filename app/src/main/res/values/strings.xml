@@ -16,6 +16,7 @@
     <string name="topbar_clients">Clientes</string>
     <string name="topbar_sales">Ventas</string>
     <string name="topbar_suppliers">Proveedores</string>
+    <string name="topbar_suppliers_purchases">Proveedores Compras</string>
 
 <!--    Menu labels-->
     <string name="menu_label_quick_actions">Acciones Rápidas</string>

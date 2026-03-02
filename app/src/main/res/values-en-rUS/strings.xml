@@ -17,6 +17,7 @@
     <string name="topbar_categories">Categories</string>
     <string name="topbar_sales">Sales</string>
     <string name="topbar_suppliers">Suppliers</string>
+    <string name="topbar_suppliers_purchases">Purchases Suppliers</string>
     <string name="menu_label_quick_actions">Quick Actions</string>
     <string name="welcome_user">Welcome back,</string>
     <string name="topbar_products">Products</string>

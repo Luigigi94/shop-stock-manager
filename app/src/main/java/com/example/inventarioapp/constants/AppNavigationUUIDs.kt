@@ -10,5 +10,6 @@ object AppNavigationUUIDs {
         const val SALESBYUSER = "SalesByUserScreen"
         const val INVENTORY = "InventoryScreen"
         const val SUPPLIER = "SupplierScreen"
+        const val SUPPLIER_PURCHASES = "SupplierPurchaseScreen"
     }
 }

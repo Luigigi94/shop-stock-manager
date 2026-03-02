@@ -18,6 +18,8 @@ import com.example.inventarioapp.screens.PurchaseProductScreen
 import com.example.inventarioapp.screens.PurchaseScreen
 import com.example.inventarioapp.screens.ReservesScreen
 import com.example.inventarioapp.screens.SalesByUserScreen
+import com.example.inventarioapp.screens.SupplierItemScreen
+import com.example.inventarioapp.screens.SupplierPurchaseScreen
 import com.example.inventarioapp.screens.SupplierScreen
 
 @Composable
@@ -202,6 +204,62 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
                 supplierId = supplierId
             )
         }
+        composable(AppScreens.SupplierPurchaseScreen.route) {
+            SupplierPurchaseScreen(darkThemeState, navController)
+        }
+        composable(
+            route = "${AppScreens.SupplierItemScreen.route}/{supplierPurchaseId}?itemId={itemId}",
+            arguments = listOf(
+                navArgument("supplierPurchaseId"){
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument("itemId"){
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            )
+        ) {
+            backStackEntry ->
+            val supplierPurchaseId = backStackEntry.arguments?.getString("supplierPurchaseId")
+            val itemId = backStackEntry.arguments?.getString("itemId")
+            SupplierItemScreen(
+                darkThemeState,
+                navController,
+                onSave = {navController.popBackStack()},
+                supplierPurchaseId = supplierPurchaseId,
+                itemId = itemId
+            )
+        }
+
+        /*composable(AppScreens.PurchaseScreen.route) {
+            PurchaseScreen(darkThemeState, navController)
+        }
+        composable(
+            route = "${AppScreens.PurchaseProductScreen.route}/{purchaseId}?itemId={itemId}",
+            arguments = listOf(
+                navArgument("purchaseId"){ type = NavType.StringType },
+                navArgument("itemId"){
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+
+            val purchaseId = backStackEntry.arguments?.getString("purchaseId")
+            val itemId = backStackEntry.arguments?.getString("itemId")
+
+            PurchaseProductScreen(
+                darkThemeState,
+                navController,
+                onSave = { navController.popBackStack() },
+                purchaseId = purchaseId,
+                itemId = itemId
+            )
+        }*/
     }
 }
 

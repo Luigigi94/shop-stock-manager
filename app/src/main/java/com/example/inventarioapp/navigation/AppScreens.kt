@@ -8,10 +8,11 @@ sealed class    AppScreens(val route: String) {
     object ReservesScreen: AppScreens(route = "ReservesScreen")
     object ClientScreen: AppScreens(route = "ClientScreen")
     object PurchaseScreen: AppScreens(route = "PurchaseScreen")
-    object EditCategoryScreen: AppScreens(route = "EditCategoryScreen")
     object InvoiceScreen: AppScreens(route = "InvoiceScreen")
     object PurchaseProductScreen: AppScreens(route = "PurchaseProductScreen")
     object SalesByUserScreen: AppScreens(route = "SalesByUserScreen")
     object InventoryScreen: AppScreens(route = "InventoryScreen")
     object SupplierScreen: AppScreens(route = "SupplierScreen")
+    object SupplierPurchaseScreen: AppScreens(route = "SupplierPurchaseScreen")
+    object SupplierItemScreen: AppScreens(route = "SupplierItemScreen")
 }

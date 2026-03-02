@@ -1,6 +1,7 @@
 package com.example.inventarioapp.repository
 
 import android.util.Log
+import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.Cart
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,7 +15,7 @@ class CartRepository {
     private val db by lazy {
         FirebaseFirestore.getInstance()
     }
-    private val carts = db.collection("Carts")
+    private val carts = db.collection(FirestorePaths.Collections.CARTS)
 
     suspend fun saveCart(cart: Cart) {
         Log.d("PurchaseRepository","Revisando que cart no venga null $cart")

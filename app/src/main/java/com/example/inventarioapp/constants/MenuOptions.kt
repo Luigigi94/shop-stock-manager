@@ -77,6 +77,14 @@ object MenuOptions {
             role = null,
             state = true,
             contentDescription = "Icon Sales by User"
+        ),
+        OptionsMenu(
+            label = R.string.topbar_suppliers_purchases,
+            icon = Icons.Filled.AccountCircle,
+            route = AppNavigationUUIDs.ScreenUUID.SUPPLIER_PURCHASES,
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
         )
     )
 }
