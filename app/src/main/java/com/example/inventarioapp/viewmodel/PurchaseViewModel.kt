@@ -12,8 +12,6 @@ import com.example.inventarioapp.model.Purchase
 import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.repository.CartRepository
 import com.example.inventarioapp.repository.CatalogsRepository
-import com.example.inventarioapp.repository.InventoryRepository
-import com.example.inventarioapp.repository.ProductRepository
 import com.example.inventarioapp.repository.PurchaseRepository
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +23,6 @@ class PurchaseViewModel(
     private val purchaseRepository: PurchaseRepository = PurchaseRepository(),
     private val catalogsRepository: CatalogsRepository = CatalogsRepository(),
     private val cartRepository: CartRepository = CartRepository(),
-    private val inventoryRepository: InventoryRepository = InventoryRepository(),
-    private val productRepository: ProductRepository = ProductRepository(),
 ) : ViewModel() {
     private val _cart = MutableStateFlow<Cart?>(null)
     val cart: StateFlow<Cart?> = _cart

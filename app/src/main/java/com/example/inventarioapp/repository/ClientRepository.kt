@@ -13,10 +13,12 @@ class ClientRepository {
     private val db by lazy {
         FirebaseFirestore.getInstance()
     }
+    
+    private val clientCollection = db.collection(FirestorePaths.Collections.CLIENTS)
 
     fun getClients(): Flow<List<Clients>> {
         return callbackFlow {
-            val listener = db.collection(FirestorePaths.Collections.CLIENTS).addSnapshotListener { snapshots, exception ->
+            val listener = clientCollection.addSnapshotListener { snapshots, exception ->
                 if (exception != null || snapshots == null) return@addSnapshotListener
                 val list = snapshots.documents.mapNotNull { documentSnapshot ->
                     documentSnapshot.toObject(Clients::class.java)
@@ -30,7 +32,7 @@ class ClientRepository {
 
     suspend fun addClient(client: Clients): Result<Unit>{
         return try {
-            db.collection(FirestorePaths.Collections.CLIENTS)
+            clientCollection
                 .document(client.idClient)
                 .set(client)
                 .await()
@@ -42,7 +44,7 @@ class ClientRepository {
     }
 
     suspend fun getClientById(idClient: String): Clients? {
-        return db.collection(FirestorePaths.Collections.CLIENTS)
+        return clientCollection
             .document(idClient)
             .get()
             .await()
@@ -51,7 +53,7 @@ class ClientRepository {
 
     suspend fun updateClient(client: Clients): Result<Unit>{
         return try {
-            db.collection(FirestorePaths.Collections.CLIENTS)
+            clientCollection
                 .document(client.idClient)
                 .set(client)
                 .await()
@@ -63,7 +65,7 @@ class ClientRepository {
 
     suspend fun deleteClient(idClient: String): Result<Unit>{
         return try {
-            db.collection(FirestorePaths.Collections.CLIENTS)
+            clientCollection
                 .document(idClient)
                 .delete()
                 .await()

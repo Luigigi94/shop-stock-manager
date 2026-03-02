@@ -63,10 +63,8 @@ fun SupplierScreen(
 
     LaunchedEffect(supplierId) {
         if (supplierId == null){
-            Log.e("LaunchedEffect supplierId if","supplierId: $supplierId")
             viewModel.startCreate()
         } else {
-            Log.e("LaunchedEffect supplierId else","supplierId: $supplierId")
             viewModel.loadSupplier(idSupplier = supplierId)
         }
     }

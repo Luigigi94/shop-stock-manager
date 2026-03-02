@@ -55,7 +55,6 @@ fun PurchaseScreen(
 ) {
     val scope = rememberCoroutineScope()
     var isProcessing by remember { mutableStateOf(false) }
-//    val cart by purchaseViewModel.cart.collectAsState()
     val sessionViewModel = LocalSessionViewModel.current
     val session by sessionViewModel.session.collectAsState()
 
@@ -81,9 +80,11 @@ fun PurchaseScreen(
         purchaseViewModel.start(userId = session?.userName ?: "Unlogged")
     }
 
-    Scaffold(topBar = {
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
+        topBar = {
         CustomizedTopAppBar(
-            title = "PurchaseScreen",
+            title = stringResource(R.string.topbar_purchase),
             navController = navController,
             darkThemeState = darkThemeState,
             showBack = true,

@@ -132,7 +132,6 @@ class SupplierViewModel (
             _uiState.update { it.copy(isLoading = true) }
 
             val supplier = repository.getSupplierById(idSupplier)
-            Log.d("SupplierVM","Revisando values of idSupplier: $idSupplier\n suplier $supplier")
 
             if (supplier != null){
                 _uiState.value = SupplierUiState(

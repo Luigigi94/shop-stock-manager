@@ -100,11 +100,11 @@ fun ClientScreen(
         return
     }
 
-    LaunchedEffect(stateClient.success) {
+    /*LaunchedEffect(stateClient.success) {
         if (stateClient.isEdit) {
             navController.popBackStack()
         }
-    }
+    }*/
 
 
     val listClients by viewModel.clients.collectAsState()
@@ -224,8 +224,10 @@ fun ClientScreen(
                                 onAction = {
                                     if (stateClient.isEdit){
                                         viewModel.updateClient()
+                                        navController.popBackStack()
                                     } else {
                                         viewModel.addClient()
+                                        addClientForm = false
                                     }
                                 },
                                 isEdit = stateClient.isEdit,
