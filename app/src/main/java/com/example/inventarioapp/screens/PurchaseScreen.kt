@@ -3,8 +3,12 @@ package com.example.inventarioapp.screens
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddShoppingCart
@@ -39,6 +43,7 @@ import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedListedPurchaseItems
+import com.example.inventarioapp.ui.components.CustomizedTitleScreens
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.ui.utils.hideKeyboardOnTap
 import com.example.inventarioapp.viewmodel.ClientViewModel
@@ -102,7 +107,10 @@ fun PurchaseScreen(
                         val routeParam = "${AppScreens.PurchaseProductScreen.route}/${cartId}?itemId="
                         Log.d("FABAddProduct","Revisando el navParam $routeParam")
                         navController.navigate(routeParam)
-                    }) {
+                    },
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    shape = CircleShape
+                ) {
                     Icon(
                         imageVector = Icons.Filled.AddShoppingCart,
                         contentDescription = "Agregar al carrito de compra"
@@ -130,7 +138,10 @@ fun PurchaseScreen(
                                 }
                             }
                         }
-                    }) {
+                    },
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    shape = CircleShape
+                ) {
                     if (isProcessing) {
                         CircularProgressIndicator(color = Color.White)
                     } else {
@@ -141,7 +152,10 @@ fun PurchaseScreen(
                     }
                 }
                 FloatingActionButton(
-                    onClick = { expandedFAB = false }) {
+                    onClick = { expandedFAB = false },
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    shape = CircleShape
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Close, contentDescription = "close expandedFAB"
                     )
@@ -151,7 +165,7 @@ fun PurchaseScreen(
             FloatingActionButton(
 //                    onClick = { navController.navigate(route = AppScreens.InvoiceScreen.route+"/current_purchase" ) },
                 onClick = { expandedFAB = true },
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
 
                 ) {
                 Icon(
@@ -162,6 +176,18 @@ fun PurchaseScreen(
     }, bottomBar = {
         Text(text = "Total: ${cart?.total ?: 0}")
     }) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item {
+                CustomizedTitleScreens(stringResource(R.string.purchase_label_listed_prods))
+            }
+        }
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)

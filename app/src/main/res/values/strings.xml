@@ -70,6 +70,7 @@
 <!--    Product Purchase labels-->
     <string name="purchase_product_label_add">Agregar al Carrito</string>
     <string name="purchase_product_label_quantity">Cantidad</string>
+    <string name="purchase_product_label_product">Producto</string>
 
 <!--    Purchase labels-->
     <string name="purchase_label_listed_prods">Lista de compra</string>
