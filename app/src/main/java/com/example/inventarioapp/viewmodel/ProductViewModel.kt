@@ -105,8 +105,21 @@ class ProductViewModel(
         }
     }
 
-    fun quickAddProduct(products: Products){
-        val quickProducts
+    fun quickAddProduct(nameProd: String, idCatGral: String, price: String, onSuccess: (Products) -> Unit){
+        val idCreatedProd = UUID.randomUUID().toString()
+        val product = Products(
+            idProduct = idCreatedProd,
+            nameProduct = nameProd,
+            idCategory = idCatGral,
+            priceProduct = price.toDoubleOrNull() ?:0.0,
+            createdAt = Timestamp.now(),
+            descriptionProduct = "",
+            stock = 0
+        )
+        viewModelScope.launch {
+            productRepository.addProduct(product)
+            onSuccess(product)
+        }
     }
 
     fun addProduct() {

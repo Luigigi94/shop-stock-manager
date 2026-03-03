@@ -66,6 +66,9 @@ fun SupplierItemScreen(
     val products by productViewModel.products.collectAsState()
     var addProductModal by remember { mutableStateOf(false) }
 
+    var quickAddNameProd by remember { mutableStateOf("") }
+    var quickAddPriceProd by remember { mutableStateOf("") }
+
     val categoriesViewModel: CategoryViewModel = viewModel()
     val selectGralCat = categoriesViewModel.returnGralCategory()
 
@@ -126,16 +129,24 @@ fun SupplierItemScreen(
             onDismiss = { addProductModal = false },
             onConfirm = {
                 // Aquí llamas a tu ProductRepository
-
-
+                val cat = selectGralCat;
+                productViewModel.quickAddProduct(
+                    nameProd = quickAddNameProd,
+                    idCatGral = cat.toString(),
+                    price = quickAddPriceProd
+                ){ productSaved ->
+                    selectedProduct = productSaved
+                }
                 addProductModal = false
+                quickAddNameProd = ""
+                quickAddPriceProd = ""
             },
             title = "Nuevo Producto"
         ) {
             // 3. Aquí dibujas tus TextFields rápidos
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = "", onValueChange = {}, label = { Text("Nombre") })
-                OutlinedTextField(value = "", onValueChange = {}, label = { Text("Precio") })
+                OutlinedTextField(value = quickAddNameProd, onValueChange = {quickAddNameProd = it}, label = { Text("Nombre") })
+                OutlinedTextField(value = quickAddPriceProd, onValueChange = { quickAddPriceProd = it}, label = { Text("Precio") })
             }
         }
         LazyColumn(
