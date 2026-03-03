@@ -78,8 +78,6 @@ fun PurchaseScreen(
     }
     var selectedClient by remember { mutableStateOf<Clients?>(null) }
 
-//    purchaseViewModel.setClient(clienteSeleccionado)
-
     LaunchedEffect(idUser) {
         if (idUser.isNullOrBlank()) return@LaunchedEffect
         purchaseViewModel.observeCart(idUser)
@@ -172,10 +170,8 @@ fun PurchaseScreen(
                 }
             } else {
                 FloatingActionButton(
-//                    onClick = { navController.navigate(route = AppScreens.InvoiceScreen.route+"/current_purchase" ) },
                     onClick = { expandedFAB = true },
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-
                     ) {
                     Icon(
                         imageVector = Icons.Filled.Add, contentDescription = "open expandedFAB"

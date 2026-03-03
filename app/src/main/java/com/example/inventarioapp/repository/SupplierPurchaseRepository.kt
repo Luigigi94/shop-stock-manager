@@ -4,13 +4,9 @@ import android.util.Log
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.constants.MovementType
 import com.example.inventarioapp.model.InventoryMovements
-import com.example.inventarioapp.model.Supplier
 import com.example.inventarioapp.model.SupplierPurchase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import kotlin.getValue
 
@@ -42,7 +38,7 @@ class SupplierPurchaseRepository {
                 )
 
                 val movRef = db
-                    .collection(FirestorePaths.Collections.INVENTORYMOVEMENTS)
+                    .collection(FirestorePaths.Collections.INVENTORY_MOVEMENTS)
                     .document()
 
                 batch.set(movRef, movement)

@@ -83,7 +83,7 @@ class ReservesRepository {
         try {
             db.runTransaction { transaction ->
                 val reserveRef = db.collection(FirestorePaths.Collections.RESERVES).document(reserve.idReserves)
-                val movementRef = db.collection(FirestorePaths.Collections.INVENTORYMOVEMENTS).document(movements.id)
+                val movementRef = db.collection(FirestorePaths.Collections.INVENTORY_MOVEMENTS).document(movements.id)
                 val productRef = db.collection(FirestorePaths.Collections.PRODUCTS).document(reserve.idProduct)
 
                 transaction.set(reserveRef, reserve)

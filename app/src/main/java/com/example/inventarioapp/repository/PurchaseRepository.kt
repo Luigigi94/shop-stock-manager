@@ -57,7 +57,7 @@ class PurchaseRepository {
             val purchaseRef = db.collection(FirestorePaths.Collections.PURCHASES).document(purchase.id)
             batch.set(purchaseRef, purchase)
             movements.forEach { movement ->
-                val movRef = db.collection(FirestorePaths.Collections.INVENTORYMOVEMENTS).document()
+                val movRef = db.collection(FirestorePaths.Collections.INVENTORY_MOVEMENTS).document()
                 batch.set(movRef, movement)
             }
 

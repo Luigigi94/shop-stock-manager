@@ -16,7 +16,7 @@
     <string name="topbar_clients">Clientes</string>
     <string name="topbar_sales">Ventas</string>
     <string name="topbar_suppliers">Proveedores</string>
-    <string name="topbar_suppliers_purchases">Proveedores Compras</string>
+    <string name="topbar_suppliers_purchases">Compras a Proveedores</string>
 
 <!--    Menu labels-->
     <string name="menu_label_quick_actions">Acciones Rápidas</string>
@@ -106,6 +106,12 @@
     <string name="suppliers_label_bank_supplier">Banco</string>
     <string name="suppliers_label_update_supplier">Actualizar Proveedor</string>
     <string name="suppliers_label_create_supplier">Crear Proveedor</string>
+
+<!--    SupplierItemScreen-->
+    <string name="supplier_item_product_label_add">Agregar al Carrito</string>
+    <string name="supplier_item_product_label_quantity">Cantidad</string>
+    <string name="supplier_item_product_label_cost">Costo</string>
+    <string name="supplier_item_product_label_product">Producto</string>
 
 <!--    Generic labels-->
     <string name="generic_label_details">Editar Detalles</string>

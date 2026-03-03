@@ -13,6 +13,7 @@
     <string name="reserve_label_create_reserve">Reserve</string>
     <string name="inventory_label_product_quantity">Quantity</string>
     <string name="suppliers_label_create_supplier">Create Supplier</string>
+    <string name="supplier_item_product_label_product">Product</string>
     <string name="generic_label_details">Edit Details</string>
     <string name="topbar_categories">Categories</string>
     <string name="topbar_sales">Sales</string>
@@ -93,4 +94,7 @@
     <string name="suppliers_label_identifier_account_supplier">Card Num/CLABE</string>
     <string name="suppliers_label_bank_supplier">Bank</string>
     <string name="suppliers_label_update_supplier">Update Supplier</string>
+    <string name="supplier_item_product_label_add">Add to Cart</string>
+    <string name="supplier_item_product_label_quantity">Quantity</string>
+    <string name="supplier_item_product_label_cost">Cost</string>
 </resources>
