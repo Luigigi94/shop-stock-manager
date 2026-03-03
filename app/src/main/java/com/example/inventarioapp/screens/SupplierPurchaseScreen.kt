@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -77,9 +78,11 @@ fun SupplierPurchaseScreen(
     val supplierList by suppliers.suppliers.collectAsState()
 
     LaunchedEffect(idUser) {
-        if (idUser.isNullOrBlank()) return@LaunchedEffect
-        viewModel.observeSupplierCart(idUser)
-        viewModel.start(idUser)
+        val userSession = session?.userName
+        Log.d("SupplierPurchaseScreen","LaunchedEffect -> idUser $userSession")
+        if (userSession.isNullOrBlank()) return@LaunchedEffect
+        viewModel.observeSupplierCart(userSession)
+        viewModel.start(userSession)
     }
 
     Scaffold(

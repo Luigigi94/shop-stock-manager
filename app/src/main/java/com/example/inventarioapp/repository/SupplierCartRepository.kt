@@ -1,5 +1,6 @@
 package com.example.inventarioapp.repository
 
+import android.util.Log
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.SupplierPurchase
 import com.google.firebase.Timestamp
@@ -17,13 +18,13 @@ class SupplierCartRepository {
 
     private val supplierCart = db.collection(FirestorePaths.Collections.SUPPLIER_CART)
 
-    suspend fun saveSupplierCart(supplierPurchase: SupplierPurchase) {
-        val supplierId = supplierPurchase.supplierId ?: return
-        val doc = supplierCart.document(supplierId)
+    suspend fun saveSupplierCart(supplierPurchase: SupplierPurchase, userId: String) {
+        val doc = supplierCart.document(userId)
         doc.set(supplierPurchase.copy(updatedAt = Timestamp.now()))
     }
 
     fun observeSupplierCart(userId: String): Flow<SupplierPurchase?> = callbackFlow {
+        Log.d("SupplierCartRepo","userId: $userId")
         val sub = supplierCart.document(userId)
             .addSnapshotListener { snap, _ ->
                 trySend(snap?.toObject(SupplierPurchase::class.java))

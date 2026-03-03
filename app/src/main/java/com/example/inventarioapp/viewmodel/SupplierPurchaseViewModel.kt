@@ -1,5 +1,6 @@
 package com.example.inventarioapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.constants.MovementType
@@ -45,6 +46,7 @@ class SupplierPurchaseViewModel(
         if (started) return
         started = true
 
+        Log.d("SuplierPurchaseVM","start -> userId: $userId")
         observeSupplierCart(userId)
     }
 
@@ -53,6 +55,7 @@ class SupplierPurchaseViewModel(
     }
 
     fun observeSupplierCart(userId: String){
+        Log.d("SupplierPurchaseVM","observeSupplierCart -> userId: $userId")
         viewModelScope.launch {
             supplierCartRepository.observeSupplierCart(userId).collect { remoteCart ->
                 _currentPurchase.value = remoteCart ?: SupplierPurchase(id = userId, userId = userId)
@@ -99,33 +102,8 @@ class SupplierPurchaseViewModel(
 
         _currentPurchase.value = updateSupplierCart
 
-        viewModelScope.launch { supplierCartRepository.saveSupplierCart(updateSupplierCart) }
+        viewModelScope.launch { supplierCartRepository.saveSupplierCart(updateSupplierCart, current.userId) }
 
-        /*val existingIndex = _currentPurchase.value.indexOfFirst { it.productId == product.idProduct }
-
-        val updated = if (existingIndex != -1) {
-            _currentPurchase.value.mapIndexed { i, item ->
-                if (i == existingIndex) {
-                    val newQty = item.quantity + quantity
-                    item.copy(
-                        quantity = newQty,
-                        cost = cost,
-                        subtotal = newQty * cost
-                    )
-                } else item
-            }
-        } else {
-            _currentPurchase.value + SupplierPurchaseItem(
-                productId = product.idProduct,
-                productName = product.nameProduct,
-                quantity = quantity,
-                cost = cost,
-                subtotal = cost * quantity
-            )
-        }
-
-        _currentPurchase.value = updated
-        _total.value = updated.sumOf { it.subtotal }*/
     }
 
     fun updateItemQuantity(productId: String, quantity: Int) {
@@ -164,7 +142,7 @@ class SupplierPurchaseViewModel(
         _currentPurchase.value = updateCart
 
         viewModelScope.launch {
-            supplierCartRepository.saveSupplierCart(updateCart)
+            supplierCartRepository.saveSupplierCart(updateCart, current.userId)
         }
     }
 
@@ -180,7 +158,7 @@ class SupplierPurchaseViewModel(
 //        _total.value = updatedSupplierCart.sumOf { it.subtotal }
 
         viewModelScope.launch {
-            supplierCartRepository.saveSupplierCart(updatedSupplierCart)
+            supplierCartRepository.saveSupplierCart(updatedSupplierCart, current.userId)
         }
     }
 

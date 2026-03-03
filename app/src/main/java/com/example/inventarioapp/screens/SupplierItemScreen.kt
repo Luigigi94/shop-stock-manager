@@ -4,24 +4,29 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,11 +42,14 @@ import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.ui.LocalSessionViewModel
+import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedEditRows
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
+import com.example.inventarioapp.ui.components.CustomizedModal
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTitleScreens
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
+import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
 import com.example.inventarioapp.viewmodel.SupplierPurchaseViewModel
 
@@ -56,6 +64,10 @@ fun SupplierItemScreen(
 ) {
     val productViewModel: ProductViewModel = viewModel()
     val products by productViewModel.products.collectAsState()
+    var addProductModal by remember { mutableStateOf(false) }
+
+    val categoriesViewModel: CategoryViewModel = viewModel()
+    val selectGralCat = categoriesViewModel.returnGralCategory()
 
     val sessionViewModel = LocalSessionViewModel.current
     val session by sessionViewModel.session.collectAsState()
@@ -63,8 +75,25 @@ fun SupplierItemScreen(
     var selectedProduct by remember { mutableStateOf<Products?>(null) }
 
     var quantityProduct by remember { mutableStateOf("1") }
+    var costProduct by remember { mutableStateOf("0.0") }
     val snackbarHostState = remember { SnackbarHostState() }
     val itemsSupplier by viewModel.currentPurchase.collectAsState()
+
+    LaunchedEffect(itemId, itemsSupplier, products) {
+        if (itemId == null) return@LaunchedEffect
+        val supplierCart = itemsSupplier ?: return@LaunchedEffect
+        val item = supplierCart.items.firstOrNull{ it.id == itemId } ?: return@LaunchedEffect
+
+        selectedProduct = products.firstOrNull { it.idProduct == item.productId } ?: return@LaunchedEffect
+
+        quantityProduct = item.quantity.toString()
+
+        costProduct = item.cost.toString()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.start(userId = session?.userName ?: "Unlogged")
+    }
 
 
     Scaffold(
@@ -92,6 +121,23 @@ fun SupplierItemScreen(
             }
         }
     ) { innerPadding ->
+        CustomizedModal(
+            show = addProductModal,
+            onDismiss = { addProductModal = false },
+            onConfirm = {
+                // Aquí llamas a tu ProductRepository
+
+
+                addProductModal = false
+            },
+            title = "Nuevo Producto"
+        ) {
+            // 3. Aquí dibujas tus TextFields rápidos
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(value = "", onValueChange = {}, label = { Text("Nombre") })
+                OutlinedTextField(value = "", onValueChange = {}, label = { Text("Precio") })
+            }
+        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -126,16 +172,24 @@ fun SupplierItemScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
 
-                        CustomizedExposedDropdownMenu(
-                            items = products,
-                            selectedItem = selectedProduct,
-                            label = stringResource(R.string.supplier_item_product_label_product),
-                            itemLabel = { it.nameProduct },
-                            onItemSelected = { selectedProduct = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            /*isError = statePurchaseItem.idProductError != null,
+                        Row() {
+                            CustomizedExposedDropdownMenu(
+                                items = products,
+                                selectedItem = selectedProduct,
+                                label = stringResource(R.string.supplier_item_product_label_product),
+                                itemLabel = { it.nameProduct },
+                                onItemSelected = { selectedProduct = it },
+                                modifier = Modifier.weight(1f),
+                                /*isError = statePurchaseItem.idProductError != null,
                         supportingText = statePurchaseItem.idProductError*/
-                        )
+                            )
+
+                            CustomizedButton(
+                                onClick = { addProductModal = true }
+                            ) {
+                                Icon(Icons.Filled.Folder, null)
+                            }
+                        }
                         CustomizedOutlinedTextField(
                             modifier = Modifier.fillMaxWidth(),
                             onValueChange = { quantityProduct = it },
@@ -146,9 +200,9 @@ fun SupplierItemScreen(
                         )
                         CustomizedOutlinedTextField(
                             modifier = Modifier.fillMaxWidth(),
-                            onValueChange = { quantityProduct = it },
+                            onValueChange = { costProduct = it },
 //                            onValueChange = purchaseViewModel::onQuantity,
-                            value = quantityProduct,
+                            value = costProduct,
                             label = { Text(text = stringResource(R.string.supplier_item_product_label_cost)) },
 //                            onFocusLost = purchaseViewModel::onQuantityBlur
                         )
@@ -159,11 +213,12 @@ fun SupplierItemScreen(
                             onAction = {
                                 selectedProduct?.let {
                                     val qty = quantityProduct.toInt()
+                                    val cost = costProduct.toDouble()
                                     Log.d("selectedProduct","Revisando el itemId: $itemId")
                                     if (itemId == null){
-//                                        purchaseViewModel.addOrUpdateItem(it, qty)
+                                        viewModel.addOrUpdateItem(it, qty, cost)
                                     } else {
-//                                        purchaseViewModel.updateItemQuantity(itemId, qty)
+                                        viewModel.updateItemQuantity(itemId, qty)
                                     }
                                     onSave()
                                 }

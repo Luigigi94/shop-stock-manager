@@ -8,7 +8,6 @@ import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Products
 import com.example.inventarioapp.repository.InventoryRepository
 import com.example.inventarioapp.repository.ProductRepository
-import com.example.inventarioapp.repository.PurchaseRepository
 import com.example.inventarioapp.state.ProductUiState
 import com.example.inventarioapp.validators.ProductValidator
 import com.example.inventarioapp.validators.model.ValidationResult
@@ -24,7 +23,6 @@ class ProductViewModel(
     private val inventoryRepository: InventoryRepository = InventoryRepository()
 ) : ViewModel() {
 
-    private val purchaseRepository: PurchaseRepository = PurchaseRepository()
     private val _products = MutableStateFlow<List<Products>>(emptyList())
     val products: StateFlow<List<Products>> get() = _products
 
@@ -105,6 +103,10 @@ class ProductViewModel(
                 _products.value = fetchedList
             }
         }
+    }
+
+    fun quickAddProduct(products: Products){
+        val quickProducts
     }
 
     fun addProduct() {

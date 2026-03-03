@@ -3,6 +3,7 @@ package com.example.inventarioapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.model.Categories
+import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.repository.CategoryRepository
 import com.example.inventarioapp.state.CategoryUiState
 import com.example.inventarioapp.validators.CategoryValidator
@@ -34,6 +35,10 @@ class CategoryViewModel(
 
     private val _uiState = MutableStateFlow(CategoryUiState())
     val uiState: StateFlow<CategoryUiState> = _uiState
+
+    private val _gralCat = MutableStateFlow<List<Categories?>>(emptyList())
+    val gralCat: StateFlow<List<Categories?>> get() = _gralCat
+
 
     /*
     * Setters para el support del state hoisting
@@ -133,6 +138,13 @@ class CategoryViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun returnGralCategory(){
+        viewModelScope.launch {
+            val list = repository.getGenericCategory()
+            _gralCat.value = list
         }
     }
 
