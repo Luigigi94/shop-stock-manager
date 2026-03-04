@@ -2,6 +2,9 @@ package com.example.inventarioapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,6 +13,7 @@ import androidx.navigation.navArgument
 import com.example.inventarioapp.screens.AddCategoryScreen
 import com.example.inventarioapp.screens.AddProductScreen
 import com.example.inventarioapp.screens.ClientScreen
+import com.example.inventarioapp.screens.InventoryListScreen
 import com.example.inventarioapp.screens.InventoryScreen
 import com.example.inventarioapp.screens.InvoiceScreen
 import com.example.inventarioapp.screens.LoginScreen
@@ -21,13 +25,17 @@ import com.example.inventarioapp.screens.SalesByUserScreen
 import com.example.inventarioapp.screens.SupplierItemScreen
 import com.example.inventarioapp.screens.SupplierPurchaseScreen
 import com.example.inventarioapp.screens.SupplierScreen
+import com.example.inventarioapp.viewmodel.SessionViewModel
 
 @Composable
 fun AppNavigation(darkThemeState: MutableState<Boolean>) {
+    val sessionViewModel: SessionViewModel = viewModel()
+    val session by sessionViewModel.session.collectAsState()
     val navController = rememberNavController()
+    val startDestination = if (session != null) AppScreens.MenuScreen.route else AppScreens.LoginScreen.route
     NavHost(
         navController = navController,
-        startDestination = AppScreens.LoginScreen.route
+        startDestination = startDestination
     ) {
         composable(route = AppScreens.LoginScreen.route) {
             LoginScreen(
@@ -183,6 +191,14 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             route = AppScreens.InventoryScreen.route
         ){
             InventoryScreen(
+                darkThemeState,
+                navController
+            )
+        }
+        composable(
+            route = AppScreens.InventoryListScreen.route
+        ){
+            InventoryListScreen(
                 darkThemeState,
                 navController
             )

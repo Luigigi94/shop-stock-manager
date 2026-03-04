@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.constants.MovementType
 import com.example.inventarioapp.model.InventoryCountItem
+import com.example.inventarioapp.model.InventoryHeader
 import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.repository.InventoryRepository
 import com.example.inventarioapp.repository.ProductRepository
@@ -26,6 +27,9 @@ class InventoryViewModel(
     private val _items = MutableStateFlow<List<InventoryCountItem>>(emptyList())
     val items: StateFlow<List<InventoryCountItem>> = _items.asStateFlow()
 
+    private val _listedInventories = MutableStateFlow<List<InventoryHeader>>(emptyList())
+    val listedInventories: StateFlow<List<InventoryHeader>> get() = _listedInventories
+
     private var currentUserId: String? = null
     private var isInitialized = false
 
@@ -33,6 +37,11 @@ class InventoryViewModel(
 
     init {
         loadItems()
+        viewModelScope.launch {
+            inventoryRepository.getListedInventories().collect { fetchedList ->
+                _listedInventories.value = fetchedList
+            }
+        }
     }
 
     fun initViewModel(userId: String){

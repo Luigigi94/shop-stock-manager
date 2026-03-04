@@ -3,8 +3,12 @@ package com.example.inventarioapp.repository
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.InventoryCountItem
 import com.example.inventarioapp.model.InventoryDraft
+import com.example.inventarioapp.model.InventoryHeader
 import com.example.inventarioapp.model.InventoryMovements
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class InventoryRepository {
@@ -12,6 +16,9 @@ class InventoryRepository {
     private val db by lazy {
         FirebaseFirestore.getInstance()
     }
+    
+    private val dbInventoryDraft = db.collection(FirestorePaths.Collections.INVENTORY_DRAFT)
+    private val dbInventoryList = db.collection(FirestorePaths.Collections.INVENTORY_LIST)
 
     suspend fun saveInventoryMovements(movements: List<InventoryMovements>) {
         val batch = db.batch()
@@ -43,22 +50,35 @@ class InventoryRepository {
     }
 
     suspend fun saveInventoryDraft(userId: String, items: List<InventoryCountItem>) {
-        db.collection(FirestorePaths.Collections.INVENTORY_DRAFT)
+        dbInventoryDraft
             .document(userId)
             .set(mapOf("items" to items))
             .await()
     }
 
     suspend fun deleteDraft(userId: String) {
-        db.collection(FirestorePaths.Collections.INVENTORY_DRAFT).document(userId).delete().await()
+        dbInventoryDraft.document(userId).delete().await()
     }
 
     suspend fun getInventoryDraft(userId: String): List<InventoryCountItem>? {
-        return db.collection(FirestorePaths.Collections.INVENTORY_DRAFT)
+        return dbInventoryDraft
             .document(userId)
             .get()
             .await()
             .toObject(InventoryDraft::class.java)?.items
+    }
+    
+    suspend fun getListedInventories(): Flow<List<InventoryHeader>> {
+        return callbackFlow {
+            val listener = dbInventoryList.addSnapshotListener { snapshots, exception ->
+                if (exception != null || snapshots == null) return@addSnapshotListener
+                val list = snapshots.documents.mapNotNull { documentSnapshot ->
+                    documentSnapshot.toObject(InventoryHeader::class.java)
+                }
+                trySend(list)
+            }
+            awaitClose { listener.remove() }
+        }
     }
 
     suspend fun getMovementsByReference(idReference: String): List<InventoryMovements> {

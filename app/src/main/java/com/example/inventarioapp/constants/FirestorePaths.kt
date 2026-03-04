@@ -10,11 +10,10 @@ object FirestorePaths {
         const val PURCHASES = "Purchases"
         const val RESERVES = "Reserves"
         const val CARTS = "Carts"
-
         const val SUPPLIER_PURCHASES = "SupplierPurchases"
         const val SUPPLIER = "Suppliers"
-
         const val SUPPLIER_CART = "SupplierCart"
+        const val INVENTORY_LIST = "InventoryList"
     }
 
     object Documents {

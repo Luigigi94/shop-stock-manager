@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="menu_label_sales_today">Todays Sales</string>
+    <string name="menu_label_sales_today">Today\'s Sales</string>
     <string name="menu_label_reserves">Reserves</string>
     <string name="categories_label_saved">Added Category</string>
     <string name="categories_label_add">Add Catgory</string>
@@ -23,6 +23,7 @@
     <string name="welcome_user">Welcome back,</string>
     <string name="topbar_products">Products</string>
     <string name="topbar_Inventory">Inventory</string>
+    <string name="topbar_inventories_listed">Inventories Listed</string>
     <string name="topbar_Invoice">Purchase Invoice</string>
     <string name="topbar_reserves">Reserves</string>
     <string name="topbar_purchase_product">Cart</string>

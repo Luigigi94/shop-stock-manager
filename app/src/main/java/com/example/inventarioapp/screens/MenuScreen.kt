@@ -17,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.PointOfSale
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.constants.MenuOptions
+import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 
@@ -165,7 +168,7 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        text = "${session?.userName} 👋",
+                        text = "${session?.userName ?: "Usuario"} 👋",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -184,6 +187,25 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
 
             item {
                 ListedOptions(navController)
+            }
+            item {
+                Button(
+                    onClick = {
+                        sessionViewModel.logout()
+                        // Al limpiar la sesión, debemos mandar al usuario al Login
+                        navController.navigate(AppScreens.LoginScreen.route) {
+                            // Limpiamos el historial para que no pueda regresar al menú con el botón atrás
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                ) {
+                    Text("Cerrar Sesión")
+                }
             }
         }
     }

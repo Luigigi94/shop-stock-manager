@@ -62,10 +62,18 @@ object MenuOptions {
             state = true,
             contentDescription = "Icon Sales by User"
         ),
-        OptionsMenu(
+        /*OptionsMenu(
             label = R.string.topbar_Inventory,
             icon = Icons.Filled.Inventory,
             route = AppNavigationUUIDs.ScreenUUID.INVENTORY,
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
+        ),*/
+        OptionsMenu(
+            label = R.string.topbar_inventories_listed,
+            icon = Icons.Filled.Inventory,
+            route = AppNavigationUUIDs.ScreenUUID.INVENTORY_LIST,
             role = null,
             state = true,
             contentDescription = "Icon Sales by User"
