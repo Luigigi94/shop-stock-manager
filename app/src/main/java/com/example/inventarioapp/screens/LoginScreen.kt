@@ -73,11 +73,16 @@ fun LoginScreen(darkThemeState: MutableState<Boolean>, navController: NavControl
                     null
                 )
 
-                Firebase.auth.signInWithCredential(googleIdToken).addOnCompleteListener { task ->
+                Firebase.auth.signInWithCredential(googleIdToken)
+                    .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val firebaseUser = task.result?.user
                         stateLogin = "Authorized"
                         sessionViewModel.updateSession(firebaseUser)
+                        firebaseUser.let { user ->
+                            if (user != null)
+                                sessionViewModel.saveUserToFirebase(user)
+                        }
                         navController.navigate(AppScreens.MenuScreen.route) {
                             popUpTo(AppScreens.LoginScreen.route) { inclusive = true }
                         }

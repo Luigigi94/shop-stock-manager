@@ -14,6 +14,7 @@ object FirestorePaths {
         const val SUPPLIER = "Suppliers"
         const val SUPPLIER_CART = "SupplierCart"
         const val INVENTORY_LIST = "InventoryList"
+        const val USERS = "Users"
     }
 
     object Documents {
