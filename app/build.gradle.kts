@@ -1,3 +1,5 @@
+import java.util.Properties
+import java.io.FileInputStream
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -11,6 +13,10 @@ android {
         version = release(36)
     }
 
+    buildFeatures{
+        buildConfig=true
+    }
+
     defaultConfig {
         applicationId = "com.example.inventarioapp"
         minSdk = 24
@@ -19,6 +25,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val local_properties = Properties()
+        val archivo_local = project.rootProject.file("local.properties")
+
+        if (archivo_local.exists()) {
+            local_properties.load(FileInputStream(archivo_local))
+        }
+
+        val google_token = local_properties.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
+
+        // RECUERDA: Las comillas escapeadas \" son obligatorias para que sea un String en Kotlin
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$google_token\"")
     }
 
     flavorDimensions += "env"
@@ -76,6 +94,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.text.google.fonts)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.ui.text)
+//    implementation(libs.firebase.auth.ktx)
+//    implementation(libs.firebase.auth.common)
 //    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -87,6 +107,15 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-auth")
 
     implementation("androidx.compose.material:material-icons-extended")
+
+    implementation("androidx.credentials:credentials:1.2.2")
+    implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+//    implementation ("com.google.firebase:firebase-auth-ktx:23.2.1")
+//    implementation ("com.google.android.gms:play-services-auth:21.5.1")
+
 }
