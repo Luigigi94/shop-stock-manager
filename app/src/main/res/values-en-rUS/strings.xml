@@ -77,6 +77,8 @@
     <string name="generic_label_button_delete">Delete</string>
     <string name="generic_label_button_edit">Edit</string>
     <string name="inventory_label_product_name">Name</string>
+    <string name="login_label_error_client">There is no avaliables credentials on your device</string>
+    <string name="login_label_success_client">Authorized</string>
     <string name="error_required">Required Field</string>
     <string name="error_invalid_number">Only valid numbers</string>
     <string name="error_min_quantity">The quantity cannot be less than 1</string>
