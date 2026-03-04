@@ -4,7 +4,11 @@ import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +26,7 @@ import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedButton
+import com.example.inventarioapp.ui.components.CustomizedFAB
 import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
@@ -31,33 +36,63 @@ import com.example.inventarioapp.viewmodel.InventoryViewModel
 @Composable
 fun InventoryScreen(
     darkThemeState: MutableState<Boolean>,
-    navController: NavController
+    navController: NavController,
+    inventoryId: String?
 ) {
     val sessionViewModel = LocalSessionViewModel.current
     val session by sessionViewModel.session.collectAsState()
 
     val inventoryViewModel: InventoryViewModel = viewModel()
-    val inventoryItems by inventoryViewModel.items.collectAsState()
+    val inventoryItems by inventoryViewModel.itemsListed.collectAsState()
 
     var selectedProductId by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(session) {
-        val name = session?.userName
+    var addProductInventory by remember { mutableStateOf(false) }
 
-        if (!name.isNullOrBlank()){
-            inventoryViewModel.loadInventory(name)
-        }
+    val stateInventoryProduct by remember { mutableStateOf(true) } //TODO: create the state function on ViewModel
+
+    val finalId = remember { inventoryId ?: "inv_${System.currentTimeMillis()}" }
+
+    LaunchedEffect(finalId) {
+        inventoryViewModel.loadInventory(finalId)
     }
 
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
-                title = stringResource(R.string.topbar_Inventory),
+                title = "${stringResource(R.string.topbar_Inventory)}/brrrr",
                 darkThemeState = darkThemeState,
                 navController = navController,
                 showThemeSwitch = true,
                 showBack = true
             )
+        },
+        floatingActionButton = {
+            if(!stateInventoryProduct) {
+                if (addProductInventory) {
+                    CustomizedFAB(
+                        onClick = {
+                            addProductInventory = false
+                        },
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close Reserve Form"
+                        )
+                    }
+                }
+            } else {
+                CustomizedFAB(
+                    onClick = { addProductInventory = true },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Close Reserve Form"
+                    )
+                }
+            }
         },
         bottomBar = {
             if (selectedProductId == null) {

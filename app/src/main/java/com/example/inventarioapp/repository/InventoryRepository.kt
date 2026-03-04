@@ -49,9 +49,9 @@ class InventoryRepository {
         }.await()
     }
 
-    suspend fun saveInventoryDraft(userId: String, items: List<InventoryCountItem>) {
+    suspend fun saveInventoryDraft(inventoryId: String, items: List<InventoryCountItem>) {
         dbInventoryDraft
-            .document(userId)
+            .document(inventoryId)
             .set(mapOf("items" to items))
             .await()
     }
@@ -60,9 +60,9 @@ class InventoryRepository {
         dbInventoryDraft.document(userId).delete().await()
     }
 
-    suspend fun getInventoryDraft(userId: String): List<InventoryCountItem>? {
+    suspend fun getInventoryDraft(inventoryId: String): List<InventoryCountItem>? {
         return dbInventoryDraft
-            .document(userId)
+            .document(inventoryId)
             .get()
             .await()
             .toObject(InventoryDraft::class.java)?.items

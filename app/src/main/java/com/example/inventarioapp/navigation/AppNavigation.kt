@@ -188,11 +188,20 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             )
         }
         composable(
-            route = AppScreens.InventoryScreen.route
-        ){
+            route = "${AppScreens.InventoryScreen.route}?inventoryActive={inventoryId}",
+            arguments = listOf(
+                navArgument("inventoryId"){
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ){ backStackEntry ->
+            val inventoryId = backStackEntry.arguments?.getString("inventoryId")
             InventoryScreen(
                 darkThemeState,
-                navController
+                navController,
+                inventoryId = inventoryId
             )
         }
         composable(

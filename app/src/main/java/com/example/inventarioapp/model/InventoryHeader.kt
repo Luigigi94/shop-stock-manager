@@ -3,7 +3,7 @@ package com.example.inventarioapp.model
 import com.google.firebase.Timestamp
 
 data class InventoryHeader(
-    val id: String = "",
+    val idHeaderInventory: String = "",
     val userId: String = "",
     val userName: String = "",
     val createdAt: Timestamp? = null,

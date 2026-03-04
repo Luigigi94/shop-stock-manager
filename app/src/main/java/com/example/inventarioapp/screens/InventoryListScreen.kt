@@ -3,13 +3,21 @@ package com.example.inventarioapp.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Plumbing
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.inventarioapp.R
+import com.example.inventarioapp.navigation.AppScreens
+import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.viewmodel.InventoryViewModel
@@ -44,6 +54,28 @@ fun InventoryListScreen(
                 showThemeSwitch = true,
                 showBack = true
             )
+        }, bottomBar = {
+            CustomizedButton(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    MaterialTheme.colorScheme.primary
+                ),
+                onClick = {
+                    val newInv = "inv_${System.currentTimeMillis()}"
+                    navController.navigate("${AppScreens.InventoryScreen.route}?inventoryActive=$newInv")
+                }
+            ) {
+                Row {
+                    Icon(
+                        imageVector = Icons.Filled.Plumbing,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "Comenzar Nuevo Inventario",
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         LazyColumn(
