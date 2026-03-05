@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventarioapp.constants.MovementType
 import com.example.inventarioapp.model.InventoryCountItem
+import com.example.inventarioapp.model.InventoryDetail
 import com.example.inventarioapp.model.InventoryHeader
 import com.example.inventarioapp.model.InventoryMovements
-import com.example.inventarioapp.model.Products
+import com.example.inventarioapp.model.InventoryResult
 import com.example.inventarioapp.repository.InventoryRepository
 import com.example.inventarioapp.repository.ProductRepository
 import com.example.inventarioapp.state.InventoryUiState
@@ -35,11 +36,20 @@ class InventoryViewModel(
     private val _uiState = MutableStateFlow(InventoryUiState())
     val uiState: StateFlow<InventoryUiState> get() = _uiState
 
+    private val _confirmationResult = MutableStateFlow<InventoryResult>(InventoryResult.Idle)
+    val confirmationResult: StateFlow<InventoryResult> = _confirmationResult.asStateFlow()
+
+    private val _activeDraftId = MutableStateFlow<String?>(null)
+    val activeDraftId = _activeDraftId.asStateFlow()
+
     private var currentInventoryId: String? = null
+
+
 
 
     init {
 //        loadItems()
+        fetchDraftId()
         viewModelScope.launch {
             inventoryRepository.getListedInventories().collect { fetchedList ->
                 _listedInventories.value = fetchedList
@@ -48,6 +58,7 @@ class InventoryViewModel(
     }
 
     fun initViewModel(inventoryId: String){
+        Log.d("INV -> InventoryVM initiViewModel","Revisando el valor de inventoryId $inventoryId y de currentInventory: $currentInventoryId")
         if (currentInventoryId == inventoryId) return
         currentInventoryId = inventoryId
         loadInventory(inventoryId)
@@ -67,40 +78,56 @@ class InventoryViewModel(
             )
         }
     }
-    fun loadInventory(inventoryId: String) = viewModelScope.launch {
-        val draft = inventoryRepository.getInventoryDraft(inventoryId)
 
-        if (!draft.isNullOrEmpty()){
-            Log.d("InventoryVM", "Cargando borrador encontrado para $inventoryId")
-            _itemsListed.value = draft
-        } /*else {
-            Log.d("InventoryVM", "No hay borrador, cargando productos base")
-            val products = productRepository.getInventoryProducts()
-            _items.value = products.map { prod ->
-                InventoryCountItem(
+    fun onIdProduct(value: String){
+        _uiState.update { it.copy(idProduct = value) }
+    }
+    fun onQtyCounted(value: String){
+        _uiState.update { it.copy(countedQuantity = value) }
+    }
+    fun loadInventory(inventoryId: String) {
+        Log.d("INV -> InventoryVM loadInventory","valor de inventoryId: $inventoryId")
+        currentInventoryId = inventoryId // ¡ESTA LÍNEA ES VITAL!
+        viewModelScope.launch {
+            val draft = inventoryRepository.getInventoryDraft(inventoryId)
+            Log.d("INV -> InventoryVM loadInventory","valor de draft: $draft")
+            if (!draft.isNullOrEmpty()) {
+                _itemsListed.update {  draft }
+            }
+        }
+    }
+
+    fun addProductToInventory(productId: String) {
+        viewModelScope.launch {
+            // 1. Buscamos si ya existe en el conteo actual
+            val currentItems = _itemsListed.value
+            val alreadyInList = currentItems.any { it.idProduct == productId }
+
+            if (alreadyInList) {
+                // Si ya está, quizás prefieras mandarlo a updateCount en lugar de duplicar
+                return@launch
+            }
+
+            // 2. Si no está, buscamos sus datos base (nombre, stock actual) en el repo de productos
+            val baseProduct = productRepository.getProductById(productId) // Necesitas este método en tu repo
+
+            baseProduct?.let { prod ->
+                val newItem = InventoryCountItem(
                     idProduct = prod.idProduct,
                     productName = prod.nameProduct,
                     systemQuantity = prod.stock,
-                    countedQuantity = prod.stock
+                    countedQuantity = _uiState.value.countedQuantity.toIntOrNull() ?: 0,
+                    updatedAt = Timestamp.now()
                 )
+
+                // 3. Actualizamos la lista y el State de la UI
+                _itemsListed.value = currentItems + newItem
+
+                // 4. Limpiamos el formulario para el siguiente producto
+                _uiState.update { InventoryUiState() }
+
+                saveCurrentDraft()
             }
-        }*/
-    }
-
-    fun addProductToInventory(product: Products){
-        val currentProducts = _itemsListed.value
-        val existingItem = currentProducts.find { it.idProduct == product.idProduct }
-
-        if (existingItem != null){
-            val newItem = InventoryCountItem(
-                idProduct = product.idProduct,
-                productName = product.nameProduct,
-                systemQuantity = product.stock,
-                countedQuantity = product.stock,
-            )
-            _itemsListed.value = currentProducts + newItem
-
-            saveCurrentDraft()
         }
     }
 
@@ -120,14 +147,41 @@ class InventoryViewModel(
     }
 
 
-    fun confirmInventory(userId: String = "Admin") = viewModelScope.launch {
-        val inventoryId = currentInventoryId ?: return@launch
-        Log.d("confirmInventory", "Revisando que llegue usuario: $userId")
-        val refId = "inventory_${userId}_${System.currentTimeMillis()}"
+    fun confirmInventory(inventoryId: String, userId: String) = viewModelScope.launch {
+        Log.d("confirmInventory", "Revisando que llegue usuario: $inventoryId")
         val diffItems = _itemsListed.value.filter { it.difference != 0 }
         Log.d("confirmInventory", "Revisando que existe diffItems: $diffItems")
 
+        val items = _itemsListed.value
+
         if (diffItems.isEmpty()) return@launch
+        if (items.isEmpty()) {
+            _confirmationResult.value = InventoryResult.Error("No hay items para registrar")
+            return@launch
+        }
+
+        val details = items.map { item ->
+            InventoryDetail(
+                id = "${inventoryId}_${item.idProduct}",
+                referenceId = inventoryId,
+                productId = item.idProduct,
+                productName = item.productName,
+                systemQuantity = item.systemQuantity,
+                countedQuantity = item.countedQuantity,
+                difference = item.difference,
+                timestamp = Timestamp.now()
+            )
+        }
+
+        val header = InventoryHeader(
+            idHeaderInventory = inventoryId,
+            userId = userId,
+            userName = userId,
+            createdAt = items.minByOrNull { it.updatedAt?.seconds ?: 0 }?.updatedAt ?: Timestamp.now(),
+            finishedAt = Timestamp.now(),
+            totalItemsCounted = items.size,
+            totalDiscrepancies = items.count { it.difference != 0 }
+        )
 
         val movements = diffItems.map { item ->
             InventoryMovements(
@@ -136,14 +190,37 @@ class InventoryViewModel(
                 quantity = item.difference,
                 type = MovementType.INVENTORY,
                 reason = "Conteo Físico",
-                referenceId = refId,
+                referenceId = inventoryId,
                 userId = userId,
                 createdAt = Timestamp.now()
             )
         }
 
-        val finalStocks = diffItems.associate { it.idProduct to it.countedQuantity }
-        inventoryRepository.applyInventoryMovements(movements, finalStocks)
-        inventoryRepository.deleteDraft(userId)
+        try {
+            val finalStocks = diffItems.associate { it.idProduct to it.countedQuantity }
+            inventoryRepository.applyInventoryMovements(movements, finalStocks)
+            inventoryRepository.saveFinalInventoryRecord(header, details)
+            inventoryRepository.deleteDraft(inventoryId)
+
+            _confirmationResult.value = InventoryResult.Success
+        } catch (e: Exception) {
+            Log.e("ConfirmInventory","Error: $e")
+            _confirmationResult.value = InventoryResult.Error(e.localizedMessage ?: "Error desconocido")
+        }
+    }
+
+    fun fetchDraftId() {
+        viewModelScope.launch {
+            val id = inventoryRepository.getDraftActive()
+            Log.d("INV -> InventoryVM FetchDraftId", "ID de Firebase: $id")
+            _activeDraftId.value = id
+        }
+    }
+
+    fun clearActiveDraftId(){
+        _activeDraftId.value = null
+    }
+    fun resetConfirmationResult() {
+        _confirmationResult.value = InventoryResult.Idle
     }
 }

@@ -15,13 +15,15 @@ fun CustomizedButton(
     onClick: () -> Unit,
     shape: Shape = ButtonDefaults.shape,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
-    content: @Composable () -> Unit
+    isEnabled: Boolean = true,
+    content: @Composable () -> Unit,
 ){
     Button(
         modifier = modifier,
         onClick = onClick,
         shape = shape,
-        colors = colors
+        colors = colors,
+        enabled = isEnabled
     ) {
         content()
     }

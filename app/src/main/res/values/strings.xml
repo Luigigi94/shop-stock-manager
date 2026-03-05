@@ -94,6 +94,11 @@
 <!--    Inventory labels-->
     <string name="inventory_label_product_name">Nombre</string>
     <string name="inventory_label_product_quantity">Cantidad</string>
+    <string name="inventory_label_product_add">Agregar Producto al Inventario</string>
+    <string name="inventory_label_product_edit">Actualizar Cantidad en el Inventario</string>
+    <string name="inventory_label_product">Producto</string>
+    <string name="inventory_label_product_inventory">Producto</string>
+
 
     <!--    Suppliers labels-->
     <string name="suppliers_label_saved">Proveedor Añadido</string>

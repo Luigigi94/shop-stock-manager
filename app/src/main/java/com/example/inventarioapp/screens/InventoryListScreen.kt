@@ -1,5 +1,6 @@
 package com.example.inventarioapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,6 +47,18 @@ fun InventoryListScreen(
     inventoryViewModel: InventoryViewModel = viewModel()
 ){
     val listInventories by inventoryViewModel.listedInventories.collectAsState()
+
+    val draftId by inventoryViewModel.activeDraftId.collectAsState()
+    LaunchedEffect(Unit) {
+        inventoryViewModel.fetchDraftId()
+    }
+    LaunchedEffect(draftId) {
+//        navController.navigate("${AppScreens.InventoryScreen.route}?inventoryActive=${draftId.toString()}")
+        draftId?.let { id ->
+            navController.navigate("${AppScreens.InventoryScreen.route}?inventoryActive=$id")
+            inventoryViewModel.clearActiveDraftId()
+        }
+    }
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
@@ -63,6 +77,7 @@ fun InventoryListScreen(
                 ),
                 onClick = {
                     val newInv = "inv_${System.currentTimeMillis()}"
+                    Log.d("INV -> onClick InventoryListScreen","Valor del queryparam: $newInv")
                     navController.navigate("${AppScreens.InventoryScreen.route}?inventoryActive=$newInv")
                 }
             ) {

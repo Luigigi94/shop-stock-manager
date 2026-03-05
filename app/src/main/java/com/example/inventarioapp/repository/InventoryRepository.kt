@@ -1,11 +1,14 @@
 package com.example.inventarioapp.repository
 
+import android.util.Log
 import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.InventoryCountItem
+import com.example.inventarioapp.model.InventoryDetail
 import com.example.inventarioapp.model.InventoryDraft
 import com.example.inventarioapp.model.InventoryHeader
 import com.example.inventarioapp.model.InventoryMovements
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -67,6 +70,23 @@ class InventoryRepository {
             .await()
             .toObject(InventoryDraft::class.java)?.items
     }
+
+    suspend fun getDraftActive(): String? {
+        return try {
+            val snapshot = dbInventoryDraft
+                .get()
+                .await()
+
+            // Si no está vacío, devolvemos el ID del primero (y único)
+            if (!snapshot.isEmpty) {
+                snapshot.documents[0].id
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
     
     suspend fun getListedInventories(): Flow<List<InventoryHeader>> {
         return callbackFlow {
@@ -92,5 +112,22 @@ class InventoryRepository {
         } catch (e: Exception) {
             emptyList()
         }
+    }
+
+    suspend fun saveFinalInventoryRecord(
+        header: InventoryHeader,
+        details: List<InventoryDetail>
+    ) {
+        val batch = db.batch()
+
+        val headerRef = dbInventoryList.document(header.idHeaderInventory)
+        batch.set(headerRef, header)
+
+        details.forEach { detail ->
+            val detailRef = db.collection(FirestorePaths.Collections.INVENTORY_DETAILS).document(detail.id)
+            batch.set(detailRef, detail)
+        }
+
+        batch.commit().await()
     }
 }
