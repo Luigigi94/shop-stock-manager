@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.Icon
@@ -12,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.Categories
@@ -65,29 +67,35 @@ fun ProductForm(
 
             CustomizedOutlinedTextField(
                 modifier = Modifier.weight(1f),
-                value = state.priceProduct.toString(),
+                value = state.priceProduct,
                 onValueChange = onPriceChange,
                 label = { Text(stringResource(R.string.products_label_price_product)) },
                 error = state.priceError,
-                onFocusLost = onPriceBlur
+                onFocusLost = onPriceBlur,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number
+                )
             )
 
 
             if (state.isEdit) {
                 CustomizedOutlinedTextField(
                     modifier = Modifier.weight(1f),
-                    value = state.quantityProduct.toString(),
+                    value = state.quantityProduct,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text(stringResource(R.string.products_label_quantity_product)) })
             } else {
                 CustomizedOutlinedTextField(
                     modifier = Modifier.weight(1f),
-                    value = state.quantityProduct.toString(),
+                    value = state.quantityProduct,
                     onValueChange = onQuantityChange,
                     label = { Text(stringResource(R.string.products_label_quantity_product)) },
                     error = state.quantityError,
-                    onFocusLost = onQuantityBlur
+                    onFocusLost = onQuantityBlur,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    )
                 )
             }
         }

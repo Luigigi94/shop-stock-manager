@@ -96,6 +96,7 @@
     <string name="reserve_label_amount">Abono</string>
     <string name="reserve_label_update_reserve">Abonar</string>
     <string name="reserve_label_create_reserve">Apartar</string>
+    <string name="reserve_label_created_reserve">Inicio de Apartado</string>
 
 <!--    Inventory labels-->
     <string name="inventory_label_product_name">Nombre</string>

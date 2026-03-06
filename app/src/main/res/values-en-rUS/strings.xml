@@ -80,6 +80,7 @@
     <string name="generic_label_button_back">Back</string>
     <string name="generic_label_button_delete">Delete</string>
     <string name="generic_label_button_edit">Edit</string>
+    <string name="reserve_label_created_reserve">Reserve Start Date</string>
     <string name="inventory_label_product_name">Name</string>
     <string name="login_label_error_client">There is no avaliables credentials on your device</string>
     <string name="login_label_success_client">Authorized</string>
