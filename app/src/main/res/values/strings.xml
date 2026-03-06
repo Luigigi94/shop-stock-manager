@@ -132,10 +132,14 @@
     <string name="generic_label_button_back">Regresar</string>
     <string name="generic_label_button_delete">Eliminar</string>
     <string name="generic_label_button_edit">Editar</string>
+    <string name="menu_label_app_settings" translatable="false">App Settings</string>
 
 <!--    Login labels-->
     <string name="login_label_error_client">No hay cuentas disponibles en tu dispositivo</string>
     <string name="login_label_success_client">Autorizado</string>
+
+<!--    Profile labels-->
+    <string name="menu_label_profile">Perfil</string>
 
 <!--    Error labels-->
     <string name="error_required">Campo Obligatorio</string>

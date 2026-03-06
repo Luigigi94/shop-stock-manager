@@ -64,7 +64,7 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservesScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     reserveId: String?,
     reserveViewModel: ReserveViewModel = viewModel()
@@ -135,7 +135,7 @@ fun ReservesScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_reserves),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )

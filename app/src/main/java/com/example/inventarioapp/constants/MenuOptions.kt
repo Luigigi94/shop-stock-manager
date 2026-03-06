@@ -7,13 +7,15 @@ import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Inventory
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.PointOfSale
+import androidx.compose.material.icons.filled.Settings
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.OptionsMenu
 
 object MenuOptions {
-    val options = listOf(
+    /*val options = listOf(
         OptionsMenu(
             label = R.string.topbar_products,
             icon = Icons.Default.AddBox,
@@ -62,14 +64,14 @@ object MenuOptions {
             state = true,
             contentDescription = "Icon Sales by User"
         ),
-        /*OptionsMenu(
+        *//*OptionsMenu(
             label = R.string.topbar_Inventory,
             icon = Icons.Filled.Inventory,
             route = AppNavigationUUIDs.ScreenUUID.INVENTORY,
             role = null,
             state = true,
             contentDescription = "Icon Sales by User"
-        ),*/
+        ),*//*
         OptionsMenu(
             label = R.string.topbar_inventories_listed,
             icon = Icons.Filled.Inventory,
@@ -93,6 +95,103 @@ object MenuOptions {
             role = null,
             state = true,
             contentDescription = "Icon Sales by User"
+        )
+    )*/
+
+    val POS_OPTIONS = listOf(
+        OptionsMenu(
+            label = R.string.topbar_purchase,
+            icon = Icons.Filled.PointOfSale,
+            route = AppNavigationUUIDs.ScreenUUID.PURCHASE,
+            role = null,
+            state = true,
+            contentDescription = "Icon New Purchase"
+        ),
+        OptionsMenu(
+            label = R.string.topbar_reserves,
+            icon = Icons.AutoMirrored.Filled.ReceiptLong,
+            route = AppNavigationUUIDs.ScreenUUID.RESERVES,
+            role = null,
+            state = true,
+            contentDescription = "Icon New Order"
+        ),
+        OptionsMenu(
+            label = R.string.topbar_sales,
+            icon = Icons.Filled.Analytics,
+            route = AppNavigationUUIDs.ScreenUUID.SALESBYUSER,
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
+        ),
+    )
+    val CATALOG_GROUP = listOf(
+        OptionsMenu(
+            label = R.string.topbar_products,
+            icon = Icons.Default.AddBox,
+            route = AppNavigationUUIDs.ScreenUUID.PRODUCT,
+            role = null,
+            state = true,
+            contentDescription = "Icon Add Product"
+        ),
+        OptionsMenu(
+            label = R.string.topbar_categories,
+            icon = Icons.Filled.Folder,
+            route = AppNavigationUUIDs.ScreenUUID.CATEGORY,
+            role = null,
+            state = true,
+            contentDescription = "Icon Add Category"
+        ),
+        OptionsMenu(
+            label = R.string.topbar_clients,
+            icon = Icons.Filled.PersonAdd,
+            route = AppNavigationUUIDs.ScreenUUID.CLIENT,
+            role = null,
+            state = true,
+            contentDescription = "Icon Add Client"
+        ),
+        OptionsMenu(
+            label = R.string.topbar_suppliers,
+            icon = Icons.Filled.AccountCircle,
+            route = AppNavigationUUIDs.ScreenUUID.SUPPLIER,
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
+        ),
+    )
+    val STOCK_GROUP = listOf(
+        OptionsMenu(
+            label = R.string.topbar_suppliers_purchases,
+            icon = Icons.Filled.AccountCircle,
+            route = AppNavigationUUIDs.ScreenUUID.SUPPLIER_PURCHASES,
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
+        ),
+        OptionsMenu(
+            label = R.string.topbar_inventories_listed,
+            icon = Icons.Filled.Inventory,
+            route = AppNavigationUUIDs.ScreenUUID.INVENTORY_LIST,
+            role = null,
+            state = true,
+            contentDescription = "Icon Sales by User"
+        ),
+    )
+    val MORE_OPTIONS = listOf(
+        OptionsMenu(
+            label = R.string.menu_label_profile,
+            icon = Icons.Default.Person,
+            route = "profile_settings",
+            state = true,
+            contentDescription = "",
+            role = null
+        ),
+        OptionsMenu(
+            label = R.string.menu_label_app_settings,
+            icon = Icons.Default.Settings,
+            route = "app_config",
+            state = true,
+            contentDescription = "",
+            role = null
         )
     )
 }

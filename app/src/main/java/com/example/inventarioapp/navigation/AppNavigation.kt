@@ -40,7 +40,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
     ) {
         composable(route = AppScreens.LoginScreen.route) {
             LoginScreen(
-                darkThemeState,
+//                darkThemeState,
                 navController
             )
         }
@@ -68,7 +68,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             val productId = backStackEntry.arguments?.getString("productId")
             val isCreateMode = backStackEntry.arguments?.getBoolean("isCreateMode")
             AddProductScreen(
-                darkThemeState,
+//                darkThemeState,
                 navController,
                 productId = productId,
                 isCreateMode = isCreateMode ?: false
@@ -93,7 +93,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             val categoryId = backStackEntry.arguments?.getString("categoryId")
             val isCreateMode = backStackEntry.arguments?.getBoolean("isCreateMode")
             AddCategoryScreen(
-                darkThemeState,
+//                darkThemeState,
                 navController,
                 categoryId = categoryId,
                 isCreateMode = isCreateMode ?: false
@@ -117,7 +117,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             val clientId = backStackEntry.arguments?.getString("clientId")
             val isCreateMode = backStackEntry.arguments?.getBoolean("isCreateMode")
             ClientScreen(
-                darkThemeState,
+                /*darkThemeState,*/
                 navController,
                 clientId = clientId,
                 isCreateMode = isCreateMode ?: false
@@ -135,14 +135,14 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         ) { backStackEntry ->
             val reserveId = backStackEntry.arguments?.getString("reserveId")
             ReservesScreen(
-                darkThemeState,
+                /*darkThemeState,*/
                 navController,
                 reserveId = reserveId
             )
         }
 
         composable(AppScreens.PurchaseScreen.route) {
-            PurchaseScreen(darkThemeState, navController)
+            PurchaseScreen(/*darkThemeState,*/ navController)
         }
         composable(
             route = "${AppScreens.PurchaseProductScreen.route}/{purchaseId}?itemId={itemId}",
@@ -177,14 +177,14 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         ){ backStackEntry ->
             val purchaseId = backStackEntry.arguments?.getString("purchaseId")
             InvoiceScreen(
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 navController = navController,
                 purchaseId = purchaseId
             )
         }
         composable(AppScreens.SalesByUserScreen.route) {
             SalesByUserScreen(
-                darkThemeState,
+//                darkThemeState,
                 navController
             )
         }
@@ -200,7 +200,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         ){ backStackEntry ->
             val inventoryId = backStackEntry.arguments?.getString("inventoryId")
             InventoryScreen(
-                darkThemeState,
+//                darkThemeState,
                 navController,
                 inventoryId = inventoryId
             )
@@ -217,7 +217,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         ){ backStackEntry ->
             val inventoryId = backStackEntry.arguments?.getString("inventoryId")
             InventoryDetailScreen(
-                darkThemeState,
+//                darkThemeState,
                 navController,
                 inventoryId = inventoryId
             )
@@ -226,7 +226,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             route = AppScreens.InventoryListScreen.route
         ){
             InventoryListScreen(
-                darkThemeState,
+//                darkThemeState,
                 navController
             )
         }
@@ -242,13 +242,13 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         ){ backStackEntry ->
             val supplierId = backStackEntry.arguments?.getString("supplierId")
             SupplierScreen(
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 navController = navController,
                 supplierId = supplierId
             )
         }
         composable(AppScreens.SupplierPurchaseScreen.route) {
-            SupplierPurchaseScreen(darkThemeState, navController)
+            SupplierPurchaseScreen(/*darkThemeState,*/ navController)
         }
         composable(
             route = "${AppScreens.SupplierItemScreen.route}/{supplierPurchaseId}?itemId={itemId}",
@@ -269,7 +269,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
             val supplierPurchaseId = backStackEntry.arguments?.getString("supplierPurchaseId")
             val itemId = backStackEntry.arguments?.getString("itemId")
             SupplierItemScreen(
-                darkThemeState,
+//                darkThemeState,
                 navController,
                 onSave = {navController.popBackStack()},
                 supplierPurchaseId = supplierPurchaseId,

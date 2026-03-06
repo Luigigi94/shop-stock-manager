@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PurchaseScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     idUser: String? = "",
     purchaseViewModel: PurchaseViewModel = viewModel()
@@ -92,7 +92,7 @@ fun PurchaseScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_purchase),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )

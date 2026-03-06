@@ -20,7 +20,7 @@ import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
 @Composable
 fun SalesByUserScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     purchaseViewModel: PurchaseViewModel = viewModel()
 ){
@@ -38,7 +38,7 @@ fun SalesByUserScreen(
             CustomizedTopAppBar(
                 title = "Ventas de ${session?.userName}",
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )

@@ -56,7 +56,7 @@ import com.example.inventarioapp.viewmodel.ProductViewModel
 
 @Composable
 fun InventoryScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     inventoryId: String?
 ) {
@@ -108,7 +108,7 @@ fun InventoryScreen(
         topBar = {
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_Inventory),
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 navController = navController,
                 showThemeSwitch = true,
                 showBack = true

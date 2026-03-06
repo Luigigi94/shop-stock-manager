@@ -58,7 +58,7 @@ import com.example.inventarioapp.viewmodel.CategoryViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCategoryScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     categoryId: String?,
     isCreateMode: Boolean,
@@ -111,7 +111,7 @@ fun AddCategoryScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_categories),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )

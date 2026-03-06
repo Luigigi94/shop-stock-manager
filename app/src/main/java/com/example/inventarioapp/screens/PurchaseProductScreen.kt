@@ -103,7 +103,7 @@ fun PurchaseProductScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_purchase_product),
                 navController = navController,
-                darkThemeState = darkTheme,
+//                darkThemeState = darkTheme,
                 showBack = true,
                 showThemeSwitch = true
             )

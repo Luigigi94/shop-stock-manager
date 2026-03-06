@@ -24,12 +24,17 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,8 +46,11 @@ import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.constants.MenuOptions
 import com.example.inventarioapp.navigation.AppScreens
+import com.example.inventarioapp.navigation.BottomNavDestinations
+import com.example.inventarioapp.screens.menu.MoreScreen
 import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
+import com.example.inventarioapp.ui.components.GenericListedOptions
 
 @Composable
 fun CustomizedElevatedCard(title: String, value: String, icon: ImageVector, iconColor: Color) {
@@ -81,6 +89,7 @@ fun CustomizedElevatedCard(title: String, value: String, icon: ImageVector, icon
         }
     }
 }
+/*
 @Composable
 fun ListedOptions(navController: NavController) {
     val options = MenuOptions.options
@@ -140,19 +149,43 @@ fun ListedOptions(navController: NavController) {
         }
     }
 }
+*/
+
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavController){
+fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavController) {
     val sessionViewModel = LocalSessionViewModel.current
     val session by sessionViewModel.session.collectAsState()
-    Scaffold(topBar = {
-        CustomizedTopAppBar(
-            title = stringResource(R.string.topbar_dashboard),
-            darkThemeState = darkThemeState,
-            showThemeSwitch = true
-        )
-    }) { innerPadding ->
+    var selectedTab by remember { mutableStateOf(BottomNavDestinations.POS.route) }
+    Scaffold(
+        topBar = {
+            CustomizedTopAppBar(
+                title = stringResource(R.string.topbar_dashboard),
+                /* darkThemeState = darkThemeState, */
+                showThemeSwitch = true
+            )
+        },
+        bottomBar = {
+            NavigationBar {
+                val items = listOf(
+                    BottomNavDestinations.POS,
+                    BottomNavDestinations.Catalog,
+                    BottomNavDestinations.Stock,
+                    BottomNavDestinations.More
+                )
+                items.forEach { item ->
+                    NavigationBarItem(
+                        icon = { Icon(item.icon, contentDescription = null) },
+                        label = { Text(item.label) },
+                        selected = selectedTab == item.route,
+                        onClick = { selectedTab = item.route }
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -175,17 +208,59 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
                 }
             }
             item {
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        CustomizedElevatedCard(stringResource(R.string.menu_label_sales_today), "$1,250", Icons.Default.PointOfSale, Color(0xFF4CAF50))
+
+            }
+
+            item {
+                when (selectedTab) {
+                    BottomNavDestinations.POS.route -> {
+                        Column {
+                            // Tus tarjetas de resumen
+//                            DashboardCards()
+                            // Tus opciones de venta (Refactorizadas)
+
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)) {
+                                Box(modifier = Modifier.weight(1f)) {
+                                    CustomizedElevatedCard(
+                                        stringResource(R.string.menu_label_sales_today),
+                                        "$1,250",
+                                        Icons.Default.PointOfSale,
+                                        Color(0xFF4CAF50)
+                                    )
+                                }
+                                Box(modifier = Modifier.weight(1f)) {
+                                    CustomizedElevatedCard(
+                                        stringResource(R.string.menu_label_reserves),
+                                        "12",
+                                        Icons.Default.Inventory,
+                                        Color(0xFF2196F3)
+                                    )
+                                }
+                            }
+
+                            GenericListedOptions(navController, MenuOptions.POS_OPTIONS, "Acciones de Venta")
+                        }
                     }
-                    Box(modifier = Modifier.weight(1f)) {
-                        CustomizedElevatedCard(stringResource(R.string.menu_label_reserves), "12", Icons.Default.Inventory, Color(0xFF2196F3))
+                    BottomNavDestinations.Catalog.route -> {
+                        GenericListedOptions(navController, MenuOptions.CATALOG_GROUP, "Administración")
+                    }
+                    BottomNavDestinations.Stock.route -> {
+                        GenericListedOptions(navController, MenuOptions.STOCK_GROUP, "Inventarios")
+                    }
+                    BottomNavDestinations.More.route -> {
+                        MoreScreen(darkThemeState, onLogout = {
+                            sessionViewModel.logout()
+                            navController.navigate(AppScreens.LoginScreen.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        },sessionViewModel, navController)
                     }
                 }
             }
 
-            item {
+            /*item {
                 ListedOptions(navController)
             }
             item {
@@ -198,7 +273,9 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
                             popUpTo(0) { inclusive = true }
                         }
                     },
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -206,7 +283,7 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
                 ) {
                     Text("Cerrar Sesión")
                 }
-            }
+            }*/
         }
     }
 }

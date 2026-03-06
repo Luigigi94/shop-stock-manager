@@ -55,7 +55,7 @@ import com.example.inventarioapp.viewmodel.SupplierPurchaseViewModel
 
 @Composable
 fun SupplierItemScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     onSave: () -> Unit = { navController.popBackStack() },
     supplierPurchaseId: String?,
@@ -106,7 +106,7 @@ fun SupplierItemScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_purchase_product),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )

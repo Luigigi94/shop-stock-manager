@@ -56,7 +56,7 @@ import com.example.inventarioapp.viewmodel.ProductViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     productId: String?,
     isCreateMode: Boolean,
@@ -130,7 +130,7 @@ fun AddProductScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_products),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )
