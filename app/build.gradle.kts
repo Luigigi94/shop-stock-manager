@@ -9,6 +9,23 @@ plugins {
 
 android {
     namespace = "com.example.inventarioapp"
+
+    val local_properties = Properties()
+    val archivo_local = project.rootProject.file("local.properties")
+
+    if (archivo_local.exists()) {
+        local_properties.load(FileInputStream(archivo_local))
+    }
+
+    signingConfigs{
+        create("qaConfig") {
+            storeFile = file(local_properties.getProperty("QA_STORE_FILE") ?: "")
+            storePassword = local_properties.getProperty("QA_STORE_PASSWORD") ?: ""
+            keyAlias = local_properties.getProperty("QA_KEY_ALIAS") ?: ""
+            keyPassword = local_properties.getProperty("QA_KEY_PASSWORD") ?: ""
+        }
+    }
+
     compileSdk {
         version = release(36)
     }
@@ -25,18 +42,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val local_properties = Properties()
-        val archivo_local = project.rootProject.file("local.properties")
-
-        if (archivo_local.exists()) {
-            local_properties.load(FileInputStream(archivo_local))
-        }
-
-        val google_token = local_properties.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
-
-        // RECUERDA: Las comillas escapeadas \" son obligatorias para que sea un String en Kotlin
-        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$google_token\"")
     }
 
     flavorDimensions += "env"
@@ -46,12 +51,18 @@ android {
             dimension = "env"
             applicationId = "com.example.inventarioapp"
             versionNameSuffix = "-dev"
+
+            val tokenDev = local_properties.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
+            buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$tokenDev\"")
         }
 
         create("qa") {
             dimension = "env"
             applicationId = "com.example.inventarioapp.qa"
             versionNameSuffix = "-qa"
+
+            val tokenQa = local_properties.getProperty("GOOGLE_WEB_CLIENT_ID_QA") ?: ""
+            buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$tokenQa\"")
         }
 
 //        create("prod") {
@@ -67,6 +78,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("qaConfig")
+        }
+
+        create("stagging") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("qaConfig")
+
+            isDebuggable = true
+
+            matchingFallbacks += listOf("releases")
         }
     }
     compileOptions {
