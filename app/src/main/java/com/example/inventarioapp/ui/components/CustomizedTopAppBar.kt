@@ -25,7 +25,7 @@ import com.example.inventarioapp.navigation.AppScreens
 fun CustomizedTopAppBar(
     title: String,
     navController: NavController? = null,
-    darkThemeState: MutableState<Boolean>? = null,
+    /*darkThemeState: MutableState<Boolean>? = null,*/
     showBack: Boolean = true,
     showThemeSwitch: Boolean = true
 ) {
@@ -52,13 +52,13 @@ fun CustomizedTopAppBar(
                 )
             }
         },
-        actions = {
+        /*actions = {
             if (showThemeSwitch && darkThemeState != null) {
                 Switch(
                     checked = darkThemeState.value,
                     onCheckedChange = { darkThemeState.value = it }
                 )
             }
-        }
+        }*/
     )
 }

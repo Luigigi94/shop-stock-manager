@@ -66,7 +66,7 @@ import com.example.inventarioapp.viewmodel.ClientViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     clientId: String?,
     isCreateMode: Boolean,
@@ -122,7 +122,7 @@ fun ClientScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_clients),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )

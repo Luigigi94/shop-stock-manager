@@ -33,7 +33,7 @@ import com.example.inventarioapp.viewmodel.PurchaseViewModel
 
 @Composable
 fun InvoiceScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     viewModel: PurchaseViewModel = viewModel(),
     purchaseId: String?
@@ -47,7 +47,7 @@ fun InvoiceScreen(
         topBar = {
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_Invoice),
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showThemeSwitch = true,
                 showBack = false
             )
