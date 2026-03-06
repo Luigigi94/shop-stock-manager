@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -41,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -324,7 +326,10 @@ fun ReservesScreen(
                                         },
                                         label = { Text(text = stringResource(R.string.reserve_label_quantity)) },
                                         error = stateReserve.qtyReserveError,
-                                        onFocusLost = reserveViewModel::onQtyReserveBlur
+                                        onFocusLost = reserveViewModel::onQtyReserveBlur,
+                                        keyboardOptions = KeyboardOptions(
+                                            keyboardType = KeyboardType.Number
+                                        )
                                     )
                                     CustomizedOutlinedTextField(
                                         modifier = Modifier.weight(1f),
@@ -337,7 +342,10 @@ fun ReservesScreen(
                                         label = { Text(text = stringResource(R.string.reserve_label_amount)) },
                                         error = stateReserve.amountError?.errorResId,
                                         errorArgs = stateReserve.amountError?.args,
-                                        onFocusLost = reserveViewModel::onAmountBlur
+                                        onFocusLost = reserveViewModel::onAmountBlur,
+                                        keyboardOptions = KeyboardOptions(
+                                            keyboardType = KeyboardType.Number
+                                        )
                                     )
                                 }
                                 Row(
@@ -348,7 +356,7 @@ fun ReservesScreen(
                                         onValueChange = {},
                                         value = today,
                                         readOnly = true,
-                                        label = { Text("Inicio de Apartado") }
+                                        label = { Text(stringResource(R.string.reserve_label_created_reserve)) }
                                     )
                                     CustomizedDatePicker(
                                         modifier = Modifier.weight(1f),

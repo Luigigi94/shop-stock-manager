@@ -10,10 +10,10 @@ data class ProductUiState (
 
     val idProduct: String = "",
     val nameProduct: String = "",
-    val quantityProduct: Int = 0,
+    val quantityProduct: String = "",
     val imageProduct: String = "",
     val descriptionProduct: String = "",
-    val priceProduct: Double = 0.0,
+    val priceProduct: String = "",
     val statusProduct: Boolean = false,
     val idCategory: String? = null,
     val createdAt: Timestamp? = null,
