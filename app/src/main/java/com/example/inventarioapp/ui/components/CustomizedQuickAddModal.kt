@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CustomizedModal(
+fun CustomizedQuickAddModal(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,

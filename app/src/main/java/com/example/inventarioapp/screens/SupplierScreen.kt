@@ -52,7 +52,7 @@ import com.example.inventarioapp.viewmodel.SupplierViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SupplierScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     supplierId: String?,
     viewModel: SupplierViewModel = viewModel()
@@ -96,7 +96,7 @@ fun SupplierScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_suppliers),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )

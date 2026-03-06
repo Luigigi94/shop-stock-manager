@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SupplierPurchaseScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     idUser: String?= "",
     viewModel: SupplierPurchaseViewModel = viewModel()
@@ -90,7 +90,7 @@ fun SupplierPurchaseScreen(
         topBar = {
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_suppliers_purchases),
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 navController = navController,
                 showBack = true,
                 showThemeSwitch = true

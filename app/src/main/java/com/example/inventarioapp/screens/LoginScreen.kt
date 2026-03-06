@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(darkThemeState: MutableState<Boolean>, navController: NavController) {
+fun LoginScreen(/* darkThemeState: MutableState<Boolean>, */ navController: NavController) {
     val snackbarHostState = remember { SnackbarHostState() }
     var stateLogin by remember { mutableStateOf("") }
     val sessionViewModel: SessionViewModel = viewModel()
@@ -114,7 +114,7 @@ fun LoginScreen(darkThemeState: MutableState<Boolean>, navController: NavControl
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_login),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = false,
                 showThemeSwitch = true
             )

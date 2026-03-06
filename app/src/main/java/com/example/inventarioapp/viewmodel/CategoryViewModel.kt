@@ -91,8 +91,9 @@ class CategoryViewModel(
 
         if (!validatedState.isValid) return
 
+        val idCatGenerated = UUID.randomUUID().toString()
         val category = Categories(
-            idCategory = UUID.randomUUID().toString(),
+            idCategory = idCatGenerated,
             nameCategory = validatedState.nameCategory,
             descriptionCategory = validatedState.descriptionCategory
         )
@@ -100,7 +101,11 @@ class CategoryViewModel(
             _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
             repository.addCategory(category)
                 .onSuccess {
-                    _uiState.value = CategoryUiState(success = true)
+                    _uiState.value = CategoryUiState(
+                        success = true,
+                        idCategory = idCatGenerated
+
+                    )
                 }
                 .onFailure { exception ->
                     _uiState.update {

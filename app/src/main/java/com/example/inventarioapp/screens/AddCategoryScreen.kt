@@ -53,12 +53,13 @@ import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTitleScreens
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
+import com.example.inventarioapp.ui.forms.CategoryForm
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCategoryScreen(
-    darkThemeState: MutableState<Boolean>,
+    /* darkThemeState: MutableState<Boolean>, */
     navController: NavController,
     categoryId: String?,
     isCreateMode: Boolean,
@@ -111,7 +112,7 @@ fun AddCategoryScreen(
             CustomizedTopAppBar(
                 title = stringResource(R.string.topbar_categories),
                 navController = navController,
-                darkThemeState = darkThemeState,
+                /* darkThemeState = darkThemeState, */
                 showBack = true,
                 showThemeSwitch = true
             )
@@ -139,7 +140,11 @@ fun AddCategoryScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-                CustomizedTitleScreens(if (stateCategory.isEdit) stringResource(R.string.categories_label_edit) else stringResource(R.string.categories_label_list_categories))
+                CustomizedTitleScreens(
+                    if (stateCategory.isEdit && !addCategoryForm) stringResource(R.string.categories_label_edit)
+                    else if (!stateCategory.isEdit && addCategoryForm) stringResource(R.string.categories_label_new_category)
+                    else stringResource(R.string.categories_label_list_categories)
+                )
             }
 
             if (addCategoryForm || stateCategory.isEdit) {
@@ -153,55 +158,37 @@ fun AddCategoryScreen(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                         )
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Text(
-                                text = if (stateCategory.isEdit) stringResource(R.string.generic_label_details) else stringResource(R.string.categories_label_new_category),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-
-                            CustomizedOutlinedTextField(
-                                modifier = Modifier.fillMaxWidth(),
-                                label = { Text(text = stringResource(R.string.categories_label_name_category)) },
-                                value = stateCategory.nameCategory,
-                                onValueChange = viewModel::onNameCategory,
-                                error = stateCategory.nameError
-                            )
-
-                            CustomizedOutlinedTextField(
-                                modifier = Modifier.fillMaxWidth(),
-                                label = { Text(text = stringResource(R.string.categories_label_description_category)) },
-                                value = stateCategory.descriptionCategory ?: "",
-                                onValueChange = viewModel::onDescriptionCategory
-                            )
-                            CustomizedEditRows(
-                                onCancel = {
-                                    if (addCategoryForm) addCategoryForm = false else
+                        CategoryForm(
+                            stateCategory = stateCategory,
+                            onNameCategory = viewModel::onNameCategory,
+                            onNameBlur = viewModel::onNameBlur,
+                            onDescriptionCategory = viewModel::onDescriptionCategory
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        CustomizedEditRows(
+                            onCancel = {
+                                if (addCategoryForm) addCategoryForm = false else
+                                    navController.popBackStack()
+                            },
+                            onDelete = { viewModel.deleteCategory() },
+                            onAction = {
+                                if (stateCategory.isEdit) {
+                                    viewModel.updateCategory()
+                                } else {
+                                    viewModel.addCategory()
+                                    if (isRedirectedByProduct) {
                                         navController.popBackStack()
-                                },
-                                onDelete = { viewModel.deleteCategory() },
-                                onAction ={
-                                    if (stateCategory.isEdit) {
-                                        viewModel.updateCategory()
                                     } else {
-                                        viewModel.addCategory()
-                                        if (isRedirectedByProduct) {
-                                            navController.popBackStack()
-                                        } else {
-                                            addCategoryForm = false
-                                        }
+                                        addCategoryForm = false
                                     }
-                                },
-                                isEdit = stateCategory.isEdit,
-                                label = if (stateCategory.isEdit) stringResource(R.string.categories_label_update_category) else stringResource(R.string.categories_label_create_category),
-                            )
-                        }
+                                }
+                            },
+                            isEdit = stateCategory.isEdit,
+                            label = if (stateCategory.isEdit) stringResource(R.string.categories_label_update_category) else stringResource(
+                                R.string.categories_label_create_category
+                            ),
+                        )
+
                     }
                 }
             }
