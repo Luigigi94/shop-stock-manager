@@ -231,7 +231,7 @@ fun PurchaseScreen(
                                 cart = cart ?: return@Column,
                                 onEditItem = { item ->
                                     val routeRedirect =
-                                        "${AppScreens.PurchaseProductScreen.route}/Admin?itemId=${item.id}"
+                                        "${AppScreens.PurchaseProductScreen.route}/$idUser?itemId=${item.id}"
                                     Log.d("PurchaseScreen", "Redirecto hacía $routeRedirect")
                                     navController.navigate(route = routeRedirect)
                                 },

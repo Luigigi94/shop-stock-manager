@@ -62,7 +62,7 @@
     <string name="clients_label_apem_client">Apellido Materno (Opc.)</string>
     <string name="clients_label_phone_client">Telefono</string>
     <string name="clients_label_update_client">Actualizar Cliente</string>
-    <string name="clients_label_create_client">Crear Categoria</string>
+    <string name="clients_label_create_client">Crear Cliente</string>
 
 <!--    Invoice labels-->
     <string name="invoice_label_end_purchase">Finalizar Compra</string>
@@ -79,8 +79,10 @@
     <string name="purchase_label_listed_prods">Lista de compra</string>
 
 <!--    Reserve labels-->
+    <string name="reserve_label_deposit">Abonar</string>
     <string name="reserve_label_saved">Producto Apartado</string>
     <string name="reserve_label_select_client">Cliente</string>
+    <string name="reserve_label_list_reserves">Lista de Apartados</string>
     <string name="reserve_label_select_product">Producto</string>
     <string name="reserve_label_reserved_quantity">Cantidad Apartada</string>
     <string name="reserve_label_new_reserve">Nuevo Apartado</string>

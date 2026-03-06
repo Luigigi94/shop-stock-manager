@@ -54,7 +54,7 @@
     <string name="clients_label_apem_client">Second Last Name (Opt.)</string>
     <string name="clients_label_phone_client">Phone</string>
     <string name="clients_label_update_client">Update Client</string>
-    <string name="clients_label_create_client">Create Category</string>
+    <string name="clients_label_create_client">Create Client</string>
     <string name="invoice_label_end_purchase">End Purchase</string>
     <string name="invoice_label_client">Clients</string>
     <string name="invoice_label_timestamp">Date</string>
@@ -63,8 +63,10 @@
     <string name="purchase_product_label_quantity">Quantity</string>
     <string name="purchase_product_label_product">Product</string>
     <string name="purchase_label_listed_prods">Purchase list</string>
+    <string name="reserve_label_deposit">Make a Payment</string>
     <string name="reserve_label_saved">Reserved Product</string>
     <string name="reserve_label_select_client">Client</string>
+    <string name="reserve_label_list_reserves">Reseves List</string>
     <string name="reserve_label_select_product">Product</string>
     <string name="reserve_label_reserved_quantity">Reserved Quantity</string>
     <string name="reserve_label_new_reserve">New Reserve</string>
