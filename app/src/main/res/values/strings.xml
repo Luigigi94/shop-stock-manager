@@ -69,6 +69,9 @@
     <string name="invoice_label_client">Cliente</string>
     <string name="invoice_label_timestamp">Fecha</string>
     <string name="invoice_label_products">Productos</string>
+    <string name="invoice_label_price">Precio</string>
+    <string name="invoice_label_qty">Cant.</string>
+    <string name="invoice_label_subtotal">SubTotal</string>
 
 <!--    Product Purchase labels-->
     <string name="purchase_product_label_add">Agregar al Carrito</string>

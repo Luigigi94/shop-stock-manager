@@ -59,6 +59,7 @@
     <string name="invoice_label_client">Clients</string>
     <string name="invoice_label_timestamp">Date</string>
     <string name="invoice_label_products">Products</string>
+    <string name="invoice_label_subtotal">SubTotal</string>
     <string name="purchase_product_label_add">Add to Cart</string>
     <string name="purchase_product_label_quantity">Quantity</string>
     <string name="purchase_product_label_product">Product</string>
@@ -108,4 +109,6 @@
     <string name="supplier_item_product_label_quantity">Quantity</string>
     <string name="supplier_item_product_label_cost">Cost</string>
     <string name="inventory_label_product">Product</string>
+    <string name="invoice_label_price">Price</string>
+    <string name="invoice_label_qty">Qty.</string>
 </resources>
