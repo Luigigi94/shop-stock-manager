@@ -76,4 +76,17 @@ class PurchaseRepository {
             null
         }
     }
+
+    suspend fun confirmPurchaseFromReserve(purchase: Purchase): Boolean {
+        return try {
+            db.collection(FirestorePaths.Collections.PURCHASES)
+                .document(purchase.id)
+                .set(purchase)
+                .await()
+            true
+        } catch (e: Exception) {
+            Log.e("PurchaseRepository", "Error al convertir reserva a venta", e)
+            false
+        }
+    }
 }

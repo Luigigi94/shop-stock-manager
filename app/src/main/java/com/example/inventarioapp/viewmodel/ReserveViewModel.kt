@@ -7,9 +7,12 @@ import com.example.inventarioapp.constants.MovementType
 import com.example.inventarioapp.model.Clients
 import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Products
+import com.example.inventarioapp.model.Purchase
+import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.model.Reserves
 import com.example.inventarioapp.repository.CatalogsRepository
 import com.example.inventarioapp.repository.InventoryRepository
+import com.example.inventarioapp.repository.PurchaseRepository
 import com.example.inventarioapp.repository.ReservesRepository
 import com.example.inventarioapp.state.ReserveUiState
 import com.example.inventarioapp.validators.ReserveValidator
@@ -31,7 +34,8 @@ import java.util.UUID
 class ReserveViewModel(
     private val repository: ReservesRepository = ReservesRepository(),
     private val catalogsRepository: CatalogsRepository = CatalogsRepository(),
-    private val inventoryRepository: InventoryRepository = InventoryRepository()
+    private val inventoryRepository: InventoryRepository = InventoryRepository(),
+    private val purchaseRepository: PurchaseRepository = PurchaseRepository()
 ) : ViewModel() {
     private val _products = MutableStateFlow<List<Products>>(emptyList())
     val products: StateFlow<List<Products>> = _products.asStateFlow()
@@ -247,6 +251,26 @@ class ReserveViewModel(
 
 
         val movements = buildMovement(productId = state.idProduct, qty = reserve.qtyReserve, amount = reserve.amount,referenceId = reserve.idReserves,)
+        val purchaseFromReserve = if (reserveFinalized) {
+            Purchase(
+                id = UUID.randomUUID().toString(), // ID de venta nuevo
+                clientId = state.idClient,
+                clientName = getClientName(state.idClient),
+                items = listOf(
+                    PurchaseItem(
+                        id = UUID.randomUUID().toString(),
+                        productId = state.idProduct,
+                        productName = getProductName(state.idProduct),
+                        price = price, // El precio pactado
+                        quantity = originalQty,
+                        subtotal = totalDebt
+                    )
+                ),
+                total = totalDebt,
+                createdAt = Timestamp.now(),
+                userId = "Reserva_Finalizada" // O el ID del usuario actual
+            )
+        } else null
 
         viewModelScope.launch {
             repository.updateReserve(reserve)
@@ -263,6 +287,10 @@ class ReserveViewModel(
                 }
             inventoryRepository.saveInventoryMovements(listOf(movements))
             repository.applyReserveMovements(reserve, movements, newStock)
+            if (reserveFinalized && purchaseFromReserve != null) {
+                purchaseRepository.confirmPurchaseFromReserve(purchaseFromReserve)
+                Log.d("ReserveVM", "Venta generada desde reserva con éxito")
+            }
         }
     }
 
