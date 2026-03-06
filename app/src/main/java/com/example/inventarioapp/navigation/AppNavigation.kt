@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.example.inventarioapp.screens.AddCategoryScreen
 import com.example.inventarioapp.screens.AddProductScreen
 import com.example.inventarioapp.screens.ClientScreen
+import com.example.inventarioapp.screens.InventoryDetailScreen
 import com.example.inventarioapp.screens.InventoryListScreen
 import com.example.inventarioapp.screens.InventoryScreen
 import com.example.inventarioapp.screens.InvoiceScreen
@@ -199,6 +200,23 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         ){ backStackEntry ->
             val inventoryId = backStackEntry.arguments?.getString("inventoryId")
             InventoryScreen(
+                darkThemeState,
+                navController,
+                inventoryId = inventoryId
+            )
+        }
+        composable(
+            route = "${AppScreens.InventoryDetailScreen.route}?historicInventory={inventoryId}",
+            arguments = listOf(
+                navArgument("inventoryId"){
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ){ backStackEntry ->
+            val inventoryId = backStackEntry.arguments?.getString("inventoryId")
+            InventoryDetailScreen(
                 darkThemeState,
                 navController,
                 inventoryId = inventoryId

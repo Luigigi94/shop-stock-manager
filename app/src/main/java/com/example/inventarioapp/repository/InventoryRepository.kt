@@ -23,6 +23,8 @@ class InventoryRepository {
     private val dbInventoryDraft = db.collection(FirestorePaths.Collections.INVENTORY_DRAFT)
     private val dbInventoryList = db.collection(FirestorePaths.Collections.INVENTORY_LIST)
 
+    private val dbInventoryDetails = db.collection(FirestorePaths.Collections.INVENTORY_DETAILS)
+
     suspend fun saveInventoryMovements(movements: List<InventoryMovements>) {
         val batch = db.batch()
         movements.forEach { movement ->
@@ -71,6 +73,8 @@ class InventoryRepository {
             .toObject(InventoryDraft::class.java)?.items
     }
 
+
+
     suspend fun getDraftActive(): String? {
         return try {
             val snapshot = dbInventoryDraft
@@ -88,7 +92,7 @@ class InventoryRepository {
         }
     }
     
-    suspend fun getListedInventories(): Flow<List<InventoryHeader>> {
+    fun getListedInventories(): Flow<List<InventoryHeader>> {
         return callbackFlow {
             val listener = dbInventoryList.addSnapshotListener { snapshots, exception ->
                 if (exception != null || snapshots == null) return@addSnapshotListener
@@ -100,6 +104,7 @@ class InventoryRepository {
             awaitClose { listener.remove() }
         }
     }
+
 
     suspend fun getMovementsByReference(idReference: String): List<InventoryMovements> {
         return try {
@@ -114,6 +119,18 @@ class InventoryRepository {
         }
     }
 
+    suspend fun getHistoryInventoryProductsList(referenceId: String): List<InventoryDetail>{
+        return try {
+            dbInventoryDetails
+                .whereEqualTo("referenceId",referenceId)
+                .get()
+                .await()
+                .toObjects(InventoryDetail::class.java)
+        } catch (e: Exception){
+            emptyList()
+        }
+    }
+
     suspend fun saveFinalInventoryRecord(
         header: InventoryHeader,
         details: List<InventoryDetail>
@@ -124,7 +141,7 @@ class InventoryRepository {
         batch.set(headerRef, header)
 
         details.forEach { detail ->
-            val detailRef = db.collection(FirestorePaths.Collections.INVENTORY_DETAILS).document(detail.id)
+            val detailRef = dbInventoryDetails.document(detail.id)
             batch.set(detailRef, detail)
         }
 

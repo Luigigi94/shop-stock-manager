@@ -107,7 +107,7 @@ fun InventoryScreen(
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
-                title = "${stringResource(R.string.topbar_Inventory)}/brrrr",
+                title = stringResource(R.string.topbar_Inventory),
                 darkThemeState = darkThemeState,
                 navController = navController,
                 showThemeSwitch = true,

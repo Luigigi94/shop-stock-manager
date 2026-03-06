@@ -130,7 +130,9 @@ fun InventoryListScreen(
                     list = listInventories,
                     modifier = Modifier,
                     label = { it.userName },
-                    onItemClick = {}
+                    onItemClick = {
+                        navController.navigate("${AppScreens.InventoryDetailScreen.route}?historicInventory=${it.idHeaderInventory}")
+                    }
                 )
             }
         }

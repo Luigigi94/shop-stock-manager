@@ -23,6 +23,7 @@
     <string name="welcome_user">Welcome back,</string>
     <string name="topbar_products">Products</string>
     <string name="topbar_Inventory">Inventory</string>
+    <string name="topbar_Inventory_details">Inventory Details</string>
     <string name="topbar_inventories_listed">Inventories Listed</string>
     <string name="topbar_Invoice">Purchase Invoice</string>
     <string name="topbar_reserves">Reserves</string>
@@ -89,6 +90,8 @@
     <string name="error_long_identifier_account">the card number/ CLABE account is wrong</string>
     <string name="inventory_label_product_add">Add Product to Inventory</string>
     <string name="inventory_label_product_edit">Update Quantity Inventoried</string>
+    <string name="inventory_label_product_inventory">Product</string>
+    <string name="inventory_details_label_products">Products Inventoried Details</string>
     <string name="suppliers_label_saved">Supplier Added</string>
     <string name="suppliers_label_add">Add Supplier</string>
     <string name="suppliers_label_edit">Edit Supplier</string>
@@ -102,4 +105,5 @@
     <string name="supplier_item_product_label_add">Add to Cart</string>
     <string name="supplier_item_product_label_quantity">Quantity</string>
     <string name="supplier_item_product_label_cost">Cost</string>
+    <string name="inventory_label_product">Product</string>
 </resources>

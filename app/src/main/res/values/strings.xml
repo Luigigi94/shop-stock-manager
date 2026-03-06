@@ -8,6 +8,7 @@
     <string name="topbar_categories">Categorias</string>
     <string name="topbar_products">Productos</string>
     <string name="topbar_Inventory">Inventario</string>
+    <string name="topbar_Inventory_details">Detalles del Inventario</string>
     <string name="topbar_inventories_listed">Listado de Inventarios</string>
     <string name="topbar_Invoice">Recibo Compra</string>
     <string name="topbar_reserves">Apartados</string>
@@ -99,6 +100,8 @@
     <string name="inventory_label_product">Producto</string>
     <string name="inventory_label_product_inventory">Producto</string>
 
+<!--    Inventory Details labels-->
+    <string name="inventory_details_label_products">Detalle de Productos Inventariados</string>
 
     <!--    Suppliers labels-->
     <string name="suppliers_label_saved">Proveedor Añadido</string>

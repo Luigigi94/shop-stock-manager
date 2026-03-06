@@ -11,6 +11,7 @@ import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.InventoryResult
 import com.example.inventarioapp.repository.InventoryRepository
 import com.example.inventarioapp.repository.ProductRepository
+import com.example.inventarioapp.state.HistoryInventoryUiState
 import com.example.inventarioapp.state.InventoryUiState
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +44,9 @@ class InventoryViewModel(
     val activeDraftId = _activeDraftId.asStateFlow()
 
     private var currentInventoryId: String? = null
+
+    private val _uiStateHistory = MutableStateFlow(HistoryInventoryUiState())
+    val uiStateHistory: StateFlow<HistoryInventoryUiState> get() = _uiStateHistory
 
 
 
@@ -214,6 +218,25 @@ class InventoryViewModel(
             val id = inventoryRepository.getDraftActive()
             Log.d("INV -> InventoryVM FetchDraftId", "ID de Firebase: $id")
             _activeDraftId.value = id
+        }
+    }
+
+    fun getListedInventoriedItems(referenceId: String){
+        viewModelScope.launch {
+            _uiStateHistory.update { it.copy(isLoading = true) }
+
+            try {
+                val list = inventoryRepository.getHistoryInventoryProductsList(referenceId)
+
+                _uiStateHistory.update {
+                    it.copy(
+                        isLoading = false,
+                        products = list
+                    )
+                }
+            } catch (e: Exception){
+
+            }
         }
     }
 

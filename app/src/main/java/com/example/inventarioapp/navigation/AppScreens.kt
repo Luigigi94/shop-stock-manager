@@ -13,6 +13,7 @@ sealed class    AppScreens(val route: String) {
     object SalesByUserScreen: AppScreens(route = "SalesByUserScreen")
     object InventoryScreen: AppScreens(route = "InventoryScreen")
     object InventoryListScreen: AppScreens(route = "InventoryListScreen")
+    object InventoryDetailScreen: AppScreens(route = "InventoryDetailScreen")
     object SupplierScreen: AppScreens(route = "SupplierScreen")
     object SupplierPurchaseScreen: AppScreens(route = "SupplierPurchaseScreen")
     object SupplierItemScreen: AppScreens(route = "SupplierItemScreen")
