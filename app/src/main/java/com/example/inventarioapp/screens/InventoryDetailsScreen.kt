@@ -17,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +32,7 @@ import androidx.navigation.NavController
 import com.example.inventarioapp.R
 import com.example.inventarioapp.model.InventoryDetail
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
-import com.example.inventarioapp.ui.components.CustomizedModal
+import com.example.inventarioapp.ui.components.CustomizedQuickAddModal
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
 import com.example.inventarioapp.viewmodel.InventoryViewModel
 
@@ -113,7 +112,7 @@ fun InventoryDetailScreen(
                                 showModal = true
                             }
                         )
-                        CustomizedModal(
+                        CustomizedQuickAddModal(
                             show = showModal,
                             onDismiss = { showModal = false },
                             onConfirm = { showModal = false },

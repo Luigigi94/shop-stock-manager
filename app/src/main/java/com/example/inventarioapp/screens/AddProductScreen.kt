@@ -29,12 +29,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,13 +41,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.inventarioapp.R
 import com.example.inventarioapp.navigation.AppScreens
 import com.example.inventarioapp.ui.components.CustomizedEditRows
-import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
+import com.example.inventarioapp.ui.components.CustomizedQuickAddModal
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
+import com.example.inventarioapp.ui.forms.CategoryForm
 import com.example.inventarioapp.ui.forms.ProductForm
 import com.example.inventarioapp.viewmodel.CategoryViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
@@ -62,8 +61,8 @@ fun AddProductScreen(
     isCreateMode: Boolean,
     viewModel: ProductViewModel = viewModel()
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
     var addProductForm by remember { mutableStateOf(false) }
+    /*val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     LaunchedEffect(navBackStackEntry) {
         val result = navBackStackEntry?.savedStateHandle?.get<Boolean>("openCreateForm")
@@ -75,11 +74,13 @@ fun AddProductScreen(
 
     BackHandler(enabled = addProductForm) {
         addProductForm = false
-    }
+    }*/
 
-
+    var addCategoryModal by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val stateProduct by viewModel.uiState.collectAsState()
+    val categoryViewModel: CategoryViewModel = viewModel()
+    val stateCategory by categoryViewModel.uiState.collectAsState()
 
     LaunchedEffect(productId) {
         if (productId == null) {
@@ -115,14 +116,19 @@ fun AddProductScreen(
         }
     }
 
-    val categoryViewModel: CategoryViewModel = viewModel()
-
     val categories by categoryViewModel.categories.collectAsState()
 
-//    var selectedCategory by remember { mutableStateOf<Categories?>(null) }
     val selectedCategory = categories.firstOrNull {
         it.idCategory == stateProduct.idCategory
     }
+    LaunchedEffect(stateCategory.success) {
+        if (stateCategory.success){
+            viewModel.onCategoryChange(stateCategory.idCategory)
+            categoryViewModel.clearForm()
+        }
+        addCategoryModal = false
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -149,6 +155,22 @@ fun AddProductScreen(
             }
         }
     ) { innerPadding ->
+        CustomizedQuickAddModal(
+            show = addCategoryModal,
+            onDismiss = { addCategoryModal = false },
+            onConfirm = {
+                categoryViewModel.addCategory()
+                addCategoryModal = false
+            },
+            title = stringResource(R.string.categories_label_new_category)
+        ) {
+            CategoryForm(
+                stateCategory = stateCategory,
+                onNameCategory = categoryViewModel::onNameCategory,
+                onNameBlur = categoryViewModel::onNameBlur,
+                onDescriptionCategory = categoryViewModel::onDescriptionCategory
+            )
+        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -201,7 +223,6 @@ fun AddProductScreen(
 
                             ProductForm(
                                 state = stateProduct,
-//                        currentStock = currentStock,
                                 categories = categories,
                                 selectedCategory = selectedCategory,
                                 onNameChange = viewModel::onNameProduct,
@@ -212,9 +233,7 @@ fun AddProductScreen(
                                 onQuantityChange = viewModel::onQuantityProduct,
                                 onQuantityBlur = viewModel::onQuantityBlur,
                                 onCategorySelected = viewModel::onIdCategory,
-                                onAddCategoryClick = {
-                                    navController.navigate("${AppScreens.AddCategoryScreen.route}?openCreateForm=true")
-                                }
+                                onAddCategoryClick = { addCategoryModal = true }
                             )
                             Spacer(modifier = Modifier.height(18.dp))
                             CustomizedEditRows(

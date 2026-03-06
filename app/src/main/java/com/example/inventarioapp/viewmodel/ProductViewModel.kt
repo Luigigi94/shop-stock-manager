@@ -259,6 +259,14 @@ class ProductViewModel(
         _uiState.value = ProductUiState()
     }
 
+    fun onCategoryChange(idCategory: String){
+        _uiState.update {
+            it.copy(
+                idCategory = idCategory
+            )
+        }
+    }
+
     private fun validateForm(state: ProductUiState): ProductUiState {
         val nameResult = ProductValidator.name(state.nameProduct)
         val quantityResult = ProductValidator.quantity(state.quantityProduct.toString())

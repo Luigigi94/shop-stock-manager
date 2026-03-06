@@ -25,7 +25,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,11 +45,9 @@ import com.example.inventarioapp.ui.components.CustomizedButton
 import com.example.inventarioapp.ui.components.CustomizedEditRows
 import com.example.inventarioapp.ui.components.CustomizedExposedDropdownMenu
 import com.example.inventarioapp.ui.components.CustomizedFAB
-import com.example.inventarioapp.ui.components.CustomizedFilledCard
 import com.example.inventarioapp.ui.components.CustomizedListOfEditables
 import com.example.inventarioapp.ui.components.CustomizedOutlinedTextField
 import com.example.inventarioapp.ui.components.CustomizedTopAppBar
-import com.example.inventarioapp.ui.forms.InventoryForm
 import com.example.inventarioapp.viewmodel.InventoryViewModel
 import com.example.inventarioapp.viewmodel.ProductViewModel
 
