@@ -14,12 +14,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import com.example.inventarioapp.navigation.AppNavigation
+import com.example.inventarioapp.navigation.BottomNavDestinations
 import com.example.inventarioapp.ui.LocalSessionViewModel
 import com.example.inventarioapp.ui.theme.InventarioAppTheme
 import com.example.inventarioapp.viewmodel.SessionViewModel
 
 class MainActivity : ComponentActivity() {
     private val themeState = mutableStateOf(false)
+    private val menuSelected = mutableStateOf(BottomNavDestinations.POS.route)
 
     private val sessionViewModel: SessionViewModel by viewModels()
 
@@ -39,7 +41,8 @@ class MainActivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.background
                     ) {
                         AppNavigation(
-                            darkThemeState = themeState
+                            darkThemeState = themeState,
+                            optionSelected = menuSelected
                         )
                     }
                 }

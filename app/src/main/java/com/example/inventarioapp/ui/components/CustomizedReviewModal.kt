@@ -10,26 +10,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.inventarioapp.R
 
-
 @Composable
-fun CustomizedQuickAddModal(
+fun CustomizedReviewModal(
     show: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     title: String,
-    content: @Composable () -> Unit // Aquí metes tu formulario
-) {
-    if (show) {
+    content: @Composable () -> Unit
+){
+    if (show){
         AlertDialog(
-            onDismissRequest = { onDismiss() }, // Se activa al tocar fuera o dar atrás
+            onDismissRequest = { onDismiss() },
             confirmButton = {
                 TextButton(onClick = onConfirm) {
-                    Text(stringResource(R.string.generic_label_button_save))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.generic_label_button_cancel))
+                    Text(stringResource(R.string.generic_label_button_back))
                 }
             },
             title = {

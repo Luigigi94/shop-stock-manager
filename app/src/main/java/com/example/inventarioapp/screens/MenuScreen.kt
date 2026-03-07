@@ -1,24 +1,18 @@
 package com.example.inventarioapp.screens
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.PointOfSale
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,10 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -89,76 +79,15 @@ fun CustomizedElevatedCard(title: String, value: String, icon: ImageVector, icon
         }
     }
 }
-/*
-@Composable
-fun ListedOptions(navController: NavController) {
-    val options = MenuOptions.options
-
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Text(
-            text = stringResource(R.string.menu_label_quick_actions),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(vertical = 12.dp)
-        )
-
-        options.forEach { option ->
-            ElevatedCard(
-                onClick = { navController.navigate(route = option.route) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(
-                                MaterialTheme.colorScheme.primaryContainer,
-                                RoundedCornerShape(8.dp)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = option.icon ?: Icons.Default.Warning,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Text(
-                        text = stringResource(option.label),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
-    }
-}
-*/
-
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavController) {
+fun MenuScreen(darkThemeState: MutableState<Boolean>, optionSelected: MutableState<String>, navController: NavController) {
     val sessionViewModel = LocalSessionViewModel.current
     val session by sessionViewModel.session.collectAsState()
-    var selectedTab by remember { mutableStateOf(BottomNavDestinations.POS.route) }
+//    var selectedTab by remember { mutableStateOf(BottomNavDestinations.POS.route) }
+
     Scaffold(
         topBar = {
             CustomizedTopAppBar(
@@ -179,8 +108,8 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
                     NavigationBarItem(
                         icon = { Icon(item.icon, contentDescription = null) },
                         label = { Text(item.label) },
-                        selected = selectedTab == item.route,
-                        onClick = { selectedTab = item.route }
+                        selected = optionSelected.value == item.route,
+                        onClick = { optionSelected.value = item.route }
                     )
                 }
             }
@@ -212,7 +141,7 @@ fun MenuScreen(darkThemeState: MutableState<Boolean>, navController: NavControll
             }
 
             item {
-                when (selectedTab) {
+                when (optionSelected.value) {
                     BottomNavDestinations.POS.route -> {
                         Column {
                             // Tus tarjetas de resumen

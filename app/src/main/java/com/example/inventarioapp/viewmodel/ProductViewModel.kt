@@ -55,7 +55,7 @@ class ProductViewModel(
     fun onQuantityProduct(value: String) {
         _uiState.value = validateForm(
             _uiState.value.copy(
-                quantityProduct = value.toIntOrNull() ?: 0,
+                quantityProduct = value,
                 quantityTouched = true
             )
         )
@@ -72,7 +72,7 @@ class ProductViewModel(
     fun onPriceProduct(value: String) {
         _uiState.value = validateForm(
             _uiState.value.copy(
-                priceProduct = value.toDouble(),
+                priceProduct = value,
                 priceTouched = true
             )
         )
@@ -141,10 +141,10 @@ class ProductViewModel(
             idProduct = UUID.randomUUID().toString(),
             nameProduct = validateState.nameProduct,
             descriptionProduct = validateState.descriptionProduct,
-            priceProduct = validateState.priceProduct,
+            priceProduct = validateState.priceProduct.toDouble(),
             idCategory = validateState.idCategory?: "",
             createdAt = Timestamp.now(),
-            stock = validateState.quantityProduct
+            stock = validateState.quantityProduct.toInt()
         )
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null, success = false) }
@@ -194,11 +194,11 @@ class ProductViewModel(
                     idProduct = product.idProduct,
                     nameProduct = product.nameProduct,
                     descriptionProduct = product.descriptionProduct,
-                    priceProduct = product.priceProduct,
+                    priceProduct = product.priceProduct.toString(),
                     idCategory = product.idCategory,
                     isEdit = true,
                     isLoading = false,
-                    quantityProduct = product.stock
+                    quantityProduct = product.stock.toString()
                 )
             } else {
                 _uiState.update {
@@ -218,10 +218,10 @@ class ProductViewModel(
             idProduct = state.idProduct,
             nameProduct = state.nameProduct,
             descriptionProduct = state.descriptionProduct,
-            priceProduct = state.priceProduct,
+            priceProduct = state.priceProduct.toDouble(),
             idCategory = state.idCategory?: "",
             updatedAt = Timestamp.now(),
-            stock = state.quantityProduct
+            stock = state.quantityProduct.toInt()
         )
         viewModelScope.launch {
             productRepository.updateProduct(product)

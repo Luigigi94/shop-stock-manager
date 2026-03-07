@@ -5,8 +5,10 @@ import com.example.inventarioapp.constants.FirestorePaths
 import com.example.inventarioapp.model.Cart
 import com.example.inventarioapp.model.InventoryMovements
 import com.example.inventarioapp.model.Purchase
+import com.example.inventarioapp.model.PurchaseItem
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -18,7 +20,7 @@ class PurchaseRepository {
         FirebaseFirestore.getInstance()
     }
 
-    private val purchases = db.collection("Purchases")
+    private val purchases = db.collection(FirestorePaths.Collections.PURCHASES)
 
 
     /* ---------- Purchases ---------- */
@@ -35,6 +37,7 @@ class PurchaseRepository {
     fun getPurchasesByUser(userId: String): Flow<List<Purchase>> = callbackFlow{
         val sub = purchases
             .whereEqualTo("userId", userId)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snap, _ ->
                 val list = snap?.documents
                     ?.mapNotNull { doc ->
@@ -44,6 +47,15 @@ class PurchaseRepository {
                 trySend(list)
             }
         awaitClose { sub.remove() }
+    }
+
+
+    suspend fun getProductsBySales(purchaseId: String): Purchase? {
+        return purchases
+            .document(purchaseId)
+            .get()
+            .await()
+            .toObject(Purchase::class.java)
     }
 
     suspend fun confirmPurchase(

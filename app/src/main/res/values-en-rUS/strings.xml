@@ -113,4 +113,7 @@
     <string name="inventory_label_product">Product</string>
     <string name="invoice_label_price">Price</string>
     <string name="invoice_label_qty">Qty.</string>
+    <string name="generic_label_button_save">Save</string>
+    <string name="generic_label_button_cancel">Cancel</string>
+    <string name="generic_label_anonymous_client">Anonymous</string>
 </resources>
