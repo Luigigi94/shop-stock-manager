@@ -29,7 +29,7 @@ import com.example.inventarioapp.screens.SupplierScreen
 import com.example.inventarioapp.viewmodel.SessionViewModel
 
 @Composable
-fun AppNavigation(darkThemeState: MutableState<Boolean>) {
+fun AppNavigation(darkThemeState: MutableState<Boolean>, optionSelected: MutableState<String>) {
     val sessionViewModel: SessionViewModel = viewModel()
     val session by sessionViewModel.session.collectAsState()
     val navController = rememberNavController()
@@ -47,6 +47,7 @@ fun AppNavigation(darkThemeState: MutableState<Boolean>) {
         composable(route = AppScreens.MenuScreen.route) {
             MenuScreen(
                 darkThemeState,
+                optionSelected,
                 navController
             )
         }
