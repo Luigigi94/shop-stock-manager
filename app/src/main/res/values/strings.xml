@@ -133,6 +133,9 @@
     <string name="generic_label_button_back">Regresar</string>
     <string name="generic_label_button_delete">Eliminar</string>
     <string name="generic_label_button_edit">Editar</string>
+    <string name="generic_label_button_save">Guardar</string>
+    <string name="generic_label_button_cancel">Cancelar</string>
+    <string name="generic_label_anonymous_client">Anonimo</string>
     <string name="menu_label_app_settings" translatable="false">App Settings</string>
 
 <!--    Login labels-->

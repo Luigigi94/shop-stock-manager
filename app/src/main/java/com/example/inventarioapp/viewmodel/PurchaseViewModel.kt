@@ -13,6 +13,7 @@ import com.example.inventarioapp.model.PurchaseItem
 import com.example.inventarioapp.repository.CartRepository
 import com.example.inventarioapp.repository.CatalogsRepository
 import com.example.inventarioapp.repository.PurchaseRepository
+import com.example.inventarioapp.state.PurchaseItemUiState
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +33,9 @@ class PurchaseViewModel(
     private val _purchase = MutableStateFlow<Purchase?>(null)
     val purchase: StateFlow<Purchase?> = _purchase
 
+    private val _selectedPurchase = MutableStateFlow<Purchase?>(null)
+    val selectedPurchase: StateFlow<Purchase?> = _selectedPurchase
+
     val products = MutableStateFlow<List<Products>>(emptyList())
     val clients = MutableStateFlow<List<Clients>>(emptyList())
 
@@ -45,11 +49,6 @@ class PurchaseViewModel(
 
         observeCart(userId)
         observePurchasesByUser(userId)
-    }
-
-    fun loadCatalogs() = viewModelScope.launch {
-        products.value = catalogsRepository.getProducts()
-        clients.value = catalogsRepository.getClients()
     }
 
     fun observeCart(userId: String) {
@@ -218,6 +217,25 @@ class PurchaseViewModel(
 
         viewModelScope.launch {
             cartRepository.saveCart(updated)
+        }
+    }
+
+    fun getListedProductsBySale(purchaseId: String){
+        viewModelScope.launch {
+            val prodItems = purchaseRepository.getProductsBySales(purchaseId)
+            Log.d("Purchase -> VM","Revisando prodItems: $prodItems")
+
+            if (prodItems != null){
+                _selectedPurchase.value = Purchase(
+                    id = purchaseId,
+                    clientId = prodItems.clientId,
+                    clientName = prodItems.clientName,
+                    items = prodItems.items,
+                    total = prodItems.total,
+                    createdAt = prodItems.createdAt
+                )
+            }
+            Log.d("Purchase -> VM","Revisando _selectedPurchase: $_selectedPurchase")
         }
     }
 }

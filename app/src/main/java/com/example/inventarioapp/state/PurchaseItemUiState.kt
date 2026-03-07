@@ -1,7 +1,4 @@
 package com.example.inventarioapp.state
-
-import com.example.inventarioapp.model.Products
-
 data class PurchaseItemUiState(
     val isLoading: Boolean = false,
     val isEdit: Boolean = false,
